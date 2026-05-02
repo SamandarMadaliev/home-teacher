@@ -19,8 +19,8 @@ class VideoController extends Controller
     {
         $video->load(['course', 'progress']);
 
-        $siblings = $video->course->videos()->orderBy('sort_order')->get();
-        $next = $siblings->firstWhere('sort_order', '>', $video->sort_order);
+        $courseVideos = $video->course->videos()->with('progress')->orderBy('sort_order')->get();
+        $next = $courseVideos->firstWhere('sort_order', '>', $video->sort_order);
 
         $initialPosition = 0.0;
         if ($video->progress && ! $video->progress->completed) {
@@ -29,6 +29,7 @@ class VideoController extends Controller
 
         return view('videos.show', [
             'video' => $video,
+            'courseVideos' => $courseVideos,
             'nextVideo' => $next,
             'initialPosition' => $initialPosition,
         ]);

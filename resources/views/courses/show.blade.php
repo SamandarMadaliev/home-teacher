@@ -3,30 +3,31 @@
 @section('title', $course->title.' — '.config('app.name'))
 
 @section('content')
-    <div class="mb-6">
-        <a href="{{ route('courses.index') }}" class="text-sm text-zinc-500 hover:text-white">&larr; All courses</a>
-        <h1 class="mt-2 text-2xl font-semibold text-white">{{ $course->title }}</h1>
+    <div class="mb-10">
+        <a href="{{ route('courses.index') }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-400/95 transition hover:text-sky-300">
+            <span aria-hidden="true">←</span> All courses
+        </a>
+        <h1 class="mt-4 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">{{ $course->title }}</h1>
         @if ($course->folder_path)
-            <p class="mt-3 break-all font-mono text-xs text-zinc-500" title="Video folder">
+            <p class="mt-4 max-w-3xl break-all rounded-xl bg-slate-900/55 px-4 py-3 font-mono text-xs text-slate-400 ring-1 ring-slate-800/90" title="Video folder">
                 {{ $course->folder_path }}
             </p>
-            <form action="{{ route('courses.rescan', $course) }}" method="post" class="mt-3">
+            <form action="{{ route('courses.rescan', $course) }}" method="post" class="mt-5 flex flex-wrap items-center gap-3">
                 @csrf
-                <button
-                    type="submit"
-                    class="rounded-lg border border-zinc-600 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-200 hover:border-zinc-500 hover:bg-zinc-800"
-                >
+                <button type="submit" class="btn-secondary text-sm">
                     Rescan folder
                 </button>
-                <span class="ml-2 text-xs text-zinc-500">Pick up new, moved, or renamed files</span>
+                <span class="text-xs text-slate-500">Sync lessons after you add or move files</span>
             </form>
         @endif
     </div>
 
     @if ($course->videos->isEmpty())
-        <p class="text-zinc-400">This course has no lessons yet.</p>
+        <div class="card-surface px-8 py-12 text-center text-slate-400">
+            This course has no lessons yet. Use <strong class="text-sky-300/95">Rescan folder</strong> if videos are already on disk.
+        </div>
     @else
-        <ol class="space-y-2">
+        <ol class="space-y-3">
             @foreach ($course->videos as $video)
                 @php
                     $p = $video->progress;
@@ -37,45 +38,45 @@
                 @endphp
                 <li
                     id="{{ $rowId }}"
-                    class="rounded-lg border px-4 py-3 transition
+                    class="rounded-2xl border px-5 py-4 transition sm:px-6 sm:py-5
                         @if ($isCurrent)
-                            border-emerald-500/60 bg-emerald-950/40 ring-1 ring-emerald-500/30
+                            border-sky-500/45 bg-gradient-to-r from-sky-950/55 to-blue-950/35 shadow-lg shadow-blue-950/25 ring-1 ring-sky-500/30
                         @elseif ($isNext)
-                            border-zinc-600 bg-zinc-900/60
+                            border-slate-700/80 bg-slate-900/75 ring-1 ring-slate-800/80
                         @else
-                            border-zinc-800 bg-zinc-900
+                            card-surface border-slate-800/90
                         @endif"
                 >
-                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <div class="flex items-start gap-3">
-                            <span class="mt-0.5 inline-flex h-7 min-w-[2rem] items-center justify-center rounded bg-zinc-800 text-xs font-mono text-zinc-400">
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="flex items-start gap-4">
+                            <span class="mt-0.5 inline-flex h-9 min-w-[2.25rem] items-center justify-center rounded-xl bg-slate-800/95 text-xs font-semibold tabular-nums text-sky-300/90 ring-1 ring-slate-700/80">
                                 {{ $video->sort_order }}
                             </span>
-                            <div>
-                                <a href="{{ route('videos.show', $video) }}" class="font-medium text-white hover:underline">
+                            <div class="min-w-0">
+                                <a href="{{ route('videos.show', $video) }}" class="font-semibold text-slate-50 transition hover:text-white hover:underline decoration-sky-600/55 underline-offset-2">
                                     {{ $video->title }}
                                 </a>
-                                <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+                                <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
                                     @if ($isCurrent)
-                                        <span class="rounded bg-emerald-900/80 px-2 py-0.5 text-emerald-300">Current</span>
+                                        <span class="rounded-full bg-sky-500/25 px-2.5 py-0.5 font-medium text-sky-200 ring-1 ring-sky-400/35">Current</span>
                                     @endif
                                     @if ($isNext && ! $isCurrent)
-                                        <span class="rounded bg-zinc-800 px-2 py-0.5 text-zinc-400">Up next</span>
+                                        <span class="rounded-full bg-slate-800 px-2.5 py-0.5 font-medium text-slate-300 ring-1 ring-slate-700">Up next</span>
                                     @endif
                                     @if ($p?->completed)
-                                        <span class="text-emerald-400">Completed</span>
+                                        <span class="font-medium text-emerald-400/90">Completed</span>
                                     @endif
                                 </div>
                             </div>
                         </div>
-                        <div class="min-w-[140px] flex-1 sm:max-w-xs">
-                            <div class="h-2 overflow-hidden rounded-full bg-zinc-800">
+                        <div class="min-w-[160px] flex-1 sm:max-w-xs">
+                            <div class="h-2.5 overflow-hidden rounded-full bg-slate-800 ring-1 ring-slate-900">
                                 <div
-                                    class="h-full rounded-full bg-emerald-600 transition-[width]"
+                                    class="h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-500 transition-[width] duration-300"
                                     style="width: {{ $pct }}%"
                                 ></div>
                             </div>
-                            <p class="mt-1 text-right text-xs text-zinc-500">{{ $pct }}%</p>
+                            <p class="mt-1.5 text-right text-xs tabular-nums text-slate-500">{{ $pct }}%</p>
                         </div>
                     </div>
                 </li>

@@ -3,18 +3,21 @@
 @section('title', 'Add course — '.config('app.name'))
 
 @section('content')
-    <div class="mb-6">
-        <a href="{{ route('courses.index') }}" class="text-sm text-zinc-500 hover:text-white">&larr; Courses</a>
-        <h1 class="mt-2 text-2xl font-semibold text-white">Add course</h1>
-        <p class="mt-2 max-w-2xl text-sm text-zinc-400">
-            Point to a folder on <strong class="text-zinc-200">this computer</strong> (the one running the app) that contains your video files. Nothing is copied — playback reads files in place. Lesson order follows filenames (natural sort), including subfolders.
+    <div class="mb-10">
+        <a href="{{ route('courses.index') }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-400/95 transition hover:text-sky-300">
+            <span aria-hidden="true">←</span> Courses
+        </a>
+        <p class="mt-6 text-sm font-medium uppercase tracking-widest text-sky-500/90">New course</p>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">Add course</h1>
+        <p class="mt-4 max-w-2xl text-sm leading-relaxed text-slate-400">
+            Choose a folder on <strong class="font-semibold text-slate-200">this computer</strong> where your videos live. Files stay there — we only index names for playback and progress.
         </p>
     </div>
 
-    <form action="{{ route('courses.store') }}" method="post" class="max-w-2xl space-y-5" id="add-course-form">
+    <form action="{{ route('courses.store') }}" method="post" class="card-surface max-w-2xl space-y-8 p-6 sm:p-8" id="add-course-form">
         @csrf
         <div>
-            <label for="title" class="mb-1.5 block text-sm font-medium text-zinc-300">Title</label>
+            <label for="title" class="mb-2 block text-sm font-medium text-slate-200">Title</label>
             <input
                 type="text"
                 name="title"
@@ -22,17 +25,17 @@
                 value="{{ old('title') }}"
                 required
                 maxlength="255"
-                class="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-white placeholder-zinc-500 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                class="input-field font-sans"
                 placeholder="e.g. Laravel Deep Dive"
             />
         </div>
         <div>
-            <div class="mb-1.5 flex flex-wrap items-end justify-between gap-2">
-                <label for="folder_path" class="block text-sm font-medium text-zinc-300">Video folder</label>
+            <div class="mb-2 flex flex-wrap items-end justify-between gap-2">
+                <label for="folder_path" class="block text-sm font-medium text-slate-200">Video folder</label>
                 <button
                     type="button"
                     id="folder-picker-toggle"
-                    class="text-sm text-emerald-400 hover:text-emerald-300 hover:underline"
+                    class="text-sm font-semibold text-sky-400 transition hover:text-sky-300 hover:underline underline-offset-4"
                 >
                     Browse folders
                 </button>
@@ -43,68 +46,51 @@
                 id="folder_path"
                 value="{{ old('folder_path') }}"
                 required
-                class="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 font-mono text-sm text-white placeholder-zinc-500 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
-                placeholder="Pick a folder with the button above, or paste a path"
+                class="input-field font-mono text-sm"
+                placeholder="Browse below, or paste an absolute path"
                 autocomplete="off"
             />
-            <p class="mt-1.5 text-xs text-zinc-500">
-                Browse starts from your whole computer (or the drives you allow in .env). If macOS blocks listing (Downloads, Desktop, etc.), enable Full Disk Access for your PHP/terminal app.
-                You can also paste an absolute path. Videos: mp4, webm, mkv, mov, m4v, ogv, avi.
+            <p class="mt-2 text-xs leading-relaxed text-slate-500">
+                Browse covers your whole machine unless restricted in <code class="rounded bg-slate-900 px-1 py-0.5 font-mono text-slate-300">.env</code>.
+                On macOS, protected folders may need Full Disk Access for PHP.
+                Formats: mp4, webm, mkv, mov, m4v, ogv, avi.
             </p>
 
             <div
                 id="folder-picker-panel"
-                class="mt-4 hidden rounded-lg border border-zinc-700 bg-zinc-900/80 p-4"
+                class="mt-5 hidden rounded-2xl border border-slate-800/90 bg-slate-950/55 p-5 ring-1 ring-slate-800/80"
                 data-picker-url="{{ route('folder-picker') }}"
             >
-                <div class="flex flex-wrap items-center gap-2 border-b border-zinc-800 pb-3">
-                    <button
-                        type="button"
-                        id="folder-picker-back"
-                        class="rounded border border-zinc-600 px-2 py-1 text-xs text-zinc-300 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
-                        disabled
-                    >
+                <div class="flex flex-wrap items-center gap-2 border-b border-slate-800/90 pb-4">
+                    <button type="button" id="folder-picker-back" class="btn-ghost" disabled>
                         Up
                     </button>
-                    <button
-                        type="button"
-                        id="folder-picker-roots"
-                        class="rounded border border-zinc-600 px-2 py-1 text-xs text-zinc-300 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
-                        disabled
-                    >
+                    <button type="button" id="folder-picker-roots" class="btn-ghost" disabled>
                         All places
                     </button>
-                    <span id="folder-picker-current" class="min-w-0 flex-1 truncate font-mono text-xs text-zinc-400"></span>
+                    <span id="folder-picker-current" class="min-w-0 flex-1 truncate font-mono text-xs text-sky-300/75"></span>
                 </div>
                 <div
                     id="folder-picker-list"
-                    class="mt-3 max-h-56 space-y-1 overflow-y-auto rounded border border-zinc-800 bg-zinc-950/50 p-2"
+                    class="mt-4 max-h-60 space-y-1 overflow-y-auto rounded-xl border border-slate-800/90 bg-slate-950/85 p-2 ring-1 ring-black/30"
                     role="list"
                 ></div>
-                <div class="mt-4 flex flex-wrap gap-2">
-                    <button
-                        type="button"
-                        id="folder-picker-select"
-                        class="rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
-                        disabled
-                    >
+                <div class="mt-5 flex flex-wrap items-center gap-3">
+                    <button type="button" id="folder-picker-select" class="btn-primary text-sm disabled:opacity-45" disabled>
                         Use this folder
                     </button>
-                    <p id="folder-picker-hint" class="self-center text-xs text-zinc-500">
+                    <p id="folder-picker-hint" class="text-xs text-slate-500">
                         Open a folder from the list, then confirm.
                     </p>
                 </div>
-                <p id="folder-picker-error" class="mt-3 hidden text-xs leading-relaxed text-red-300"></p>
+                <p id="folder-picker-error" class="mt-4 hidden rounded-xl border border-rose-900/55 bg-rose-950/45 px-4 py-3 text-xs leading-relaxed text-rose-100"></p>
             </div>
         </div>
-        <div class="flex flex-wrap gap-3 pt-2">
-            <button
-                type="submit"
-                class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
-            >
+        <div class="flex flex-wrap gap-3 border-t border-slate-800/90 pt-8">
+            <button type="submit" class="btn-primary">
                 Create &amp; scan folder
             </button>
-            <a href="{{ route('courses.index') }}" class="rounded-lg border border-zinc-700 px-4 py-2 text-sm text-zinc-300 hover:border-zinc-500 hover:text-white">
+            <a href="{{ route('courses.index') }}" class="btn-secondary">
                 Cancel
             </a>
         </div>
@@ -154,17 +140,17 @@
                 listEl.innerHTML = '';
                 if (!state.items.length) {
                     const empty = document.createElement('p');
-                    empty.className = 'px-2 py-3 text-sm text-zinc-500';
+                    empty.className = 'px-3 py-4 text-sm text-slate-500';
                     empty.textContent = state.atRootList
                         ? 'No starting locations found — check that PHP can read your disks, or set COURSE_BROWSE_ROOTS in .env.'
-                        : 'No subfolders you can open here (empty, or macOS/Windows blocked access). You can still use this folder for the course.';
+                        : 'No subfolders here (empty or access denied). You can still confirm this folder.';
                     listEl.appendChild(empty);
                 } else {
                     state.items.forEach(function (item) {
                         const btn = document.createElement('button');
                         btn.type = 'button';
                         btn.className =
-                            'flex w-full items-center rounded px-2 py-2 text-left text-sm text-zinc-200 hover:bg-zinc-800';
+                            'flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-200 transition hover:bg-sky-950/40 hover:text-white';
                         btn.textContent = item.name;
                         btn.addEventListener('click', function () {
                             load(item.path);
@@ -191,7 +177,7 @@
                 if (canSelect) {
                     setHint('Click “Use this folder” to fill the path above.');
                 } else if (state.atRootList) {
-                    setHint('Start from Computer (all disks), Home, or a drive.');
+                    setHint('Start from Computer, Home, or a drive.');
                 } else {
                     setHint('Open a subfolder or confirm this one.');
                 }
@@ -211,7 +197,7 @@
                     const data = await res.json();
                     if (!res.ok) {
                         const msg = data.error || 'Could not open that folder.';
-                        setHint(data.code === 'permission_denied' ? 'Access blocked — see message below.' : 'Could not open folder.');
+                        setHint(data.code === 'permission_denied' ? 'Access blocked — see below.' : 'Could not open folder.');
                         showPickerError(msg);
                         return;
                     }

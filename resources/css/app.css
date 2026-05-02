@@ -6,6 +6,35 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Outfit', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Cool blue canvas */
+.app-backdrop {
+    background-color: oklch(0.13 0.045 260);
+    background-image:
+        radial-gradient(ellipse 110% 85% at 50% -30%, oklch(0.38 0.14 250 / 0.38), transparent 55%),
+        radial-gradient(ellipse 75% 55% at 100% 20%, oklch(0.32 0.1 270 / 0.22), transparent 50%),
+        radial-gradient(ellipse 55% 45% at 0% 85%, oklch(0.28 0.08 240 / 0.18), transparent 45%);
+}
+
+.btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-950/40 transition hover:from-sky-400 hover:to-blue-500 hover:shadow-blue-900/45 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950;
+}
+
+.btn-secondary {
+    @apply inline-flex items-center justify-center rounded-xl border border-slate-600/70 bg-slate-900/70 px-4 py-2.5 text-sm font-medium text-slate-100/95 backdrop-blur-sm transition hover:border-sky-600/55 hover:bg-slate-800/85 hover:text-white;
+}
+
+.btn-ghost {
+    @apply rounded-xl border border-slate-700/90 bg-transparent px-3 py-1.5 text-xs font-medium text-slate-200/90 transition hover:border-sky-700/50 hover:bg-slate-800/60 hover:text-white disabled:opacity-40;
+}
+
+.card-surface {
+    @apply rounded-2xl border border-slate-800/90 bg-slate-900/65 shadow-xl shadow-black/25 backdrop-blur-sm;
+}
+
+.input-field {
+    @apply w-full rounded-xl border border-slate-700/80 bg-slate-900/85 px-4 py-2.5 text-slate-50 placeholder-slate-500 shadow-inner shadow-black/25 transition focus:border-sky-600/70 focus:outline-none focus:ring-2 focus:ring-sky-500/35;
 }
