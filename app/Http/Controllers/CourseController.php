@@ -7,6 +7,7 @@ use App\Models\Video;
 use App\Services\CourseVideoScanner;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class CourseController extends Controller
@@ -17,7 +18,11 @@ class CourseController extends Controller
 
     public function index(): View
     {
-        $courses = Course::query()->withCount('videos')->orderBy('title')->get();
+        $courses = Course::query()
+            ->with(['videos.progress'])
+            ->withCount('videos')
+            ->orderBy('title')
+            ->get();
 
         return view('courses.index', compact('courses'));
     }
@@ -96,7 +101,7 @@ class CourseController extends Controller
     /**
      * First lesson that is not completed (single-user course flow).
      *
-     * @param  \Illuminate\Support\Collection<int, Video>  $videos
+     * @param  Collection<int, Video>  $videos
      */
     private function resolveCurrentVideo($videos): ?Video
     {

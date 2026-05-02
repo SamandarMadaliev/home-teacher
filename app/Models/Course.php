@@ -18,6 +18,24 @@ class Course extends Model
     }
 
     /**
+     * Average lesson completion for this course (0–100). Uses each lesson's VideoProgress.
+     */
+    public function aggregateProgressPercent(): int
+    {
+        $videos = $this->videos;
+        if ($videos->isEmpty()) {
+            return 0;
+        }
+
+        $sum = 0;
+        foreach ($videos as $video) {
+            $sum += $video->progress ? $video->progress->progressPercent() : 0;
+        }
+
+        return (int) round($sum / $videos->count());
+    }
+
+    /**
      * Canonical absolute directory for this course's media files.
      */
     public function folderRootReal(): ?string

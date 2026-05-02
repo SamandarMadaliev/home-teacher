@@ -38,3 +38,63 @@
 .input-field {
     @apply w-full rounded-xl border border-slate-700/80 bg-slate-900/85 px-4 py-2.5 text-slate-50 placeholder-slate-500 shadow-inner shadow-black/25 transition focus:border-sky-600/70 focus:outline-none focus:ring-2 focus:ring-sky-500/35;
 }
+
+/*
+ | Courses index: real CSS grid so three cards per row always works at desktop
+ | (does not rely on Tailwind scanning arbitrary class strings).
+ */
+.courses-grid {
+    display: grid;
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+    .courses-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .courses-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.course-card-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 11rem;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    background: rgb(15 23 42 / 0.65);
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    backdrop-filter: blur(8px);
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        background-color 0.15s ease;
+}
+
+.course-card-box:hover {
+    background: rgb(15 23 42 / 0.85);
+    box-shadow:
+        0 25px 50px -12px rgb(0 0 0 / 0.35),
+        0 0 0 1px rgb(56 189 248 / 0.15);
+}
+
+.course-card-accent-sky {
+    border: 2px solid rgb(56 189 248 / 0.45);
+}
+
+.course-card-accent-slate {
+    border: 2px solid rgb(100 116 139 / 0.55);
+}
+
+.course-card-accent-emerald {
+    border: 2px solid rgb(52 211 153 / 0.45);
+}

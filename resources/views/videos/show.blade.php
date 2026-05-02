@@ -65,16 +65,51 @@
                 </span>
             </div>
 
-            @if ($nextVideo)
-                <div class="mt-8 rounded-2xl border border-sky-900/45 bg-gradient-to-r from-slate-900/90 to-sky-950/35 px-5 py-4 ring-1 ring-sky-950/35">
-                    <p class="text-xs font-medium uppercase tracking-wider text-sky-400/85">Next lesson</p>
-                    <p class="mt-2">
-                        <a href="{{ route('videos.show', $nextVideo) }}" class="text-lg font-semibold text-slate-100 transition hover:text-white hover:underline decoration-sky-600/60 underline-offset-4">
+            <nav class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2" aria-label="Lesson navigation">
+                @if ($previousVideo)
+                    <a
+                        href="{{ route('videos.show', $previousVideo) }}"
+                        class="group flex min-h-[5.75rem] flex-col justify-center rounded-2xl border border-sky-900/45 bg-gradient-to-br from-slate-900/92 to-sky-950/28 px-5 py-4 ring-1 ring-sky-950/35 transition hover:border-sky-700/55 hover:ring-sky-800/45"
+                    >
+                        <p class="text-xs font-medium uppercase tracking-wider text-sky-400/85 transition group-hover:text-sky-300/95">
+                            ← Previous lesson
+                        </p>
+                        <p class="mt-2 line-clamp-2 text-lg font-semibold text-slate-100 decoration-sky-600/50 underline-offset-4 transition group-hover:text-white group-hover:underline">
+                            {{ $previousVideo->title }}
+                        </p>
+                    </a>
+                @else
+                    <div
+                        class="pointer-events-none flex min-h-[5.75rem] select-none flex-col justify-center rounded-2xl border border-sky-900/25 bg-gradient-to-br from-slate-900/55 to-sky-950/15 px-5 py-4 opacity-60 ring-1 ring-sky-950/20"
+                        aria-disabled="true"
+                    >
+                        <p class="text-xs font-medium uppercase tracking-wider text-slate-500">← Previous lesson</p>
+                        <p class="mt-2 text-sm font-medium text-slate-500">First lesson — nothing before this</p>
+                    </div>
+                @endif
+
+                @if ($nextVideo)
+                    <a
+                        href="{{ route('videos.show', $nextVideo) }}"
+                        class="group flex min-h-[5.75rem] flex-col justify-center rounded-2xl border border-sky-900/45 bg-gradient-to-br from-slate-900/92 to-sky-950/28 px-5 py-4 ring-1 ring-sky-950/35 transition hover:border-sky-700/55 hover:ring-sky-800/45"
+                    >
+                        <p class="text-xs font-medium uppercase tracking-wider text-sky-400/85 transition group-hover:text-sky-300/95">
+                            Next lesson →
+                        </p>
+                        <p class="mt-2 line-clamp-2 text-lg font-semibold text-slate-100 decoration-sky-600/50 underline-offset-4 transition group-hover:text-white group-hover:underline">
                             {{ $nextVideo->title }}
-                        </a>
-                    </p>
-                </div>
-            @endif
+                        </p>
+                    </a>
+                @else
+                    <div
+                        class="pointer-events-none flex min-h-[5.75rem] select-none flex-col justify-center rounded-2xl border border-sky-900/25 bg-gradient-to-br from-slate-900/55 to-sky-950/15 px-5 py-4 opacity-60 ring-1 ring-sky-950/20"
+                        aria-disabled="true"
+                    >
+                        <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Next lesson →</p>
+                        <p class="mt-2 text-sm font-medium text-slate-500">Last lesson — nothing after this</p>
+                    </div>
+                @endif
+            </nav>
         </div>
 
         <aside class="watch-lessons-sidebar w-full shrink-0 xl:w-80 xl:min-w-[18rem]" aria-label="Course lessons">

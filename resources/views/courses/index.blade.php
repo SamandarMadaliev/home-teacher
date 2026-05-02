@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('main_max_class', 'max-w-7xl')
+
 @section('title', 'Courses — '.config('app.name'))
 
 @section('content')
@@ -30,24 +32,58 @@
             </p>
         </div>
     @else
-        <ul class="space-y-4">
+        <ul class="courses-grid" role="list">
             @foreach ($courses as $course)
-                <li>
+                @php
+                    $accents = ['course-card-accent-sky', 'course-card-accent-slate', 'course-card-accent-emerald'];
+                    $accentClass = $accents[$loop->index % 3];
+                    $coursePct = $course->aggregateProgressPercent();
+                @endphp
+                <li class="flex min-h-0">
                     <a
                         href="{{ route('courses.show', $course) }}"
-                        class="group card-surface flex items-center justify-between gap-4 px-6 py-5 transition hover:border-sky-800/60 hover:bg-slate-900/75 hover:shadow-sky-950/20"
+                        class="group course-card-box {{ $accentClass }} h-full w-full min-h-[12rem] flex-1"
                     >
-                        <div class="min-w-0">
-                            <span class="block truncate font-semibold text-slate-50 transition group-hover:text-white">
+                        <div class="min-w-0 flex-1">
+                            <h2 class="line-clamp-3 text-lg font-semibold leading-snug text-slate-50 transition group-hover:text-white">
                                 {{ $course->title }}
-                            </span>
-                            <span class="mt-1 block text-sm text-slate-500">
+                            </h2>
+                            <p class="mt-4 text-sm text-slate-400">
                                 {{ $course->videos_count }} lesson{{ $course->videos_count === 1 ? '' : 's' }}
+                            </p>
+                            @if ($course->videos_count > 0)
+                                <div class="mt-4">
+                                    <div class="flex items-center justify-between gap-2 text-xs text-slate-500">
+                                        <span>Overall progress</span>
+                                        <span class="tabular-nums font-semibold text-slate-300">{{ $coursePct }}%</span>
+                                    </div>
+                                    <div
+                                        class="mt-2 h-2.5 overflow-hidden rounded-full bg-slate-800 ring-1 ring-slate-900/80"
+                                        role="progressbar"
+                                        aria-valuenow="{{ $coursePct }}"
+                                        aria-valuemin="0"
+                                        aria-valuemax="100"
+                                        aria-label="Overall progress for {{ $course->title }}"
+                                    >
+                                        <div
+                                            class="h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-500 transition-[width]"
+                                            style="width: {{ $coursePct }}%"
+                                        ></div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="mt-6 flex items-center justify-between border-t border-slate-700/60 pt-4">
+                            <span class="text-xs font-medium text-sky-400/95 transition group-hover:text-sky-300">
+                                Open
+                            </span>
+                            <span
+                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-800/95 text-sky-400/95 ring-1 ring-slate-600/80 transition group-hover:bg-sky-500/15 group-hover:text-sky-300 group-hover:ring-sky-500/40"
+                                aria-hidden="true"
+                            >
+                                →
                             </span>
                         </div>
-                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-800/90 text-sky-400/85 ring-1 ring-slate-700/80 transition group-hover:bg-gradient-to-br group-hover:from-sky-500/15 group-hover:to-blue-600/10 group-hover:text-sky-300 group-hover:ring-sky-600/35" aria-hidden="true">
-                            →
-                        </span>
                     </a>
                 </li>
             @endforeach
