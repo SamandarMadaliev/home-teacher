@@ -9,7 +9,9 @@
         <div>
             <p class="text-sm font-medium uppercase tracking-widest text-sky-500/90">Your library</p>
             <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">Courses</h1>
-            <p class="mt-2 max-w-lg text-sm text-slate-400">Watch locally. Progress saves automatically.</p>
+            <p class="mt-2 max-w-lg text-sm text-slate-400">
+                Watch locally. Progress saves automatically. Courses you watched most recently appear first.
+            </p>
         </div>
         <a href="{{ route('courses.create') }}" class="btn-primary shrink-0">
             Add course

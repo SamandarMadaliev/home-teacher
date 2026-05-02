@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Video;
 use App\Services\CourseVideoScanner;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class CourseController extends Controller
@@ -18,10 +20,19 @@ class CourseController extends Controller
 
     public function index(): View
     {
+        $lastWatch = DB::table('videos')
+            ->join('video_progress', 'videos.id', '=', 'video_progress.video_id')
+            ->selectRaw('videos.course_id, max(video_progress.updated_at) as last_watch_at')
+            ->groupBy('videos.course_id');
+
         $courses = Course::query()
+            ->leftJoinSub($lastWatch, 'lw', 'lw.course_id', '=', 'courses.id')
+            ->select('courses.*')
             ->with(['videos.progress'])
             ->withCount('videos')
-            ->orderBy('title')
+            ->orderByRaw('CASE WHEN lw.last_watch_at IS NULL THEN 1 ELSE 0 END')
+            ->orderByDesc('lw.last_watch_at')
+            ->orderBy('courses.title')
             ->get();
 
         return view('courses.index', compact('courses'));
@@ -66,13 +77,45 @@ class CourseController extends Controller
 
         $videos = $course->videos;
         $current = $this->resolveCurrentVideo($videos);
-        $nextAfterCurrent = $current ? $videos->firstWhere('sort_order', '>', $current->sort_order) : null;
+        $nextAfterCurrent = null;
+        if ($current !== null) {
+            $idx = $videos->search(fn ($v) => $v->is($current));
+            $nextAfterCurrent = ($idx !== false && $idx < $videos->count() - 1)
+                ? $videos[$idx + 1]
+                : null;
+        }
 
         return view('courses.show', [
             'course' => $course,
             'currentVideo' => $current,
             'nextVideo' => $nextAfterCurrent,
         ]);
+    }
+
+    public function reorderVideos(Request $request, Course $course): JsonResponse
+    {
+        $data = $request->validate([
+            'video_ids' => ['required', 'array', 'min:1'],
+            'video_ids.*' => ['integer', 'distinct'],
+        ]);
+
+        $expected = $course->videos()->pluck('id')->sort()->values()->all();
+        $incoming = collect($data['video_ids'])->unique()->sort()->values()->all();
+
+        if ($expected !== $incoming) {
+            abort(422, 'Lesson list must include every video in this course exactly once.');
+        }
+
+        DB::transaction(function () use ($course, $data): void {
+            foreach ($data['video_ids'] as $i => $videoId) {
+                Video::query()
+                    ->where('course_id', $course->id)
+                    ->whereKey($videoId)
+                    ->update(['sort_order' => $i + 1]);
+            }
+        });
+
+        return response()->json(['ok' => true]);
     }
 
     public function rescan(Course $course): RedirectResponse

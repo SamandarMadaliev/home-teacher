@@ -110,6 +110,99 @@
                     </div>
                 @endif
             </nav>
+
+            <section class="mt-10" aria-labelledby="lesson-notes-heading">
+                <h2 id="lesson-notes-heading" class="text-lg font-semibold tracking-tight text-slate-100">
+                    Notes
+                </h2>
+                <p class="mt-1 text-sm text-slate-500">
+                    Add a general note for this lesson, or capture the playhead as a time-stamped note and jump back to it later.
+                </p>
+
+                <form
+                    action="{{ route('videos.notes.store', $video) }}"
+                    method="post"
+                    class="mt-5 rounded-2xl border border-slate-800/90 bg-slate-900/35 px-4 py-5 ring-1 ring-slate-800/70 sm:px-5"
+                >
+                    @csrf
+                    <label for="note-body" class="sr-only">Note</label>
+                    <textarea
+                        id="note-body"
+                        name="body"
+                        rows="4"
+                        required
+                        placeholder="Write your note here…"
+                        class="w-full rounded-xl border border-slate-700/80 bg-slate-950/50 px-3 py-2.5 text-sm text-slate-100 shadow-inner ring-0 placeholder:text-slate-600 focus:border-sky-600/60 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
+                    >{{ old('body') }}</textarea>
+
+                    <input type="hidden" name="timestamp_seconds" id="note-timestamp-input" value="{{ old('timestamp_seconds') }}" />
+
+                    <div class="mt-3 flex flex-wrap items-center gap-2">
+                        <button
+                            type="button"
+                            id="note-at-current-time"
+                            class="btn-secondary py-2 text-xs font-semibold"
+                        >
+                            Use current play time
+                        </button>
+                        <button
+                            type="button"
+                            id="note-clear-timestamp"
+                            class="btn-secondary py-2 text-xs font-semibold"
+                        >
+                            Lesson note (no time)
+                        </button>
+                    </div>
+                    <p id="note-timestamp-label" class="mt-2 hidden text-xs text-slate-500" aria-live="polite"></p>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn-primary text-sm">Save note</button>
+                    </div>
+                </form>
+
+                @if ($video->notes->isEmpty())
+                    <p class="mt-6 text-sm text-slate-500">No notes for this lesson yet.</p>
+                @else
+                    <ul class="mt-6 space-y-3" role="list">
+                        @foreach ($video->notes as $note)
+                            <li class="rounded-2xl border border-slate-800/90 bg-slate-900/30 px-4 py-3.5 ring-1 ring-slate-800/60 sm:px-5">
+                                <div class="flex flex-wrap items-start justify-between gap-3">
+                                    <div class="min-w-0 flex-1">
+                                        @if ($note->timestamp_seconds !== null)
+                                            <div class="mb-2 flex flex-wrap items-center gap-2">
+                                                <button
+                                                    type="button"
+                                                    class="inline-flex items-center rounded-lg bg-sky-950/55 px-2.5 py-1 font-mono text-xs tabular-nums font-semibold text-sky-300 ring-1 ring-sky-600/35 transition hover:bg-sky-900/55 hover:text-sky-200"
+                                                    data-note-seek="{{ $note->timestamp_seconds }}"
+                                                    aria-label="Jump to {{ $note->timestampLabel() }} in this video"
+                                                >
+                                                    {{ $note->timestampLabel() }}
+                                                </button>
+                                                <span class="text-[0.65rem] uppercase tracking-wider text-slate-500">Cue</span>
+                                            </div>
+                                        @else
+                                            <p class="mb-2 text-[0.65rem] font-medium uppercase tracking-wider text-slate-500">Lesson note</p>
+                                        @endif
+                                        <p class="whitespace-pre-wrap text-sm leading-relaxed text-slate-200">{{ $note->body }}</p>
+                                    </div>
+                                    <form
+                                        action="{{ route('videos.notes.destroy', [$video, $note]) }}"
+                                        method="post"
+                                        class="shrink-0"
+                                        onsubmit="return confirm('Remove this note?');"
+                                    >
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-xs font-medium text-slate-500 underline decoration-slate-600/60 underline-offset-2 hover:text-rose-400 hover:decoration-rose-500/50">
+                                            Remove
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </section>
         </div>
 
         <aside class="watch-lessons-sidebar w-full shrink-0 xl:w-80 xl:min-w-[18rem]" aria-label="Course lessons">

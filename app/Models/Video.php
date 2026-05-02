@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Video extends Model
@@ -30,6 +31,11 @@ class Video extends Model
     public function progress(): HasOne
     {
         return $this->hasOne(VideoProgress::class);
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(VideoNote::class)->orderByRaw('CASE WHEN timestamp_seconds IS NULL THEN 0 ELSE 1 END')->orderBy('timestamp_seconds')->orderBy('id');
     }
 
     public function absoluteFilePath(): ?string

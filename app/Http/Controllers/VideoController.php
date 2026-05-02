@@ -17,7 +17,7 @@ class VideoController extends Controller
 
     public function show(Video $video): View
     {
-        $video->load(['course', 'progress']);
+        $video->load(['course', 'progress', 'notes']);
 
         $courseVideos = $video->course->videos()->with('progress')->orderBy('sort_order')->get();
 

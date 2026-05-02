@@ -185,3 +185,81 @@ function initTheaterMode() {
 }
 
 initTheaterMode();
+
+function formatMediaTime(seconds) {
+    const t = Math.max(0, Math.floor(Number(seconds)));
+    const h = Math.floor(t / 3600);
+    const m = Math.floor((t % 3600) / 60);
+    const s = t % 60;
+    if (h > 0) {
+        return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+    return `${m}:${String(s).padStart(2, '0')}`;
+}
+
+/** Seek + timestamp helpers for lesson notes (optional DOM on watch page). */
+cfg.getCurrentTime = () =>
+    Number.isFinite(player.currentTime) ? player.currentTime : 0;
+
+cfg.seekTo = (sec) => {
+    const t = Number(sec);
+    if (!Number.isFinite(t)) {
+        return;
+    }
+    const dur = mediaDuration() ?? Number.POSITIVE_INFINITY;
+    player.currentTime = Math.min(Math.max(0, t), dur);
+};
+
+function initLessonNotes() {
+    const input = document.getElementById('note-timestamp-input');
+    const label = document.getElementById('note-timestamp-label');
+    const btnUse = document.getElementById('note-at-current-time');
+    const btnClear = document.getElementById('note-clear-timestamp');
+
+    if (!input || !label || !btnUse || !btnClear) {
+        return;
+    }
+
+    function updateLabel() {
+        const raw = input.value.trim();
+        if (raw === '') {
+            label.classList.add('hidden');
+            label.textContent = '';
+            return;
+        }
+        const n = Number(raw);
+        if (!Number.isFinite(n)) {
+            return;
+        }
+        label.textContent = `Will save at ${formatMediaTime(n)} in this lesson`;
+        label.classList.remove('hidden');
+    }
+
+    btnUse.addEventListener('click', () => {
+        const t = cfg.getCurrentTime();
+        if (!Number.isFinite(t) || t < 0) {
+            return;
+        }
+        input.value = String(Math.round(t * 1000) / 1000);
+        updateLabel();
+    });
+
+    btnClear.addEventListener('click', () => {
+        input.value = '';
+        updateLabel();
+    });
+
+    document.querySelectorAll('[data-note-seek]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const s = Number(btn.getAttribute('data-note-seek'));
+            if (!Number.isFinite(s)) {
+                return;
+            }
+            cfg.seekTo(s);
+        });
+    });
+
+    updateLabel();
+}
+
+initLessonNotes();

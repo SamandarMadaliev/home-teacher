@@ -27,24 +27,24 @@ class CourseVideoScanner
         DB::transaction(function () use ($course, $relativePaths): void {
             $existing = $course->videos()->get()->keyBy(fn ($v) => $this->normalizeKey($v->file_path));
             $keepIds = [];
+            $nextOrder = (int) ($course->videos()->max('sort_order') ?? 0);
 
-            foreach ($relativePaths as $index => $relPath) {
-                $sortOrder = $index + 1;
+            foreach ($relativePaths as $relPath) {
                 $title = $this->titleFromRelativePath($relPath);
                 $key = $this->normalizeKey($relPath);
 
                 if ($existing->has($key)) {
                     $video = $existing->get($key);
                     $video->update([
-                        'sort_order' => $sortOrder,
                         'title' => $title,
                     ]);
                     $keepIds[] = $video->id;
                 } else {
+                    $nextOrder++;
                     $video = $course->videos()->create([
                         'title' => $title,
                         'file_path' => $relPath,
-                        'sort_order' => $sortOrder,
+                        'sort_order' => $nextOrder,
                     ]);
                     $keepIds[] = $video->id;
                 }
