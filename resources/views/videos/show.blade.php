@@ -9,8 +9,8 @@
 @endpush
 
 @section('content')
-    <div class="flex flex-col gap-10 xl:flex-row xl:items-start xl:gap-10">
-        <div class="min-w-0 flex-1">
+    <div id="watch-layout" class="watch-layout flex flex-col gap-10 xl:flex-row xl:items-start xl:gap-10">
+        <div class="watch-video-column min-w-0 flex-1">
             <div class="mb-8">
                 <a href="{{ route('courses.show', $video->course) }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-400/95 transition hover:text-sky-300">
                     <span aria-hidden="true">←</span> {{ $video->course->title }}
@@ -18,15 +18,30 @@
                 <h1 class="mt-4 text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl">{{ $video->title }}</h1>
             </div>
 
-            <div class="overflow-hidden rounded-2xl border border-slate-800/90 bg-black shadow-2xl shadow-blue-950/40 ring-1 ring-sky-950/40">
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <p class="text-xs text-slate-500">
+                    Wider layout without fullscreen — shortcut <kbd class="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-400 ring-1 ring-slate-700">T</kbd>
+                </p>
+                <button
+                    type="button"
+                    id="theater-mode-toggle"
+                    class="btn-secondary shrink-0 py-2 text-xs font-semibold sm:text-sm"
+                    aria-pressed="false"
+                    data-label-off="Theater mode"
+                    data-label-on="Exit theater"
+                >
+                    Theater mode
+                </button>
+            </div>
+
+            <div class="course-plyr overflow-hidden rounded-2xl border border-slate-800/90 bg-black shadow-2xl shadow-blue-950/40 ring-1 ring-sky-950/40">
                 <video
                     id="course-video"
                     class="aspect-video w-full"
-                    controls
                     playsinline
                     preload="metadata"
-                    src="{{ route('videos.stream', $video) }}"
                 >
+                    <source src="{{ route('videos.stream', $video) }}" type="video/mp4" />
                     Your browser does not support the video tag.
                 </video>
             </div>
@@ -37,8 +52,16 @@
                     play / pause
                 </span>
                 <span class="inline-flex items-center gap-2">
+                    <kbd class="rounded-md bg-slate-800 px-2 py-1 font-mono text-[0.7rem] text-slate-300 ring-1 ring-slate-700">←</kbd>
+                    −10s
+                </span>
+                <span class="inline-flex items-center gap-2">
                     <kbd class="rounded-md bg-slate-800 px-2 py-1 font-mono text-[0.7rem] text-slate-300 ring-1 ring-slate-700">→</kbd>
-                    skip +10s
+                    +10s
+                </span>
+                <span class="text-slate-500">
+                    Player:
+                    <a href="https://github.com/sampotts/plyr" class="text-sky-400/90 underline decoration-sky-600/40 hover:text-sky-300" target="_blank" rel="noopener noreferrer">Plyr</a>
                 </span>
             </div>
 
@@ -54,7 +77,7 @@
             @endif
         </div>
 
-        <aside class="w-full shrink-0 xl:w-80 xl:min-w-[18rem]" aria-label="Course lessons">
+        <aside class="watch-lessons-sidebar w-full shrink-0 xl:w-80 xl:min-w-[18rem]" aria-label="Course lessons">
             <div class="card-surface sticky top-24 overflow-hidden xl:top-28">
                 <div class="border-b border-slate-800/90 bg-slate-900/40 px-4 py-4">
                     <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-400/90">Lessons</p>

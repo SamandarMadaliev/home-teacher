@@ -1,0 +1,34 @@
+/* Theater mode: larger in-page video (not browser fullscreen). Loaded with player.js only. */
+
+html.theater-watch main {
+    max-width: min(100vw - 1.5rem, 100rem) !important;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+@media (min-width: 640px) {
+    html.theater-watch main {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+}
+
+html.theater-watch .watch-layout {
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+html.theater-watch .watch-lessons-sidebar {
+    display: none;
+}
+
+html.theater-watch .watch-video-column {
+    width: 100%;
+    max-width: min(96vw, 100rem);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+html.theater-watch .course-plyr {
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.45);
+}

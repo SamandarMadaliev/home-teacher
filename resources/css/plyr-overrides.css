@@ -1,0 +1,29 @@
+/* Plyr skin aligned with app (sky / slate). Loaded only with the video player bundle. */
+
+.course-plyr {
+    --plyr-color-main: rgb(56 189 248);
+    --plyr-video-controls-background: linear-gradient(
+        to top,
+        rgb(15 23 42 / 0.95) 0%,
+        rgb(15 23 42 / 0.55) 55%,
+        transparent 100%
+    );
+    --plyr-range-thumb-background: rgb(56 189 248);
+    --plyr-range-fill-background: rgb(56 189 248);
+    --plyr-progress-loading-background: rgb(51 65 85 / 0.45);
+    --plyr-tooltip-background: rgb(30 41 59);
+    --plyr-tooltip-color: rgb(241 245 249);
+}
+
+.course-plyr .plyr {
+    border-radius: 1rem;
+}
+
+.course-plyr .plyr__control--overlaid {
+    background: rgb(56 189 248 / 0.95);
+    color: rgb(15 23 42);
+}
+
+.course-plyr .plyr__control--overlaid:hover {
+    background: rgb(125 211 252);
+}
