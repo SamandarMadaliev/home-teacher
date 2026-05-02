@@ -10,8 +10,8 @@
 
 @section('content')
     <div class="mb-10">
-        <a href="{{ route('courses.index') }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-400/95 transition hover:text-sky-300">
-            <span aria-hidden="true">←</span> All courses
+        <a href="{{ route('home') }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-400/95 transition hover:text-sky-300">
+            <span aria-hidden="true">←</span> Home
         </a>
         <h1 class="mt-4 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">{{ $course->title }}</h1>
         @php

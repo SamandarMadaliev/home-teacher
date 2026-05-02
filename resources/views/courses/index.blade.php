@@ -7,9 +7,9 @@
 @section('content')
     <div class="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-            <p class="text-sm font-medium uppercase tracking-widest text-sky-500/90">Your library</p>
-            <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">Courses</h1>
-            <p class="mt-2 max-w-lg text-sm text-slate-400">
+            <p class="section-eyebrow text-sky-400/95">Your library</p>
+            <h1 class="home-page-title mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Courses</h1>
+            <p class="mt-2 max-w-lg text-sm leading-relaxed text-slate-500">
                 Watch locally. Progress saves automatically. Courses you watched most recently appear first.
             </p>
         </div>
@@ -34,7 +34,7 @@
             </p>
         </div>
     @else
-        <ul class="courses-grid" role="list">
+        <ul class="courses-grid courses-grid--roomy" role="list">
             @foreach ($courses as $course)
                 @php
                     $accents = ['course-card-accent-sky', 'course-card-accent-slate', 'course-card-accent-emerald'];

@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class Course extends Model
 {
@@ -15,6 +18,51 @@ class Course extends Model
     public function videos(): HasMany
     {
         return $this->hasMany(Video::class)->orderBy('sort_order');
+    }
+
+    public function roadmaps(): BelongsToMany
+    {
+        return $this->belongsToMany(Roadmap::class, 'roadmap_course')
+            ->withPivot('sort_order')
+            ->orderByPivot('sort_order');
+    }
+
+    /**
+     * Courses list ordering: recently watched first, then never-watched by title.
+     */
+    public function scopeOrderedForLibrary(Builder $query): Builder
+    {
+        $lastWatch = DB::table('videos')
+            ->join('video_progress', 'videos.id', '=', 'video_progress.video_id')
+            ->selectRaw('videos.course_id, max(video_progress.updated_at) as last_watch_at')
+            ->groupBy('videos.course_id');
+
+        return $query
+            ->leftJoinSub($lastWatch, 'lw', 'lw.course_id', '=', 'courses.id')
+            ->select('courses.*')
+            ->orderByRaw('CASE WHEN lw.last_watch_at IS NULL THEN 1 ELSE 0 END')
+            ->orderByDesc('lw.last_watch_at')
+            ->orderBy('courses.title');
+    }
+
+    /**
+     * First lesson not marked completed; otherwise last lesson (single-user flow).
+     */
+    public function currentVideo(): ?Video
+    {
+        $this->loadMissing(['videos.progress']);
+        $videos = $this->videos;
+        if ($videos->isEmpty()) {
+            return null;
+        }
+
+        foreach ($videos as $video) {
+            if (! $video->progress?->completed) {
+                return $video;
+            }
+        }
+
+        return $videos->last();
     }
 
     /**

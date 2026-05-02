@@ -10,35 +10,33 @@
     @vite(['resources/css/app.css'])
     @stack('head')
 </head>
-<body class="app-backdrop min-h-full text-slate-100/95 antialiased">
-    <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
-        <div class="mx-auto @yield('main_max_class', 'max-w-5xl') flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
-            <a href="{{ route('courses.index') }}" class="group flex items-center gap-2.5" aria-label="{{ config('app.name') }}, home">
-                <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 text-lg shadow-lg shadow-blue-950/50 ring-1 ring-sky-400/35" aria-hidden="true">
+<body class="app-backdrop min-h-full text-slate-100/95 antialiased selection:bg-sky-500/30 selection:text-white">
+    <header class="app-header-bar sticky top-0 z-50 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-950/70">
+        <div class="mx-auto @yield('main_max_class', 'max-w-5xl') flex items-center justify-between gap-3 px-4 py-3.5 sm:gap-4 sm:px-6 sm:py-4">
+            <a href="{{ route('home') }}" class="group flex min-w-0 items-center gap-3" aria-label="{{ config('app.name') }}, home">
+                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 text-lg shadow-lg shadow-blue-950/45 ring-1 ring-white/20 transition group-hover:shadow-sky-500/20" aria-hidden="true">
                     <span class="text-sm font-bold text-slate-950">▶</span>
                 </span>
-                <span class="text-lg font-semibold tracking-tight text-slate-50 transition group-hover:text-white">
+                <span class="truncate text-lg font-semibold tracking-tight text-slate-50 transition group-hover:text-white">
                     {{ config('app.name') }}
                 </span>
             </a>
-            <nav class="flex items-center gap-1 sm:gap-2">
-                <a
-                    href="{{ route('courses.index') }}"
-                    class="rounded-lg px-3 py-2 text-sm font-medium text-slate-300/90 transition hover:bg-slate-800/70 hover:text-white"
-                >
-                    Courses
-                </a>
+            <nav class="flex max-w-[62%] flex-wrap items-center justify-end gap-0.5 sm:max-w-none sm:gap-1">
+                <a href="{{ route('home') }}" class="nav-pill text-[13px] sm:text-sm">Home</a>
+                <a href="{{ route('courses.index') }}" class="nav-pill text-[13px] sm:text-sm">Courses</a>
+                <a href="{{ route('roadmaps.index') }}" class="nav-pill text-[13px] sm:text-sm">Roadmaps</a>
                 <a
                     href="{{ route('courses.create') }}"
-                    class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-md shadow-blue-950/35 transition hover:from-sky-400 hover:to-blue-500 sm:px-4 sm:text-sm"
+                    class="ml-1 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-md shadow-blue-950/40 ring-1 ring-white/15 transition hover:from-sky-400 hover:to-blue-500 sm:ml-2 sm:px-4 sm:text-sm"
                 >
-                    Add course
+                    <span class="sm:hidden">Add</span>
+                    <span class="hidden sm:inline">Add course</span>
                 </a>
             </nav>
         </div>
     </header>
 
-    <main class="mx-auto @yield('main_max_class', 'max-w-5xl') px-4 py-10 sm:px-6 sm:py-12">
+    <main class="mx-auto @yield('main_max_class', 'max-w-5xl') px-4 py-8 sm:px-6 sm:py-11 lg:py-14">
         @if (session('status'))
             <div class="mb-8 rounded-2xl border border-sky-800/50 bg-gradient-to-r from-sky-950/45 to-blue-950/35 px-5 py-4 text-sm text-sky-100 shadow-lg shadow-sky-950/25">
                 {{ session('status') }}

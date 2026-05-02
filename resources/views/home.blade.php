@@ -1,0 +1,231 @@
+@extends('layouts.app')
+
+@section('main_max_class', 'max-w-7xl')
+
+@section('title', 'Home — '.config('app.name'))
+
+@section('content')
+    {{-- Page intro --}}
+    <header class="mb-10 sm:mb-12">
+        <h1 class="home-page-title text-3xl font-bold tracking-tight text-white sm:text-4xl">Home</h1>
+        <p class="mt-2 max-w-2xl text-[15px] leading-relaxed text-slate-400">
+            Continue watching, follow your roadmaps, and browse everything in your library.
+        </p>
+    </header>
+
+    {{-- Row 1: hero — latest watched --}}
+    <section class="mb-12 sm:mb-16" aria-label="Continue watching">
+        @if ($lastWatchedCourse)
+            @php
+                $heroPct = $lastWatchedCourse->aggregateProgressPercent();
+            @endphp
+            <div class="home-hero-wrap border border-sky-500/25 bg-slate-950/80 shadow-2xl shadow-black/40 ring-1 ring-white/5">
+                <a href="{{ $continueUrl }}" class="home-hero-inner group block text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">
+                    <div class="relative flex flex-col gap-8 p-6 sm:flex-row sm:items-stretch sm:gap-10 sm:p-8 lg:p-10">
+                        <span class="absolute left-0 top-6 bottom-6 w-1 rounded-full bg-gradient-to-b from-sky-400 via-blue-500 to-indigo-600 sm:top-8 sm:bottom-8 lg:top-10 lg:bottom-10" aria-hidden="true"></span>
+                        <div class="flex min-w-0 flex-1 flex-col pl-4 sm:pl-6">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="section-eyebrow text-sky-400/95">Continue watching</span>
+                                <span class="rounded-full bg-white/5 px-2.5 py-0.5 text-[11px] font-medium tabular-nums text-slate-500 ring-1 ring-white/10">
+                                    {{ $lastWatchedCourse->videos_count }} {{ $lastWatchedCourse->videos_count === 1 ? 'lesson' : 'lessons' }}
+                                </span>
+                            </div>
+                            <p class="mt-4 text-xl font-semibold leading-snug text-white sm:text-2xl lg:text-[1.65rem] lg:leading-tight">
+                                {{ $lastWatchedCourse->title }}
+                            </p>
+                            @if ($continueVideo)
+                                <p class="mt-3 flex flex-wrap items-baseline gap-x-2 text-sm text-slate-400">
+                                    <span class="text-slate-500">Next up</span>
+                                    <span class="font-medium text-slate-200">{{ $continueVideo->title }}</span>
+                                </p>
+                            @elseif ($lastWatchedCourse->videos_count > 0)
+                                <p class="mt-3 text-sm text-slate-500">Open the course to choose a lesson.</p>
+                            @else
+                                <p class="mt-3 text-sm text-slate-500">No lessons indexed yet — open the course to rescan.</p>
+                            @endif
+
+                            <div class="mt-8 flex flex-wrap items-center gap-4">
+                                <span class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-950/45 ring-1 ring-white/15 transition group-hover:from-sky-400 group-hover:to-blue-500 group-hover:shadow-sky-900/50">
+                                    Resume
+                                    <svg class="h-4 w-4 transition group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                    </svg>
+                                </span>
+                                <span class="text-xs text-slate-600">Press the card anywhere to open</span>
+                            </div>
+                        </div>
+
+                        @if ($lastWatchedCourse->videos_count > 0)
+                            <div class="flex w-full shrink-0 flex-col justify-center border-t border-white/5 pt-6 sm:w-72 sm:border-l sm:border-t-0 sm:pl-10 sm:pt-0 lg:w-80">
+                                <div class="flex items-end justify-between gap-3">
+                                    <span class="text-xs font-medium text-slate-500">Overall progress</span>
+                                    <span class="text-2xl font-bold tabular-nums tracking-tight text-sky-300">{{ $heroPct }}<span class="text-lg font-semibold text-sky-400/80">%</span></span>
+                                </div>
+                                <div
+                                    class="mt-4 h-3 overflow-hidden rounded-full bg-slate-900 ring-1 ring-slate-700/90"
+                                    role="progressbar"
+                                    aria-valuenow="{{ $heroPct }}"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                >
+                                    <div
+                                        class="h-full rounded-full bg-gradient-to-r from-sky-400 via-sky-500 to-blue-500 transition-[width] duration-500 ease-out"
+                                        style="width: {{ $heroPct }}%"
+                                    ></div>
+                                </div>
+                                <p class="mt-3 text-[11px] leading-relaxed text-slate-600">Average completion across lessons in this course.</p>
+                            </div>
+                        @endif
+                    </div>
+                </a>
+            </div>
+        @else
+            <div class="empty-state-soft px-6 py-14 text-center sm:px-12 sm:py-16">
+                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500/25 to-blue-600/15 ring-1 ring-sky-500/30">
+                    <svg class="h-8 w-8 text-sky-400/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+                    </svg>
+                </div>
+                <p class="mt-6 text-lg font-semibold text-slate-100">No watch history yet</p>
+                <p class="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate-500">
+                    Start any lesson — your most recent course will appear here for quick access.
+                </p>
+                <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
+                    <a href="{{ route('courses.create') }}" class="btn-primary px-6">Add course</a>
+                    <a href="{{ route('courses.index') }}" class="btn-secondary px-6">Browse library</a>
+                </div>
+            </div>
+        @endif
+    </section>
+
+    <div class="section-divider mb-12 sm:mb-16" aria-hidden="true"></div>
+
+    {{-- Row 2: roadmaps --}}
+    <section class="mb-12 sm:mb-16" aria-labelledby="home-roadmaps-heading">
+        <div class="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div class="min-w-0">
+                <p class="section-eyebrow text-violet-400/95">Learning paths</p>
+                <h2 id="home-roadmaps-heading" class="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">Roadmaps</h2>
+                <p class="mt-2 max-w-xl text-sm leading-relaxed text-slate-500">Stack courses in the order you want to complete them.</p>
+            </div>
+            <div class="flex shrink-0 flex-wrap gap-2 sm:justify-end">
+                <a href="{{ route('roadmaps.index') }}" class="btn-secondary text-sm">View all</a>
+                <a href="{{ route('roadmaps.create') }}" class="btn-primary text-sm">New roadmap</a>
+            </div>
+        </div>
+
+        @if ($roadmaps->isEmpty())
+            <div class="empty-state-soft px-6 py-12 text-center">
+                <p class="text-sm text-slate-500">No roadmaps yet.</p>
+                <a href="{{ route('roadmaps.create') }}" class="mt-4 inline-flex text-sm font-semibold text-violet-400 transition hover:text-violet-300">Create your first roadmap</a>
+            </div>
+        @else
+            <ul class="courses-grid courses-grid--roomy" role="list">
+                @foreach ($roadmaps as $roadmap)
+                    <li class="flex min-h-0">
+                        <a href="{{ route('roadmaps.show', $roadmap) }}" class="roadmap-card-home group w-full">
+                            <div class="flex items-start justify-between gap-3">
+                                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/15 text-violet-300 ring-1 ring-violet-500/25 transition group-hover:bg-violet-500/25" aria-hidden="true">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75H15.75M9 12H15.75M9 17.25H15.75M4.5 6.75h.008v.008H4.5V6.75zm0 5.25h.008v.008H4.5v-.008zm0 5.25h.008v.008H4.5v-.008zM19.5 6.75h.008v.008H19.5V6.75zm0 5.25h.008v.008H19.5v-.008zm0 5.25h.008v.008H19.5v-.008z" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="mt-4 min-w-0 flex-1">
+                                <h3 class="line-clamp-2 text-base font-semibold leading-snug text-slate-50 transition group-hover:text-white">
+                                    {{ $roadmap->title }}
+                                </h3>
+                                @if ($roadmap->description)
+                                    <p class="mt-2 line-clamp-2 text-xs leading-relaxed text-slate-500">{{ $roadmap->description }}</p>
+                                @endif
+                            </div>
+                            <div class="mt-5 flex items-center justify-between border-t border-white/5 pt-4">
+                                <span class="text-xs tabular-nums text-slate-500">{{ $roadmap->courses_count }} {{ $roadmap->courses_count === 1 ? 'course' : 'courses' }}</span>
+                                <span class="text-xs font-semibold text-violet-300/95 transition group-hover:text-violet-200">Open →</span>
+                            </div>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+    </section>
+
+    <div class="section-divider mb-12 sm:mb-16" aria-hidden="true"></div>
+
+    {{-- Row 3: courses --}}
+    <section aria-labelledby="home-courses-heading">
+        <div class="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div class="min-w-0">
+                <p class="section-eyebrow text-sky-400/95">Library</p>
+                <h2 id="home-courses-heading" class="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">Courses</h2>
+                <p class="mt-2 max-w-xl text-sm leading-relaxed text-slate-500">Recently active courses appear first. Same order as the full library.</p>
+            </div>
+            <a href="{{ route('courses.index') }}" class="btn-secondary shrink-0 self-start text-sm sm:self-auto">Full library</a>
+        </div>
+
+        @if ($courses->isEmpty())
+            <div class="empty-state-soft px-8 py-14 text-center">
+                <p class="text-lg font-medium text-slate-100">No courses yet</p>
+                <p class="mt-2 text-sm text-slate-500">
+                    <a href="{{ route('courses.create') }}" class="font-semibold text-sky-400 underline decoration-sky-500/35 underline-offset-4 transition hover:text-sky-300">Add a course</a>
+                    <span class="text-slate-600"> by pointing at a folder of videos.</span>
+                </p>
+            </div>
+        @else
+            <ul class="courses-grid courses-grid--roomy" role="list">
+                @foreach ($courses as $course)
+                    @php
+                        $accents = ['course-card-accent-sky', 'course-card-accent-slate', 'course-card-accent-emerald'];
+                        $accentClass = $accents[$loop->index % 3];
+                        $coursePct = $course->aggregateProgressPercent();
+                    @endphp
+                    <li class="flex min-h-0">
+                        <a
+                            href="{{ route('courses.show', $course) }}"
+                            class="group course-card-box {{ $accentClass }} h-full w-full min-h-[12rem] flex-1"
+                        >
+                            <div class="min-w-0 flex-1">
+                                <h3 class="line-clamp-3 text-lg font-semibold leading-snug text-slate-50 transition group-hover:text-white">
+                                    {{ $course->title }}
+                                </h3>
+                                <p class="mt-3 text-sm text-slate-500">
+                                    {{ $course->videos_count }} {{ $course->videos_count === 1 ? 'lesson' : 'lessons' }}
+                                </p>
+                                @if ($course->videos_count > 0)
+                                    <div class="mt-5">
+                                        <div class="flex items-center justify-between gap-2 text-xs text-slate-500">
+                                            <span>Progress</span>
+                                            <span class="tabular-nums font-semibold text-slate-300">{{ $coursePct }}%</span>
+                                        </div>
+                                        <div
+                                            class="mt-2.5 h-2.5 overflow-hidden rounded-full bg-slate-900/90 ring-1 ring-slate-700/80"
+                                            role="progressbar"
+                                            aria-valuenow="{{ $coursePct }}"
+                                            aria-valuemin="0"
+                                            aria-valuemax="100"
+                                            aria-label="Overall progress for {{ $course->title }}"
+                                        >
+                                            <div
+                                                class="h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-500 transition-[width] duration-300"
+                                                style="width: {{ $coursePct }}%"
+                                            ></div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="mt-6 flex items-center justify-between border-t border-slate-700/50 pt-4">
+                                <span class="text-xs font-semibold text-sky-400/95 transition group-hover:text-sky-300">Open course</span>
+                                <span
+                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-800/90 text-sky-400 ring-1 ring-slate-600/70 transition group-hover:bg-sky-500/15 group-hover:text-sky-300 group-hover:ring-sky-500/35"
+                                    aria-hidden="true"
+                                >
+                                    →
+                                </span>
+                            </div>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+    </section>
+@endsection

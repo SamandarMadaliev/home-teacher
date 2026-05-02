@@ -2,13 +2,13 @@
 
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\FolderPickerController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RoadmapController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\VideoNoteController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route('courses.index');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/folder-picker', FolderPickerController::class)->name('folder-picker');
 
@@ -18,6 +18,11 @@ Route::post('/courses/{course}/rescan', [CourseController::class, 'rescan'])->na
 Route::post('/courses/{course}/videos/reorder', [CourseController::class, 'reorderVideos'])->name('courses.videos.reorder');
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
+
+Route::resource('roadmaps', RoadmapController::class);
+Route::post('/roadmaps/{roadmap}/courses/reorder', [RoadmapController::class, 'reorderCourses'])->name('roadmaps.courses.reorder');
+Route::post('/roadmaps/{roadmap}/courses', [RoadmapController::class, 'attachCourse'])->name('roadmaps.courses.attach');
+Route::delete('/roadmaps/{roadmap}/courses/{course}', [RoadmapController::class, 'detachCourse'])->name('roadmaps.courses.detach');
 
 Route::get('/videos/{video}', [VideoController::class, 'show'])->name('videos.show');
 Route::get('/videos/{video}/stream', [VideoController::class, 'stream'])->name('videos.stream');

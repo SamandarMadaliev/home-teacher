@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
-use App\Models\Video;
 use App\Services\CourseVideoScanner;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -20,19 +18,10 @@ class CourseController extends Controller
 
     public function index(): View
     {
-        $lastWatch = DB::table('videos')
-            ->join('video_progress', 'videos.id', '=', 'video_progress.video_id')
-            ->selectRaw('videos.course_id, max(video_progress.updated_at) as last_watch_at')
-            ->groupBy('videos.course_id');
-
         $courses = Course::query()
-            ->leftJoinSub($lastWatch, 'lw', 'lw.course_id', '=', 'courses.id')
-            ->select('courses.*')
             ->with(['videos.progress'])
             ->withCount('videos')
-            ->orderByRaw('CASE WHEN lw.last_watch_at IS NULL THEN 1 ELSE 0 END')
-            ->orderByDesc('lw.last_watch_at')
-            ->orderBy('courses.title')
+            ->orderedForLibrary()
             ->get();
 
         return view('courses.index', compact('courses'));
@@ -76,7 +65,7 @@ class CourseController extends Controller
         $course->load(['videos.progress']);
 
         $videos = $course->videos;
-        $current = $this->resolveCurrentVideo($videos);
+        $current = $course->currentVideo();
         $nextAfterCurrent = null;
         if ($current !== null) {
             $idx = $videos->search(fn ($v) => $v->is($current));
@@ -139,21 +128,5 @@ class CourseController extends Controller
             : 'Rescanned: '.$count.' lesson(s) indexed.';
 
         return back()->with('status', $message);
-    }
-
-    /**
-     * First lesson that is not completed (single-user course flow).
-     *
-     * @param  Collection<int, Video>  $videos
-     */
-    private function resolveCurrentVideo($videos): ?Video
-    {
-        foreach ($videos as $video) {
-            if (! $video->progress?->completed) {
-                return $video;
-            }
-        }
-
-        return $videos->last();
     }
 }
