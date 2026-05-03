@@ -1,4 +1,7 @@
 import Sortable from 'sortablejs';
+import { initLessonRename } from './lesson-rename.js';
+
+initLessonRename();
 
 const root = document.getElementById('course-lessons-sortable');
 if (root?.dataset.reorderUrl) {

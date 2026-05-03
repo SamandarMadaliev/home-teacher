@@ -39,6 +39,19 @@
     @apply w-full rounded-xl border border-slate-700/80 bg-slate-900/85 px-4 py-2.5 text-slate-50 placeholder-slate-500 shadow-inner shadow-black/25 transition focus:border-sky-600/70 focus:outline-none focus:ring-2 focus:ring-sky-500/35;
 }
 
+/* Lesson rename: default view-only; expands to Save / Cancel on demand */
+.lesson-rename:not(.lesson-rename--editing) .lesson-rename-edit {
+    display: none;
+}
+
+.lesson-rename.lesson-rename--editing .lesson-rename-view {
+    display: none;
+}
+
+.lesson-rename-trigger {
+    @apply inline-flex shrink-0 items-center justify-center rounded-lg border border-slate-700/75 bg-slate-900/60 p-2 text-slate-400 shadow-sm shadow-black/20 ring-1 ring-slate-800/80 transition hover:border-sky-600/55 hover:bg-sky-950/35 hover:text-sky-300 hover:ring-sky-800/55 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/55;
+}
+
 /*
  | Courses index: real CSS grid so three cards per row always works at desktop
  | (does not rely on Tailwind scanning arbitrary class strings).
@@ -110,6 +123,40 @@
 
 .course-card-accent-emerald {
     border: 2px solid rgb(52 211 153 / 0.45);
+}
+
+/*
+ | Watch page: lesson list sits under the player on small screens / theater.
+ | xl: two columns — player + notes (rows 1–2, col 1), sticky lesson list (col 2, spans rows).
+ */
+.watch-layout {
+    display: grid;
+    gap: 2.5rem;
+}
+
+@media (min-width: 1280px) {
+    .watch-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(18rem, 20rem);
+        align-items: start;
+        column-gap: 2.5rem;
+        row-gap: 2.5rem;
+    }
+
+    .watch-player-stack {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .watch-lessons-sidebar {
+        grid-column: 2;
+        grid-row: 1 / -1;
+        align-self: start;
+    }
+
+    .watch-after-player {
+        grid-column: 1;
+        grid-row: 2;
+    }
 }
 
 /* —— Home & shared polish —— */

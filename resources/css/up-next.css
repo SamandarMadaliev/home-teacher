@@ -1,0 +1,18 @@
+/* “Up next” autoplay countdown — watch page only (player bundle). */
+
+.up-next-overlay {
+    visibility: hidden;
+    opacity: 0;
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+.up-next-overlay.up-next-overlay--visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+.up-next-overlay:not(.up-next-overlay--visible) {
+    pointer-events: none;
+}

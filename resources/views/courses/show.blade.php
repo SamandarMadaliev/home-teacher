@@ -60,7 +60,7 @@
                 <button type="submit" class="btn-secondary text-sm">
                     Rescan folder
                 </button>
-                <span class="text-xs text-slate-500">Adds new files from disk and removes missing ones. Your custom lesson order for existing files is kept.</span>
+                <span class="text-xs text-slate-500">Adds new files from disk and removes missing ones. Your lesson order and <strong class="font-medium text-slate-400">renamed titles</strong> for existing files are kept.</span>
             </form>
         @endif
     </div>
@@ -72,6 +72,7 @@
     @else
         <p class="mb-4 text-sm text-slate-400">
             Drag the handle (<span class="font-medium text-slate-300">⠿</span>) to reorder lessons. Order saves when you drop a row.
+            <span class="text-slate-500">Use the pencil icon beside a lesson title to rename it.</span>
         </p>
         <ol
             id="course-lessons-sortable"
@@ -110,21 +111,70 @@
                             <span class="mt-0.5 inline-flex h-9 min-w-[2.25rem] items-center justify-center rounded-xl bg-slate-800/95 text-xs font-semibold tabular-nums text-sky-300/90 ring-1 ring-slate-700/80">
                                 {{ $video->sort_order }}
                             </span>
-                            <div class="min-w-0">
-                                <a href="{{ route('videos.show', $video) }}" class="font-semibold text-slate-50 transition hover:text-white hover:underline decoration-sky-600/55 underline-offset-2">
-                                    {{ $video->title }}
-                                </a>
-                                <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
-                                    @if ($isCurrent)
-                                        <span class="rounded-full bg-sky-500/25 px-2.5 py-0.5 font-medium text-sky-200 ring-1 ring-sky-400/35">Current</span>
-                                    @endif
-                                    @if ($isNext && ! $isCurrent)
-                                        <span class="rounded-full bg-slate-800 px-2.5 py-0.5 font-medium text-slate-300 ring-1 ring-slate-700">Up next</span>
-                                    @endif
-                                    @if ($p?->completed)
-                                        <span class="font-medium text-emerald-400/90">Completed</span>
-                                    @endif
+                            @php
+                                $lessonRenameEditing =
+                                    $errors->has('title') && (string) old('lesson_video_id') === (string) $video->id;
+                            @endphp
+                            <div class="min-w-0 flex-1 space-y-2">
+                            <div class="lesson-rename {{ $lessonRenameEditing ? 'lesson-rename--editing' : '' }}" data-lesson-rename>
+                                <div class="lesson-rename-view">
+                                    <div class="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+                                        <a
+                                            href="{{ route('videos.show', $video) }}"
+                                            class="min-w-0 max-w-[min(100%,28rem)] truncate font-semibold text-slate-50 transition hover:text-white hover:underline decoration-sky-600/55 underline-offset-2"
+                                        >
+                                            {{ $video->title }}
+                                        </a>
+                                        <button
+                                            type="button"
+                                            class="lesson-rename-trigger"
+                                            aria-label="Rename {{ $video->title }}"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
+                                <form
+                                    action="{{ route('videos.update', $video) }}"
+                                    method="post"
+                                    class="lesson-rename-edit flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center"
+                                    data-original-title="{{ $video->title }}"
+                                    aria-label="Rename lesson"
+                                >
+                                    @csrf
+                                    @method('PATCH')
+                                    <input type="hidden" name="lesson_video_id" value="{{ $video->id }}" />
+                                    <label for="lesson-title-input-{{ $video->id }}" class="sr-only">Lesson display name</label>
+                                    <input
+                                        id="lesson-title-input-{{ $video->id }}"
+                                        type="text"
+                                        name="title"
+                                        value="{{ (string) old('lesson_video_id') === (string) $video->id ? old('title', $video->title) : $video->title }}"
+                                        required
+                                        maxlength="255"
+                                        class="input-field min-h-[40px] min-w-0 flex-1 font-medium text-slate-50 sm:max-w-md"
+                                        autocomplete="off"
+                                    />
+                                    <div class="flex shrink-0 flex-wrap gap-2">
+                                        <button type="submit" class="btn-primary py-2 text-xs sm:text-sm">Save</button>
+                                        <button type="button" class="lesson-rename-cancel btn-secondary py-2 text-xs sm:text-sm">Cancel</button>
+                                    </div>
+                                    <p class="basis-full text-[0.65rem] text-slate-500">Press <kbd class="rounded bg-slate-800 px-1 py-0.5 font-mono ring-1 ring-slate-700">Esc</kbd> to cancel.</p>
+                                </form>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 text-xs">
+                                @if ($isCurrent)
+                                    <span class="rounded-full bg-sky-500/25 px-2.5 py-0.5 font-medium text-sky-200 ring-1 ring-sky-400/35">Current</span>
+                                @endif
+                                @if ($isNext && ! $isCurrent)
+                                    <span class="rounded-full bg-slate-800 px-2.5 py-0.5 font-medium text-slate-300 ring-1 ring-slate-700">Up next</span>
+                                @endif
+                                @if ($p?->completed)
+                                    <span class="font-medium text-emerald-400/90">Completed</span>
+                                @endif
+                            </div>
                             </div>
                         </div>
                         <div class="min-w-[160px] flex-1 sm:max-w-xs">

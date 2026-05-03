@@ -21,13 +21,13 @@ Local **Laravel** app to watch **course videos from disk** with **saved progress
 ## Routes worth knowing
 
 - Courses: `courses.index`, `courses.show`, `courses.create`, `courses.store`, `courses.rescan`, `courses.videos.reorder` (POST JSON `{ video_ids: number[] }` — full permutation of that course’s lessons)
-- Videos: `videos.show`, `videos.stream`, `videos.progress` (POST JSON)
+- Videos: `videos.show`, `videos.update` (PATCH — rename lesson), `videos.stream`, `videos.progress` (POST JSON)
 - Notes: `videos.notes.store`, `videos.notes.destroy`
 
 ## Features (do not break casually)
 
 1. **Course index**: cards show **overall progress** — `Course::aggregateProgressPercent()`. List is ordered by **most recent watch activity** (`max(video_progress.updated_at)` per course), then courses with no watch history by title.
-2. **Course show** (`/courses/{course}`): **course-wide progress bar** + per-lesson list with **drag handle** to reorder (Sortable.js); rescan **does not** overwrite `sort_order` for files that were already indexed — only title updates; new files append at the end. Current/next lesson use **index order**, not raw `sort_order` gaps.
+2. **Course show** (`/courses/{course}`): **course-wide progress bar** + per-lesson list with **drag handle** to reorder (Sortable.js); **rescan** adds/removes lessons from disk without changing **custom lesson names** you set (scanner only sets titles for newly discovered files); new files append at the end. Current/next lesson use **index order**, not raw `sort_order` gaps.
 3. **Video page**: Plyr, theater (`T`), keyboard shortcuts; **Previous / Next lesson** cards **always** shown; **disabled** style on first/last; neighbors by **order index**, not only `sort_order` gaps.
 4. **Lesson notes** under the player: general vs **playhead time**; list shows cues that **seek** — `window.__COURSE_PLAYER__.getCurrentTime` / `.seekTo` from `player.js`.
 5. **End of video**: optional redirect via `nextUrl` in `__COURSE_PLAYER__`.

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Video;
 use App\Services\CourseVideoScanner;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;

@@ -2,12 +2,16 @@ import Plyr from 'plyr';
 import 'plyr/dist/plyr.css';
 import '../css/plyr-overrides.css';
 import '../css/theater-mode.css';
+import '../css/up-next.css';
+import { initLessonRename } from './lesson-rename.js';
 
 const cfg = window.__COURSE_PLAYER__;
 
 if (!cfg || !cfg.progressUrl) {
     throw new Error('Course player config missing');
 }
+
+initLessonRename();
 
 const el = document.getElementById('course-video');
 
@@ -75,12 +79,114 @@ player.on('pause', () => {
     sendProgress();
 });
 
+const UP_NEXT_COUNTDOWN_SEC = 5;
+
+/** @type {ReturnType<typeof setInterval> | null} */
+let upNextIntervalId = null;
+
+function clearUpNextCountdown() {
+    if (upNextIntervalId !== null) {
+        window.clearInterval(upNextIntervalId);
+        upNextIntervalId = null;
+    }
+}
+
+function hideUpNextOverlay() {
+    const overlay = document.getElementById('up-next-overlay');
+    if (!overlay) {
+        return;
+    }
+    overlay.classList.remove('up-next-overlay--visible');
+    overlay.setAttribute('aria-hidden', 'true');
+}
+
+function isUpNextOverlayOpen() {
+    return Boolean(document.getElementById('up-next-overlay')?.classList.contains('up-next-overlay--visible'));
+}
+
+function showUpNextOverlay() {
+    const overlay = document.getElementById('up-next-overlay');
+    const secEl = document.getElementById('up-next-seconds');
+    const titleEl = document.getElementById('up-next-title');
+
+    if (!overlay || !cfg.nextUrl) {
+        return;
+    }
+
+    if (titleEl && cfg.nextTitle) {
+        titleEl.textContent = cfg.nextTitle;
+    }
+
+    overlay.classList.add('up-next-overlay--visible');
+    overlay.setAttribute('aria-hidden', 'false');
+
+    let n = UP_NEXT_COUNTDOWN_SEC;
+    if (secEl) {
+        secEl.textContent = String(n);
+    }
+
+    clearUpNextCountdown();
+    upNextIntervalId = window.setInterval(() => {
+        n -= 1;
+        if (n <= 0) {
+            clearUpNextCountdown();
+            hideUpNextOverlay();
+            window.location.assign(cfg.nextUrl);
+            return;
+        }
+        if (secEl) {
+            secEl.textContent = String(n);
+        }
+    }, 1000);
+
+    const cancelBtn = document.getElementById('up-next-cancel');
+    cancelBtn?.focus({ preventScroll: true });
+}
+
+function initUpNextAutoplay() {
+    const overlay = document.getElementById('up-next-overlay');
+    if (!overlay || !cfg.nextUrl) {
+        return;
+    }
+
+    const cancel = () => {
+        clearUpNextCountdown();
+        hideUpNextOverlay();
+    };
+
+    document.getElementById('up-next-cancel')?.addEventListener('click', cancel);
+
+    document.getElementById('up-next-backdrop')?.addEventListener('click', cancel);
+
+    document.getElementById('up-next-now')?.addEventListener('click', () => {
+        clearUpNextCountdown();
+        hideUpNextOverlay();
+        window.location.assign(cfg.nextUrl);
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code !== 'Escape') {
+            return;
+        }
+        if (!overlay.classList.contains('up-next-overlay--visible')) {
+            return;
+        }
+        if (isKeyboardTypingTarget(e.target)) {
+            return;
+        }
+        e.preventDefault();
+        cancel();
+    });
+}
+
 player.on('ended', () => {
     sendProgress();
     if (cfg.nextUrl) {
-        window.location.assign(cfg.nextUrl);
+        showUpNextOverlay();
     }
 });
+
+initUpNextAutoplay();
 
 function isKeyboardTypingTarget(target) {
     if (!target || !target.tagName) {
@@ -95,6 +201,10 @@ function isKeyboardTypingTarget(target) {
 
 document.addEventListener('keydown', (e) => {
     if (isKeyboardTypingTarget(e.target)) {
+        return;
+    }
+
+    if (isUpNextOverlayOpen()) {
         return;
     }
 
@@ -125,7 +235,7 @@ window.addEventListener('beforeunload', () => {
     sendProgress();
 });
 
-/* In-page theater mode (wider video, hide lesson list — not Fullscreen API) */
+/* In-page theater mode (wider video; lesson list moves below the player — not Fullscreen API) */
 const THEATER_STORAGE_KEY = 'homeTeacherTheaterMode';
 
 function applyTheaterMode(enabled) {
@@ -176,6 +286,10 @@ function initTheaterMode() {
         }
 
         if (isKeyboardTypingTarget(e.target)) {
+            return;
+        }
+
+        if (isUpNextOverlayOpen()) {
             return;
         }
 

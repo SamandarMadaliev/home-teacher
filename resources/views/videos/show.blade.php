@@ -9,18 +9,65 @@
 @endpush
 
 @section('content')
-    <div id="watch-layout" class="watch-layout flex flex-col gap-10 xl:flex-row xl:items-start xl:gap-10">
-        <div class="watch-video-column min-w-0 flex-1">
+    <div id="watch-layout" class="watch-layout">
+        <div class="watch-player-stack min-w-0">
             <div class="mb-8">
                 <a href="{{ route('courses.show', $video->course) }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-400/95 transition hover:text-sky-300">
                     <span aria-hidden="true">←</span> {{ $video->course->title }}
                 </a>
-                <h1 class="mt-4 text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl">{{ $video->title }}</h1>
+                <div
+                    class="lesson-rename mt-5 max-w-3xl {{ $errors->has('title') ? 'lesson-rename--editing' : '' }}"
+                    data-lesson-rename
+                >
+                    <div class="lesson-rename-view flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                        <h1 class="min-w-0 flex-1 text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl">
+                            {{ $video->title }}
+                        </h1>
+                        <button
+                            type="button"
+                            class="lesson-rename-trigger shrink-0 self-start sm:mt-1"
+                            aria-label="Rename this lesson"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form
+                        action="{{ route('videos.update', $video) }}"
+                        method="post"
+                        class="lesson-rename-edit flex flex-col gap-3"
+                        data-original-title="{{ $video->title }}"
+                        aria-label="Rename lesson"
+                    >
+                        @csrf
+                        @method('PATCH')
+                        <label for="watch-lesson-title-input" class="sr-only">Lesson name</label>
+                        <input
+                            id="watch-lesson-title-input"
+                            type="text"
+                            name="title"
+                            value="{{ old('title', $video->title) }}"
+                            required
+                            maxlength="255"
+                            class="input-field w-full text-xl font-bold tracking-tight text-slate-50 sm:text-2xl"
+                            autocomplete="off"
+                        />
+                        <div class="flex flex-wrap gap-2">
+                            <button type="submit" class="btn-primary px-5 py-2 text-sm">Save</button>
+                            <button type="button" class="lesson-rename-cancel btn-secondary px-5 py-2 text-sm">Cancel</button>
+                        </div>
+                        <p class="text-[0.65rem] text-slate-500">
+                            <kbd class="rounded bg-slate-800 px-1 py-0.5 font-mono ring-1 ring-slate-700">Esc</kbd>
+                            cancels without saving.
+                        </p>
+                    </form>
+                </div>
             </div>
 
             <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <p class="text-xs text-slate-500">
-                    Wider layout without fullscreen — shortcut <kbd class="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-400 ring-1 ring-slate-700">T</kbd>
+                    Wider player and lesson list below — shortcut <kbd class="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-400 ring-1 ring-slate-700">T</kbd>
                 </p>
                 <button
                     type="button"
@@ -64,8 +111,59 @@
                     <a href="https://github.com/sampotts/plyr" class="text-sky-400/90 underline decoration-sky-600/40 hover:text-sky-300" target="_blank" rel="noopener noreferrer">Plyr</a>
                 </span>
             </div>
+        </div>
 
-            <nav class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2" aria-label="Lesson navigation">
+        <aside class="watch-lessons-sidebar w-full shrink-0 xl:w-auto xl:min-w-[18rem]" aria-label="Course lessons">
+            <div class="card-surface overflow-hidden xl:sticky xl:top-28">
+                <div class="border-b border-slate-800/90 bg-slate-900/40 px-4 py-4">
+                    <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-400/90">Lessons</p>
+                    <p class="mt-1.5 truncate text-sm font-semibold text-slate-100">{{ $video->course->title }}</p>
+                    <a href="{{ route('courses.show', $video->course) }}" class="mt-2 inline-block text-xs font-medium text-sky-400/90 hover:text-sky-300 hover:underline">
+                        Course overview →
+                    </a>
+                </div>
+                <ol class="max-h-[min(70vh,38rem)] divide-y divide-slate-800/90 overflow-y-auto overscroll-contain">
+                    @foreach ($courseVideos as $lesson)
+                        @php
+                            $p = $lesson->progress;
+                            $pct = $p ? $p->progressPercent() : 0;
+                            $active = $lesson->is($video);
+                        @endphp
+                        <li @if ($active) id="lesson-sidebar-active" @endif>
+                            <a
+                                href="{{ route('videos.show', $lesson) }}"
+                                class="{{ $active
+                                    ? 'bg-sky-950/45 ring-1 ring-inset ring-sky-500/35'
+                                    : 'hover:bg-slate-800/55' }} flex gap-3 px-4 py-3 transition"
+                            >
+                                <span class="mt-0.5 flex h-7 min-w-[1.75rem] items-center justify-center rounded-lg bg-slate-800/90 text-[0.65rem] font-semibold tabular-nums text-sky-300/90 ring-1 ring-slate-700/80">
+                                    {{ $lesson->sort_order }}
+                                </span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block truncate text-sm font-medium {{ $active ? 'text-white' : 'text-slate-200' }}">{{ $lesson->title }}</span>
+                                    @if ($p?->completed && ! $active)
+                                        <span class="mt-0.5 block text-[0.65rem] font-medium text-emerald-400/85">Done</span>
+                                    @endif
+                                    <span class="mt-2 flex items-center gap-2">
+                                        <span class="h-1 flex-1 overflow-hidden rounded-full bg-slate-800 ring-1 ring-slate-900/80">
+                                            <span class="block h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-500 transition-[width]" style="width: {{ $pct }}%"></span>
+                                        </span>
+                                        <span class="shrink-0 text-[0.65rem] tabular-nums text-slate-500">{{ $pct }}%</span>
+                                    </span>
+                                </span>
+                                @if ($active)
+                                    <span class="sr-only">(playing)</span>
+                                    <span class="mt-1 h-2 w-2 shrink-0 rounded-full bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.6)]" aria-hidden="true"></span>
+                                @endif
+                            </a>
+                        </li>
+                    @endforeach
+                </ol>
+            </div>
+        </aside>
+
+        <div class="watch-after-player min-w-0">
+            <nav class="grid grid-cols-1 gap-4 sm:grid-cols-2" aria-label="Lesson navigation">
                 @if ($previousVideo)
                     <a
                         href="{{ route('videos.show', $previousVideo) }}"
@@ -204,56 +302,65 @@
                 @endif
             </section>
         </div>
-
-        <aside class="watch-lessons-sidebar w-full shrink-0 xl:w-80 xl:min-w-[18rem]" aria-label="Course lessons">
-            <div class="card-surface sticky top-24 overflow-hidden xl:top-28">
-                <div class="border-b border-slate-800/90 bg-slate-900/40 px-4 py-4">
-                    <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-400/90">Lessons</p>
-                    <p class="mt-1.5 truncate text-sm font-semibold text-slate-100">{{ $video->course->title }}</p>
-                    <a href="{{ route('courses.show', $video->course) }}" class="mt-2 inline-block text-xs font-medium text-sky-400/90 hover:text-sky-300 hover:underline">
-                        Course overview →
-                    </a>
-                </div>
-                <ol class="max-h-[min(70vh,38rem)] divide-y divide-slate-800/90 overflow-y-auto overscroll-contain">
-                    @foreach ($courseVideos as $lesson)
-                        @php
-                            $p = $lesson->progress;
-                            $pct = $p ? $p->progressPercent() : 0;
-                            $active = $lesson->is($video);
-                        @endphp
-                        <li @if ($active) id="lesson-sidebar-active" @endif>
-                            <a
-                                href="{{ route('videos.show', $lesson) }}"
-                                class="{{ $active
-                                    ? 'bg-sky-950/45 ring-1 ring-inset ring-sky-500/35'
-                                    : 'hover:bg-slate-800/55' }} flex gap-3 px-4 py-3 transition"
-                            >
-                                <span class="mt-0.5 flex h-7 min-w-[1.75rem] items-center justify-center rounded-lg bg-slate-800/90 text-[0.65rem] font-semibold tabular-nums text-sky-300/90 ring-1 ring-slate-700/80">
-                                    {{ $lesson->sort_order }}
-                                </span>
-                                <span class="min-w-0 flex-1">
-                                    <span class="block truncate text-sm font-medium {{ $active ? 'text-white' : 'text-slate-200' }}">{{ $lesson->title }}</span>
-                                    @if ($p?->completed && ! $active)
-                                        <span class="mt-0.5 block text-[0.65rem] font-medium text-emerald-400/85">Done</span>
-                                    @endif
-                                    <span class="mt-2 flex items-center gap-2">
-                                        <span class="h-1 flex-1 overflow-hidden rounded-full bg-slate-800 ring-1 ring-slate-900/80">
-                                            <span class="block h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-500 transition-[width]" style="width: {{ $pct }}%"></span>
-                                        </span>
-                                        <span class="shrink-0 text-[0.65rem] tabular-nums text-slate-500">{{ $pct }}%</span>
-                                    </span>
-                                </span>
-                                @if ($active)
-                                    <span class="sr-only">(playing)</span>
-                                    <span class="mt-1 h-2 w-2 shrink-0 rounded-full bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.6)]" aria-hidden="true"></span>
-                                @endif
-                            </a>
-                        </li>
-                    @endforeach
-                </ol>
-            </div>
-        </aside>
     </div>
+
+    @if ($nextVideo)
+        <div
+            id="up-next-overlay"
+            class="up-next-overlay fixed inset-0 z-[200] flex flex-col justify-end p-4 sm:p-6"
+            aria-hidden="true"
+            aria-labelledby="up-next-heading"
+            role="dialog"
+        >
+            <button
+                type="button"
+                id="up-next-backdrop"
+                class="absolute inset-0 bg-slate-950/65 backdrop-blur-[3px] transition hover:bg-slate-950/75"
+                tabindex="-1"
+                aria-label="Dismiss — stay on this lesson"
+            ></button>
+            <div
+                class="relative z-10 mx-auto mb-2 w-full max-w-lg overflow-hidden rounded-2xl border border-slate-700/90 bg-slate-900/95 shadow-2xl shadow-black/50 ring-1 ring-white/10 sm:mb-4"
+            >
+                <div class="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-5">
+                    <div class="min-w-0 flex-1">
+                        <p id="up-next-heading" class="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-sky-400/95">
+                            Up next
+                        </p>
+                        <p id="up-next-title" class="mt-2 line-clamp-2 text-base font-semibold leading-snug text-white sm:text-lg">
+                            {{ $nextVideo->title }}
+                        </p>
+                        <p class="mt-3 flex flex-wrap items-baseline gap-x-2 text-sm text-slate-400">
+                            <span>Playing in</span>
+                            <span
+                                id="up-next-seconds"
+                                class="inline-flex min-w-[2.25rem] items-center justify-center rounded-lg bg-sky-950/80 px-2 py-1 font-mono text-xl font-bold tabular-nums text-sky-300 ring-1 ring-sky-600/40"
+                                aria-live="polite"
+                                aria-atomic="true"
+                            >{{ 5 }}</span>
+                            <span class="text-slate-500">seconds</span>
+                        </p>
+                    </div>
+                    <div class="flex shrink-0 flex-wrap gap-2 sm:flex-col sm:items-stretch">
+                        <button
+                            type="button"
+                            id="up-next-cancel"
+                            class="btn-secondary flex-1 px-4 py-2.5 text-sm font-semibold sm:flex-none sm:min-w-[8.5rem]"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            id="up-next-now"
+                            class="btn-primary flex-1 px-4 py-2.5 text-sm font-semibold sm:flex-none sm:min-w-[8.5rem]"
+                        >
+                            Play now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <script>
         window.__COURSE_PLAYER__ = {
@@ -261,6 +368,7 @@
             progressUrl: @json(route('videos.progress', $video)),
             initialPosition: {{ json_encode($initialPosition) }},
             nextUrl: @json($nextVideo ? route('videos.show', $nextVideo) : null),
+            nextTitle: @json($nextVideo ? $nextVideo->title : null),
         };
         document.getElementById('lesson-sidebar-active')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     </script>

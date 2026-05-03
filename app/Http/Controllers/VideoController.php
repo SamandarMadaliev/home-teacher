@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Video;
 use App\Services\VideoProgressService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -39,6 +40,25 @@ class VideoController extends Controller
             'nextVideo' => $nextVideo,
             'initialPosition' => $initialPosition,
         ]);
+    }
+
+    public function update(Request $request, Video $video): RedirectResponse
+    {
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+        ]);
+
+        $title = trim($data['title']);
+
+        if ($title === '') {
+            return redirect()->back()
+                ->withInput($request->only(['title', 'lesson_video_id']))
+                ->withErrors(['title' => 'Lesson name cannot be empty.']);
+        }
+
+        $video->update(['title' => $title]);
+
+        return redirect()->back()->with('status', 'Lesson name updated.');
     }
 
     public function stream(Video $video): BinaryFileResponse

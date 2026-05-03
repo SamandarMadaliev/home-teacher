@@ -34,11 +34,7 @@ class CourseVideoScanner
                 $key = $this->normalizeKey($relPath);
 
                 if ($existing->has($key)) {
-                    $video = $existing->get($key);
-                    $video->update([
-                        'title' => $title,
-                    ]);
-                    $keepIds[] = $video->id;
+                    $keepIds[] = $existing->get($key)->id;
                 } else {
                     $nextOrder++;
                     $video = $course->videos()->create([

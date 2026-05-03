@@ -25,6 +25,7 @@ Route::post('/roadmaps/{roadmap}/courses', [RoadmapController::class, 'attachCou
 Route::delete('/roadmaps/{roadmap}/courses/{course}', [RoadmapController::class, 'detachCourse'])->name('roadmaps.courses.detach');
 
 Route::get('/videos/{video}', [VideoController::class, 'show'])->name('videos.show');
+Route::patch('/videos/{video}', [VideoController::class, 'update'])->name('videos.update');
 Route::get('/videos/{video}/stream', [VideoController::class, 'stream'])->name('videos.stream');
 Route::post('/videos/{video}/progress', [VideoController::class, 'progress'])->name('videos.progress');
 Route::post('/videos/{video}/notes', [VideoNoteController::class, 'store'])->name('videos.notes.store');

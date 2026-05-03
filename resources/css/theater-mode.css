@@ -1,4 +1,4 @@
-/* Theater mode: larger in-page video (not browser fullscreen). Loaded with player.js only. */
+/* Theater mode: wider main column (not browser fullscreen). Loaded with player.js only. */
 
 html.theater-watch main {
     max-width: min(100vw - 1.5rem, 100rem) !important;
@@ -13,20 +13,43 @@ html.theater-watch main {
     }
 }
 
+/* Single column: player stack → lessons → prev/next & notes (native DOM order) */
 html.theater-watch .watch-layout {
-    flex-direction: column;
-    gap: 1.5rem;
+    grid-template-columns: minmax(0, 1fr);
 }
 
-html.theater-watch .watch-lessons-sidebar {
-    display: none;
+html.theater-watch .watch-player-stack,
+html.theater-watch .watch-lessons-sidebar,
+html.theater-watch .watch-after-player {
+    grid-column: 1;
+    grid-row: auto;
 }
 
-html.theater-watch .watch-video-column {
+html.theater-watch .watch-player-stack {
     width: 100%;
     max-width: min(96vw, 100rem);
     margin-left: auto;
     margin-right: auto;
+}
+
+html.theater-watch .watch-lessons-sidebar {
+    width: 100%;
+    max-width: min(96vw, 100rem);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+html.theater-watch .watch-after-player {
+    width: 100%;
+    max-width: min(96vw, 100rem);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Full-width lesson strip under the player: no sticky overlap with notes */
+html.theater-watch .watch-lessons-sidebar .card-surface {
+    position: static;
+    top: auto;
 }
 
 html.theater-watch .course-plyr {
