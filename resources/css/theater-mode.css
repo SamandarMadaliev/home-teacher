@@ -53,5 +53,9 @@ html.theater-watch .watch-lessons-sidebar .card-surface {
 }
 
 html.theater-watch .course-plyr {
+    box-shadow: 0 25px 50px -12px rgb(15 23 42 / 0.18);
+}
+
+html.dark.theater-watch .course-plyr {
     box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.45);
 }

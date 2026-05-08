@@ -4,20 +4,20 @@
 
 @section('content')
     <div class="mb-10">
-        <a href="{{ route('courses.index') }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-400/95 transition hover:text-sky-300">
+        <a href="{{ route('courses.index') }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-600 transition hover:text-sky-700 dark:text-sky-400/95 dark:hover:text-sky-300">
             <span aria-hidden="true">←</span> Courses
         </a>
-        <p class="mt-6 text-sm font-medium uppercase tracking-widest text-sky-500/90">New course</p>
-        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">Add course</h1>
-        <p class="mt-4 max-w-2xl text-sm leading-relaxed text-slate-400">
-            Choose a folder on <strong class="font-semibold text-slate-200">this computer</strong> where your videos live. Files stay there — we only index names for playback and progress.
+        <p class="mt-6 text-sm font-medium uppercase tracking-widest text-sky-600 dark:text-sky-500/90">New course</p>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-4xl">Add course</h1>
+        <p class="mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+            Choose a folder on <strong class="font-semibold text-slate-900 dark:text-slate-200">this computer</strong> where your videos live. Files stay there — we only index names for playback and progress.
         </p>
     </div>
 
     <form action="{{ route('courses.store') }}" method="post" class="card-surface max-w-2xl space-y-8 p-6 sm:p-8" id="add-course-form">
         @csrf
         <div>
-            <label for="title" class="mb-2 block text-sm font-medium text-slate-200">Title</label>
+            <label for="title" class="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-200">Title</label>
             <input
                 type="text"
                 name="title"
@@ -31,11 +31,11 @@
         </div>
         <div>
             <div class="mb-2 flex flex-wrap items-end justify-between gap-2">
-                <label for="folder_path" class="block text-sm font-medium text-slate-200">Video folder</label>
+                <label for="folder_path" class="block text-sm font-medium text-slate-800 dark:text-slate-200">Video folder</label>
                 <button
                     type="button"
                     id="folder-picker-toggle"
-                    class="text-sm font-semibold text-sky-400 transition hover:text-sky-300 hover:underline underline-offset-4"
+                    class="text-sm font-semibold text-sky-600 transition hover:text-sky-700 hover:underline underline-offset-4 dark:text-sky-400 dark:hover:text-sky-300"
                 >
                     Browse folders
                 </button>
@@ -50,43 +50,43 @@
                 placeholder="Browse below, or paste an absolute path"
                 autocomplete="off"
             />
-            <p class="mt-2 text-xs leading-relaxed text-slate-500">
-                Browse covers your whole machine unless restricted in <code class="rounded bg-slate-900 px-1 py-0.5 font-mono text-slate-300">.env</code>.
+            <p class="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-500">
+                Browse covers your whole machine unless restricted in <code class="rounded bg-slate-200 px-1 py-0.5 font-mono text-slate-900 dark:bg-slate-900 dark:text-slate-300">.env</code>.
                 On macOS, protected folders may need Full Disk Access for PHP.
                 Formats: mp4, webm, mkv, mov, m4v, ogv, avi.
             </p>
 
             <div
                 id="folder-picker-panel"
-                class="mt-5 hidden rounded-2xl border border-slate-800/90 bg-slate-950/55 p-5 ring-1 ring-slate-800/80"
+                class="mt-5 hidden rounded-2xl border border-slate-200/96 bg-white/92 p-5 ring-1 ring-slate-200/92 dark:border-slate-800/90 dark:bg-slate-950/55 dark:ring-slate-800/80"
                 data-picker-url="{{ route('folder-picker') }}"
             >
-                <div class="flex flex-wrap items-center gap-2 border-b border-slate-800/90 pb-4">
+                <div class="flex flex-wrap items-center gap-2 border-b border-slate-200/95 pb-4 dark:border-slate-800/90">
                     <button type="button" id="folder-picker-back" class="btn-ghost" disabled>
                         Up
                     </button>
                     <button type="button" id="folder-picker-roots" class="btn-ghost" disabled>
                         All places
                     </button>
-                    <span id="folder-picker-current" class="min-w-0 flex-1 truncate font-mono text-xs text-sky-300/75"></span>
+                    <span id="folder-picker-current" class="min-w-0 flex-1 truncate font-mono text-xs text-sky-700 dark:text-sky-300/75"></span>
                 </div>
                 <div
                     id="folder-picker-list"
-                    class="mt-4 max-h-60 space-y-1 overflow-y-auto rounded-xl border border-slate-800/90 bg-slate-950/85 p-2 ring-1 ring-black/30"
+                    class="mt-4 max-h-60 space-y-1 overflow-y-auto rounded-xl border border-slate-200/96 bg-slate-50 p-2 ring-1 ring-slate-900/10 dark:border-slate-800/90 dark:bg-slate-950/85 dark:ring-black/30"
                     role="list"
                 ></div>
                 <div class="mt-5 flex flex-wrap items-center gap-3">
                     <button type="button" id="folder-picker-select" class="btn-primary text-sm disabled:opacity-45" disabled>
                         Use this folder
                     </button>
-                    <p id="folder-picker-hint" class="text-xs text-slate-500">
+                    <p id="folder-picker-hint" class="text-xs text-slate-600 dark:text-slate-500">
                         Open a folder from the list, then confirm.
                     </p>
                 </div>
-                <p id="folder-picker-error" class="mt-4 hidden rounded-xl border border-rose-900/55 bg-rose-950/45 px-4 py-3 text-xs leading-relaxed text-rose-100"></p>
+                <p id="folder-picker-error" class="mt-4 hidden rounded-xl border border-rose-300/92 bg-rose-50 px-4 py-3 text-xs leading-relaxed text-rose-950 dark:border-rose-900/55 dark:bg-rose-950/45 dark:text-rose-100"></p>
             </div>
         </div>
-        <div class="flex flex-wrap gap-3 border-t border-slate-800/90 pt-8">
+        <div class="flex flex-wrap gap-3 border-t border-slate-200/96 pt-8 dark:border-slate-800/90">
             <button type="submit" class="btn-primary">
                 Create &amp; scan folder
             </button>
@@ -140,7 +140,7 @@
                 listEl.innerHTML = '';
                 if (!state.items.length) {
                     const empty = document.createElement('p');
-                    empty.className = 'px-3 py-4 text-sm text-slate-500';
+                    empty.className = 'px-3 py-4 text-sm text-slate-600 dark:text-slate-500';
                     empty.textContent = state.atRootList
                         ? 'No starting locations found — check that PHP can read your disks, or set COURSE_BROWSE_ROOTS in .env.'
                         : 'No subfolders here (empty or access denied). You can still confirm this folder.';
@@ -150,7 +150,7 @@
                         const btn = document.createElement('button');
                         btn.type = 'button';
                         btn.className =
-                            'flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-200 transition hover:bg-sky-950/40 hover:text-white';
+                            'flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-800 transition hover:bg-sky-50 hover:text-slate-950 dark:text-slate-200 dark:hover:bg-sky-950/40 dark:hover:text-white';
                         btn.textContent = item.name;
                         btn.addEventListener('click', function () {
                             load(item.path);

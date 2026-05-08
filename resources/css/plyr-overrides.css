@@ -1,6 +1,21 @@
-/* Plyr skin aligned with app (sky / slate). Loaded only with the video player bundle. */
+/* Plyr skin — lighter chrome in light mode, slate blue in dark. */
 
 .course-plyr {
+    --plyr-color-main: rgb(14 165 233);
+    --plyr-video-controls-background: linear-gradient(
+        to top,
+        rgb(248 250 252 / 0.96) 0%,
+        rgb(241 245 249 / 0.75) 55%,
+        transparent 100%
+    );
+    --plyr-range-thumb-background: rgb(2 132 199);
+    --plyr-range-fill-background: rgb(2 132 199);
+    --plyr-progress-loading-background: rgb(148 163 184 / 0.45);
+    --plyr-tooltip-background: rgb(255 255 255);
+    --plyr-tooltip-color: rgb(15 23 42);
+}
+
+.dark .course-plyr {
     --plyr-color-main: rgb(56 189 248);
     --plyr-video-controls-background: linear-gradient(
         to top,
@@ -20,10 +35,19 @@
 }
 
 .course-plyr .plyr__control--overlaid {
+    background: rgb(14 165 233 / 0.95);
+    color: rgb(255 255 255);
+}
+
+.dark .course-plyr .plyr__control--overlaid {
     background: rgb(56 189 248 / 0.95);
     color: rgb(15 23 42);
 }
 
 .course-plyr .plyr__control--overlaid:hover {
+    background: rgb(125 211 252);
+}
+
+.dark .course-plyr .plyr__control--overlaid:hover {
     background: rgb(125 211 252);
 }

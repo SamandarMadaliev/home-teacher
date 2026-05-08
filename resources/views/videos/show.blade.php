@@ -12,7 +12,7 @@
     <div id="watch-layout" class="watch-layout">
         <div class="watch-player-stack min-w-0">
             <div class="mb-8">
-                <a href="{{ route('courses.show', $video->course) }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-400/95 transition hover:text-sky-300">
+                <a href="{{ route('courses.show', $video->course) }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-600 transition hover:text-sky-700 dark:text-sky-400/95 dark:hover:text-sky-300">
                     <span aria-hidden="true">←</span> {{ $video->course->title }}
                 </a>
                 <div
@@ -20,7 +20,7 @@
                     data-lesson-rename
                 >
                     <div class="lesson-rename-view flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-                        <h1 class="min-w-0 flex-1 text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl">
+                        <h1 class="min-w-0 flex-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-3xl">
                             {{ $video->title }}
                         </h1>
                         <button
@@ -50,15 +50,15 @@
                             value="{{ old('title', $video->title) }}"
                             required
                             maxlength="255"
-                            class="input-field w-full text-xl font-bold tracking-tight text-slate-50 sm:text-2xl"
+                            class="input-field w-full text-xl font-bold tracking-tight sm:text-2xl"
                             autocomplete="off"
                         />
                         <div class="flex flex-wrap gap-2">
                             <button type="submit" class="btn-primary px-5 py-2 text-sm">Save</button>
                             <button type="button" class="lesson-rename-cancel btn-secondary px-5 py-2 text-sm">Cancel</button>
                         </div>
-                        <p class="text-[0.65rem] text-slate-500">
-                            <kbd class="rounded bg-slate-800 px-1 py-0.5 font-mono ring-1 ring-slate-700">Esc</kbd>
+                        <p class="text-[0.65rem] text-slate-600 dark:text-slate-500">
+                            <kbd class="rounded bg-slate-200 px-1 py-0.5 font-mono ring-1 ring-slate-300 dark:bg-slate-800 dark:ring-slate-700">Esc</kbd>
                             cancels without saving.
                         </p>
                     </form>
@@ -66,8 +66,8 @@
             </div>
 
             <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <p class="text-xs text-slate-500">
-                    Wider player and lesson list below — shortcut <kbd class="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-400 ring-1 ring-slate-700">T</kbd>
+                <p class="text-xs text-slate-600 dark:text-slate-500">
+                    Wider player and lesson list below — shortcut <kbd class="rounded bg-slate-200 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-700 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-700">T</kbd>
                 </p>
                 <button
                     type="button"
@@ -81,7 +81,7 @@
                 </button>
             </div>
 
-            <div class="course-plyr overflow-hidden rounded-2xl border border-slate-800/90 bg-black shadow-2xl shadow-blue-950/40 ring-1 ring-sky-950/40">
+            <div class="course-plyr overflow-hidden rounded-2xl border border-slate-300/95 bg-black shadow-2xl shadow-slate-400/45 ring-1 ring-sky-500/25 dark:border-slate-800/90 dark:shadow-blue-950/40 dark:ring-sky-950/40">
                 <video
                     id="course-video"
                     class="aspect-video w-full"
@@ -93,36 +93,36 @@
                 </video>
             </div>
 
-            <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-slate-400">
+            <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-slate-600 dark:text-slate-400">
                 <span class="inline-flex items-center gap-2">
-                    <kbd class="rounded-md bg-slate-800 px-2 py-1 font-mono text-[0.7rem] text-slate-300 ring-1 ring-slate-700">Space</kbd>
+                    <kbd class="rounded-md bg-slate-200 px-2 py-1 font-mono text-[0.7rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">Space</kbd>
                     play / pause
                 </span>
                 <span class="inline-flex items-center gap-2">
-                    <kbd class="rounded-md bg-slate-800 px-2 py-1 font-mono text-[0.7rem] text-slate-300 ring-1 ring-slate-700">←</kbd>
+                    <kbd class="rounded-md bg-slate-200 px-2 py-1 font-mono text-[0.7rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">←</kbd>
                     −10s
                 </span>
                 <span class="inline-flex items-center gap-2">
-                    <kbd class="rounded-md bg-slate-800 px-2 py-1 font-mono text-[0.7rem] text-slate-300 ring-1 ring-slate-700">→</kbd>
+                    <kbd class="rounded-md bg-slate-200 px-2 py-1 font-mono text-[0.7rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">→</kbd>
                     +10s
                 </span>
-                <span class="text-slate-500">
+                <span class="text-slate-600 dark:text-slate-500">
                     Player:
-                    <a href="https://github.com/sampotts/plyr" class="text-sky-400/90 underline decoration-sky-600/40 hover:text-sky-300" target="_blank" rel="noopener noreferrer">Plyr</a>
+                    <a href="https://github.com/sampotts/plyr" class="text-sky-600 underline decoration-sky-500/50 hover:text-sky-800 dark:text-sky-400/90 dark:hover:text-sky-300" target="_blank" rel="noopener noreferrer">Plyr</a>
                 </span>
             </div>
         </div>
 
         <aside class="watch-lessons-sidebar w-full shrink-0 xl:w-auto xl:min-w-[18rem]" aria-label="Course lessons">
             <div class="card-surface overflow-hidden xl:sticky xl:top-28">
-                <div class="border-b border-slate-800/90 bg-slate-900/40 px-4 py-4">
-                    <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-400/90">Lessons</p>
-                    <p class="mt-1.5 truncate text-sm font-semibold text-slate-100">{{ $video->course->title }}</p>
-                    <a href="{{ route('courses.show', $video->course) }}" class="mt-2 inline-block text-xs font-medium text-sky-400/90 hover:text-sky-300 hover:underline">
+                <div class="border-b border-slate-200/95 bg-slate-50/92 px-4 py-4 dark:border-slate-800/90 dark:bg-slate-900/40">
+                    <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-700 dark:text-sky-400/90">Lessons</p>
+                    <p class="mt-1.5 truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{{ $video->course->title }}</p>
+                    <a href="{{ route('courses.show', $video->course) }}" class="mt-2 inline-block text-xs font-medium text-sky-600 hover:text-sky-800 hover:underline dark:text-sky-400/90 dark:hover:text-sky-300">
                         Course overview →
                     </a>
                 </div>
-                <ol class="max-h-[min(70vh,38rem)] divide-y divide-slate-800/90 overflow-y-auto overscroll-contain">
+                <ol class="max-h-[min(70vh,38rem)] divide-y divide-slate-200/95 overflow-y-auto overscroll-contain dark:divide-slate-800/90">
                     @foreach ($courseVideos as $lesson)
                         @php
                             $p = $lesson->progress;
@@ -133,22 +133,22 @@
                             <a
                                 href="{{ route('videos.show', $lesson) }}"
                                 class="{{ $active
-                                    ? 'bg-sky-950/45 ring-1 ring-inset ring-sky-500/35'
-                                    : 'hover:bg-slate-800/55' }} flex gap-3 px-4 py-3 transition"
+                                    ? 'bg-sky-100/98 ring-1 ring-inset ring-sky-500/42 dark:bg-sky-950/45 dark:ring-sky-500/35'
+                                    : 'hover:bg-slate-100/96 dark:hover:bg-slate-800/55' }} flex gap-3 px-4 py-3 transition"
                             >
-                                <span class="mt-0.5 flex h-7 min-w-[1.75rem] items-center justify-center rounded-lg bg-slate-800/90 text-[0.65rem] font-semibold tabular-nums text-sky-300/90 ring-1 ring-slate-700/80">
+                                <span class="mt-0.5 flex h-7 min-w-[1.75rem] items-center justify-center rounded-lg bg-slate-100 text-[0.65rem] font-semibold tabular-nums text-sky-700 ring-1 ring-slate-300/95 dark:bg-slate-800/90 dark:text-sky-300/90 dark:ring-slate-700/80">
                                     {{ $lesson->sort_order }}
                                 </span>
                                 <span class="min-w-0 flex-1">
-                                    <span class="block truncate text-sm font-medium {{ $active ? 'text-white' : 'text-slate-200' }}">{{ $lesson->title }}</span>
+                                    <span class="block truncate text-sm font-medium {{ $active ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-200' }}">{{ $lesson->title }}</span>
                                     @if ($p?->completed && ! $active)
-                                        <span class="mt-0.5 block text-[0.65rem] font-medium text-emerald-400/85">Done</span>
+                                        <span class="mt-0.5 block text-[0.65rem] font-medium text-emerald-700 dark:text-emerald-400/85">Done</span>
                                     @endif
                                     <span class="mt-2 flex items-center gap-2">
-                                        <span class="h-1 flex-1 overflow-hidden rounded-full bg-slate-800 ring-1 ring-slate-900/80">
+                                        <span class="h-1 flex-1 overflow-hidden rounded-full bg-slate-200 ring-1 ring-slate-300/95 dark:bg-slate-800 dark:ring-slate-900/80">
                                             <span class="block h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-500 transition-[width]" style="width: {{ $pct }}%"></span>
                                         </span>
-                                        <span class="shrink-0 text-[0.65rem] tabular-nums text-slate-500">{{ $pct }}%</span>
+                                        <span class="shrink-0 text-[0.65rem] tabular-nums text-slate-600 dark:text-slate-500">{{ $pct }}%</span>
                                     </span>
                                 </span>
                                 @if ($active)
@@ -167,60 +167,60 @@
                 @if ($previousVideo)
                     <a
                         href="{{ route('videos.show', $previousVideo) }}"
-                        class="group flex min-h-[5.75rem] flex-col justify-center rounded-2xl border border-sky-900/45 bg-gradient-to-br from-slate-900/92 to-sky-950/28 px-5 py-4 ring-1 ring-sky-950/35 transition hover:border-sky-700/55 hover:ring-sky-800/45"
+                        class="group flex min-h-[5.75rem] flex-col justify-center rounded-2xl border border-sky-300/95 bg-gradient-to-br from-white to-sky-50/98 px-5 py-4 ring-1 ring-sky-300/52 transition hover:border-sky-500/60 hover:ring-sky-500/45 dark:border-sky-900/45 dark:from-slate-900/92 dark:to-sky-950/28 dark:ring-sky-950/35 dark:hover:border-sky-700/55 dark:hover:ring-sky-800/45"
                     >
-                        <p class="text-xs font-medium uppercase tracking-wider text-sky-400/85 transition group-hover:text-sky-300/95">
+                        <p class="text-xs font-medium uppercase tracking-wider text-sky-700 transition group-hover:text-sky-800 dark:text-sky-400/85 dark:transition dark:group-hover:text-sky-300/95">
                             ← Previous lesson
                         </p>
-                        <p class="mt-2 line-clamp-2 text-lg font-semibold text-slate-100 decoration-sky-600/50 underline-offset-4 transition group-hover:text-white group-hover:underline">
+                        <p class="mt-2 line-clamp-2 text-lg font-semibold text-slate-900 decoration-sky-600/42 underline-offset-4 transition group-hover:text-sky-950 group-hover:underline dark:text-slate-100 dark:decoration-sky-600/50 dark:group-hover:text-white">
                             {{ $previousVideo->title }}
                         </p>
                     </a>
                 @else
                     <div
-                        class="pointer-events-none flex min-h-[5.75rem] select-none flex-col justify-center rounded-2xl border border-sky-900/25 bg-gradient-to-br from-slate-900/55 to-sky-950/15 px-5 py-4 opacity-60 ring-1 ring-sky-950/20"
+                        class="pointer-events-none flex min-h-[5.75rem] select-none flex-col justify-center rounded-2xl border border-slate-300/92 bg-gradient-to-br from-slate-100/98 to-slate-50 px-5 py-4 opacity-[0.76] ring-1 ring-slate-200/95 dark:border-sky-900/25 dark:from-slate-900/55 dark:to-sky-950/15 dark:opacity-60 dark:ring-sky-950/20"
                         aria-disabled="true"
                     >
-                        <p class="text-xs font-medium uppercase tracking-wider text-slate-500">← Previous lesson</p>
-                        <p class="mt-2 text-sm font-medium text-slate-500">First lesson — nothing before this</p>
+                        <p class="text-xs font-medium uppercase tracking-wider text-slate-600 dark:text-slate-500">← Previous lesson</p>
+                        <p class="mt-2 text-sm font-medium text-slate-600 dark:text-slate-500">First lesson — nothing before this</p>
                     </div>
                 @endif
 
                 @if ($nextVideo)
                     <a
                         href="{{ route('videos.show', $nextVideo) }}"
-                        class="group flex min-h-[5.75rem] flex-col justify-center rounded-2xl border border-sky-900/45 bg-gradient-to-br from-slate-900/92 to-sky-950/28 px-5 py-4 ring-1 ring-sky-950/35 transition hover:border-sky-700/55 hover:ring-sky-800/45"
+                        class="group flex min-h-[5.75rem] flex-col justify-center rounded-2xl border border-sky-300/95 bg-gradient-to-br from-white to-sky-50/98 px-5 py-4 ring-1 ring-sky-300/52 transition hover:border-sky-500/60 hover:ring-sky-500/45 dark:border-sky-900/45 dark:from-slate-900/92 dark:to-sky-950/28 dark:ring-sky-950/35 dark:hover:border-sky-700/55 dark:hover:ring-sky-800/45"
                     >
-                        <p class="text-xs font-medium uppercase tracking-wider text-sky-400/85 transition group-hover:text-sky-300/95">
+                        <p class="text-xs font-medium uppercase tracking-wider text-sky-700 transition group-hover:text-sky-800 dark:text-sky-400/85 dark:transition dark:group-hover:text-sky-300/95">
                             Next lesson →
                         </p>
-                        <p class="mt-2 line-clamp-2 text-lg font-semibold text-slate-100 decoration-sky-600/50 underline-offset-4 transition group-hover:text-white group-hover:underline">
+                        <p class="mt-2 line-clamp-2 text-lg font-semibold text-slate-900 decoration-sky-600/42 underline-offset-4 transition group-hover:text-sky-950 group-hover:underline dark:text-slate-100 dark:decoration-sky-600/50 dark:group-hover:text-white">
                             {{ $nextVideo->title }}
                         </p>
                     </a>
                 @else
                     <div
-                        class="pointer-events-none flex min-h-[5.75rem] select-none flex-col justify-center rounded-2xl border border-sky-900/25 bg-gradient-to-br from-slate-900/55 to-sky-950/15 px-5 py-4 opacity-60 ring-1 ring-sky-950/20"
+                        class="pointer-events-none flex min-h-[5.75rem] select-none flex-col justify-center rounded-2xl border border-slate-300/92 bg-gradient-to-br from-slate-100/98 to-slate-50 px-5 py-4 opacity-[0.76] ring-1 ring-slate-200/95 dark:border-sky-900/25 dark:from-slate-900/55 dark:to-sky-950/15 dark:opacity-60 dark:ring-sky-950/20"
                         aria-disabled="true"
                     >
-                        <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Next lesson →</p>
-                        <p class="mt-2 text-sm font-medium text-slate-500">Last lesson — nothing after this</p>
+                        <p class="text-xs font-medium uppercase tracking-wider text-slate-600 dark:text-slate-500">Next lesson →</p>
+                        <p class="mt-2 text-sm font-medium text-slate-600 dark:text-slate-500">Last lesson — nothing after this</p>
                     </div>
                 @endif
             </nav>
 
             <section class="mt-10" aria-labelledby="lesson-notes-heading">
-                <h2 id="lesson-notes-heading" class="text-lg font-semibold tracking-tight text-slate-100">
+                <h2 id="lesson-notes-heading" class="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
                     Notes
                 </h2>
-                <p class="mt-1 text-sm text-slate-500">
+                <p class="mt-1 text-sm text-slate-600 dark:text-slate-500">
                     Add a general note for this lesson, or capture the playhead as a time-stamped note and jump back to it later.
                 </p>
 
                 <form
                     action="{{ route('videos.notes.store', $video) }}"
                     method="post"
-                    class="mt-5 rounded-2xl border border-slate-800/90 bg-slate-900/35 px-4 py-5 ring-1 ring-slate-800/70 sm:px-5"
+                    class="mt-5 rounded-2xl border border-slate-200/95 bg-slate-50/96 px-4 py-5 ring-1 ring-slate-200/92 sm:px-5 dark:border-slate-800/90 dark:bg-slate-900/35 dark:ring-slate-800/70"
                 >
                     @csrf
                     <label for="note-body" class="sr-only">Note</label>
@@ -230,7 +230,7 @@
                         rows="4"
                         required
                         placeholder="Write your note here…"
-                        class="w-full rounded-xl border border-slate-700/80 bg-slate-950/50 px-3 py-2.5 text-sm text-slate-100 shadow-inner ring-0 placeholder:text-slate-600 focus:border-sky-600/60 focus:outline-none focus:ring-2 focus:ring-sky-500/30"
+                        class="w-full rounded-xl border border-slate-300/95 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-inner ring-0 placeholder:text-slate-400 focus:border-sky-600/52 focus:outline-none focus:ring-2 focus:ring-sky-400/42 dark:border-slate-700/80 dark:bg-slate-950/50 dark:text-slate-100 dark:placeholder:text-slate-600 dark:focus:border-sky-600/60 dark:focus:ring-sky-500/30"
                     >{{ old('body') }}</textarea>
 
                     <input type="hidden" name="timestamp_seconds" id="note-timestamp-input" value="{{ old('timestamp_seconds') }}" />
@@ -251,7 +251,7 @@
                             Lesson note (no time)
                         </button>
                     </div>
-                    <p id="note-timestamp-label" class="mt-2 hidden text-xs text-slate-500" aria-live="polite"></p>
+                    <p id="note-timestamp-label" class="mt-2 hidden text-xs text-slate-600 dark:text-slate-500" aria-live="polite"></p>
 
                     <div class="mt-4">
                         <button type="submit" class="btn-primary text-sm">Save note</button>
@@ -259,29 +259,29 @@
                 </form>
 
                 @if ($video->notes->isEmpty())
-                    <p class="mt-6 text-sm text-slate-500">No notes for this lesson yet.</p>
+                    <p class="mt-6 text-sm text-slate-600 dark:text-slate-500">No notes for this lesson yet.</p>
                 @else
                     <ul class="mt-6 space-y-3" role="list">
                         @foreach ($video->notes as $note)
-                            <li class="rounded-2xl border border-slate-800/90 bg-slate-900/30 px-4 py-3.5 ring-1 ring-slate-800/60 sm:px-5">
+                            <li class="rounded-2xl border border-slate-200/96 bg-white px-4 py-3.5 ring-1 ring-slate-200/92 sm:px-5 dark:border-slate-800/90 dark:bg-slate-900/30 dark:ring-slate-800/60">
                                 <div class="flex flex-wrap items-start justify-between gap-3">
                                     <div class="min-w-0 flex-1">
                                         @if ($note->timestamp_seconds !== null)
                                             <div class="mb-2 flex flex-wrap items-center gap-2">
                                                 <button
                                                     type="button"
-                                                    class="inline-flex items-center rounded-lg bg-sky-950/55 px-2.5 py-1 font-mono text-xs tabular-nums font-semibold text-sky-300 ring-1 ring-sky-600/35 transition hover:bg-sky-900/55 hover:text-sky-200"
+                                                    class="inline-flex items-center rounded-lg bg-sky-100 px-2.5 py-1 font-mono text-xs tabular-nums font-semibold text-sky-800 ring-1 ring-sky-400/45 transition hover:bg-sky-200/92 hover:text-sky-950 dark:bg-sky-950/55 dark:text-sky-300 dark:ring-sky-600/35 dark:hover:bg-sky-900/55 dark:hover:text-sky-200"
                                                     data-note-seek="{{ $note->timestamp_seconds }}"
                                                     aria-label="Jump to {{ $note->timestampLabel() }} in this video"
                                                 >
                                                     {{ $note->timestampLabel() }}
                                                 </button>
-                                                <span class="text-[0.65rem] uppercase tracking-wider text-slate-500">Cue</span>
+                                                <span class="text-[0.65rem] uppercase tracking-wider text-slate-600 dark:text-slate-500">Cue</span>
                                             </div>
                                         @else
-                                            <p class="mb-2 text-[0.65rem] font-medium uppercase tracking-wider text-slate-500">Lesson note</p>
+                                            <p class="mb-2 text-[0.65rem] font-medium uppercase tracking-wider text-slate-600 dark:text-slate-500">Lesson note</p>
                                         @endif
-                                        <p class="whitespace-pre-wrap text-sm leading-relaxed text-slate-200">{{ $note->body }}</p>
+                                        <p class="whitespace-pre-wrap text-sm leading-relaxed text-slate-800 dark:text-slate-200">{{ $note->body }}</p>
                                     </div>
                                     <form
                                         action="{{ route('videos.notes.destroy', [$video, $note]) }}"
@@ -291,7 +291,7 @@
                                     >
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-xs font-medium text-slate-500 underline decoration-slate-600/60 underline-offset-2 hover:text-rose-400 hover:decoration-rose-500/50">
+                                        <button type="submit" class="text-xs font-medium text-slate-600 underline decoration-slate-500/62 underline-offset-2 hover:text-rose-600 hover:decoration-rose-500/55 dark:text-slate-500 dark:decoration-slate-600/60 dark:hover:text-rose-400 dark:hover:decoration-rose-500/50">
                                             Remove
                                         </button>
                                     </form>
@@ -315,30 +315,30 @@
             <button
                 type="button"
                 id="up-next-backdrop"
-                class="absolute inset-0 bg-slate-950/65 backdrop-blur-[3px] transition hover:bg-slate-950/75"
+                class="absolute inset-0 bg-slate-900/42 backdrop-blur-[3px] transition hover:bg-slate-900/50 dark:bg-slate-950/65 dark:hover:bg-slate-950/75"
                 tabindex="-1"
                 aria-label="Dismiss — stay on this lesson"
             ></button>
             <div
-                class="relative z-10 mx-auto mb-2 w-full max-w-lg overflow-hidden rounded-2xl border border-slate-700/90 bg-slate-900/95 shadow-2xl shadow-black/50 ring-1 ring-white/10 sm:mb-4"
+                class="relative z-10 mx-auto mb-2 w-full max-w-lg overflow-hidden rounded-2xl border border-slate-300/92 bg-white/96 shadow-2xl shadow-slate-400/30 ring-1 ring-sky-950/12 sm:mb-4 dark:border-slate-700/90 dark:bg-slate-900/95 dark:shadow-black/50 dark:ring-white/10"
             >
                 <div class="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-5">
                     <div class="min-w-0 flex-1">
-                        <p id="up-next-heading" class="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-sky-400/95">
+                        <p id="up-next-heading" class="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-sky-700 dark:text-sky-400/95">
                             Up next
                         </p>
-                        <p id="up-next-title" class="mt-2 line-clamp-2 text-base font-semibold leading-snug text-white sm:text-lg">
+                        <p id="up-next-title" class="mt-2 line-clamp-2 text-base font-semibold leading-snug text-slate-900 dark:text-white sm:text-lg">
                             {{ $nextVideo->title }}
                         </p>
-                        <p class="mt-3 flex flex-wrap items-baseline gap-x-2 text-sm text-slate-400">
+                        <p class="mt-3 flex flex-wrap items-baseline gap-x-2 text-sm text-slate-600 dark:text-slate-400">
                             <span>Playing in</span>
                             <span
                                 id="up-next-seconds"
-                                class="inline-flex min-w-[2.25rem] items-center justify-center rounded-lg bg-sky-950/80 px-2 py-1 font-mono text-xl font-bold tabular-nums text-sky-300 ring-1 ring-sky-600/40"
+                                class="inline-flex min-w-[2.25rem] items-center justify-center rounded-lg bg-sky-100 px-2 py-1 font-mono text-xl font-bold tabular-nums text-sky-800 ring-1 ring-sky-500/52 dark:bg-sky-950/80 dark:text-sky-300 dark:ring-sky-600/40"
                                 aria-live="polite"
                                 aria-atomic="true"
                             >{{ 5 }}</span>
-                            <span class="text-slate-500">seconds</span>
+                            <span class="text-slate-600 dark:text-slate-500">seconds</span>
                         </p>
                     </div>
                     <div class="flex shrink-0 flex-wrap gap-2 sm:flex-col sm:items-stretch">
