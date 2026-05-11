@@ -13,7 +13,22 @@ class Course extends Model
     protected $fillable = [
         'title',
         'folder_path',
+        'archived_at',
     ];
+
+    protected $casts = [
+        'archived_at' => 'datetime',
+    ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Course $course): void {
+            // New courses should always start active unless explicitly archived.
+            if (! $course->isDirty('archived_at')) {
+                $course->archived_at = null;
+            }
+        });
+    }
 
     public function videos(): HasMany
     {
@@ -43,6 +58,16 @@ class Course extends Model
             ->orderByRaw('CASE WHEN lw.last_watch_at IS NULL THEN 1 ELSE 0 END')
             ->orderByDesc('lw.last_watch_at')
             ->orderBy('courses.title');
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->whereNull('archived_at');
+    }
+
+    public function scopeArchived(Builder $query): Builder
+    {
+        return $query->whereNotNull('archived_at');
     }
 
     /**

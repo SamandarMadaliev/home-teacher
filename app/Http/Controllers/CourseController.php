@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 
 class CourseController extends Controller
@@ -20,12 +21,20 @@ class CourseController extends Controller
     public function index(): View
     {
         $courses = Course::query()
+            ->active()
             ->with(['videos.progress'])
             ->withCount('videos')
             ->orderedForLibrary()
             ->get();
 
-        return view('courses.index', compact('courses'));
+        $archivedCourses = Course::query()
+            ->archived()
+            ->withCount('videos')
+            ->orderByDesc('archived_at')
+            ->orderBy('title')
+            ->get();
+
+        return view('courses.index', compact('courses', 'archivedCourses'));
     }
 
     public function create(): View
@@ -50,6 +59,7 @@ class CourseController extends Controller
         $course = Course::create([
             'title' => $validated['title'],
             'folder_path' => $resolved,
+            'archived_at' => null,
         ]);
 
         $count = $this->scanner->sync($course);
@@ -129,5 +139,39 @@ class CourseController extends Controller
             : 'Rescanned: '.$count.' lesson(s) indexed.';
 
         return back()->with('status', $message);
+    }
+
+    public function archive(Course $course): RedirectResponse
+    {
+        if ($course->archived_at !== null) {
+            return back()->with('status', 'Course is already archived.');
+        }
+
+        $course->forceFill([
+            'archived_at' => Carbon::now(),
+        ])->save();
+
+        return redirect()->route('courses.index')->with('status', 'Course archived.');
+    }
+
+    public function restore(Course $course): RedirectResponse
+    {
+        if ($course->archived_at === null) {
+            return back()->with('status', 'Course is already active.');
+        }
+
+        $course->forceFill([
+            'archived_at' => null,
+        ])->save();
+
+        return redirect()->route('courses.show', $course)->with('status', 'Course restored.');
+    }
+
+    public function destroy(Course $course): RedirectResponse
+    {
+        $title = $course->title;
+        $course->delete();
+
+        return redirect()->route('courses.index')->with('status', 'Deleted course: '.$title.'.');
     }
 }

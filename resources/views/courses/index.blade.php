@@ -91,4 +91,30 @@
             @endforeach
         </ul>
     @endif
+
+    @if ($archivedCourses->isNotEmpty())
+        <section class="mt-12">
+            <div class="mb-4">
+                <h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100">Archived courses</h2>
+                <p class="mt-1 text-sm text-slate-600 dark:text-slate-500">Archived courses are hidden from home and active library cards.</p>
+            </div>
+            <ul class="space-y-3">
+                @foreach ($archivedCourses as $course)
+                    <li class="card-surface flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="min-w-0">
+                            <p class="truncate font-medium text-slate-900 dark:text-slate-100">{{ $course->title }}</p>
+                            <p class="mt-1 text-xs text-slate-600 dark:text-slate-500">{{ $course->videos_count }} lesson{{ $course->videos_count === 1 ? '' : 's' }}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('courses.show', $course) }}" class="btn-secondary px-3 py-2 text-xs">Open</a>
+                            <form action="{{ route('courses.restore', $course) }}" method="post">
+                                @csrf
+                                <button type="submit" class="btn-secondary px-3 py-2 text-xs">Restore</button>
+                            </form>
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        </section>
+    @endif
 @endsection

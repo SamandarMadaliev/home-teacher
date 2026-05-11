@@ -18,6 +18,7 @@ class HomeController extends Controller
 
         $lastWatchedCourse = $courseId !== null
             ? Course::query()
+                ->active()
                 ->with(['videos.progress'])
                 ->withCount('videos')
                 ->find($courseId)
@@ -38,6 +39,7 @@ class HomeController extends Controller
             ->get();
 
         $courses = Course::query()
+            ->active()
             ->with(['videos.progress'])
             ->withCount('videos')
             ->orderedForLibrary()

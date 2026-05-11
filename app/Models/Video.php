@@ -38,6 +38,11 @@ class Video extends Model
         return $this->hasMany(VideoNote::class)->orderByRaw('CASE WHEN timestamp_seconds IS NULL THEN 0 ELSE 1 END')->orderBy('timestamp_seconds')->orderBy('id');
     }
 
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(VideoAttachment::class)->orderBy('sort_order')->orderBy('id');
+    }
+
     public function absoluteFilePath(): ?string
     {
         $this->loadMissing('course');

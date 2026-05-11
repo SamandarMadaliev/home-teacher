@@ -75,6 +75,28 @@ html.dark .app-backdrop {
     @apply inline-flex shrink-0 items-center justify-center rounded-lg border border-slate-300/90 bg-white/85 p-2 text-slate-500 shadow-sm shadow-slate-200/75 ring-1 ring-slate-200/85 transition hover:border-sky-500/45 hover:bg-sky-50/95 hover:text-sky-700 hover:ring-sky-300/55 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/55 dark:border-slate-700/75 dark:bg-slate-900/60 dark:text-slate-400 dark:shadow-black/20 dark:ring-slate-800/80 dark:hover:border-sky-600/55 dark:hover:bg-sky-950/35 dark:hover:text-sky-300 dark:hover:ring-sky-800/55;
 }
 
+/* Course "Manage" overflow menu (built on <details>/<summary>) */
+.manage-menu > summary {
+    list-style: none;
+}
+.manage-menu > summary::-webkit-details-marker {
+    display: none;
+}
+.manage-menu > summary::marker {
+    content: '';
+}
+
+/* Collapsible help blocks (e.g. course create tips) */
+.details-plain > summary {
+    list-style: none;
+}
+.details-plain > summary::-webkit-details-marker {
+    display: none;
+}
+.details-plain > summary::marker {
+    content: '';
+}
+
 /*
  | Courses index: real CSS grid so three cards per row always works at desktop
  | (does not rely on Tailwind scanning arbitrary class strings).
