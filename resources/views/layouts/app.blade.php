@@ -22,7 +22,8 @@
 </head>
 <body class="app-backdrop min-h-full text-slate-800 antialiased selection:bg-sky-300/50 selection:text-slate-900 dark:text-slate-100/95 dark:selection:bg-sky-500/30 dark:selection:text-white">
     <header class="app-header-bar sticky top-0 z-50 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70 dark:supports-[backdrop-filter]:bg-slate-950/70">
-        <div class="mx-auto @yield('main_max_class', 'max-w-5xl') flex items-center justify-between gap-3 px-4 py-3.5 sm:gap-4 sm:px-6 sm:py-4">
+        {{-- Header width is fixed so the bar lines up on every page; main still uses @section('main_max_class') below. --}}
+        <div class="app-header-inner mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3.5 sm:gap-4 sm:px-6 sm:py-4">
             <a href="{{ route('home') }}" class="group flex min-w-0 items-center gap-3" aria-label="{{ config('app.name') }}, home">
                 <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 text-lg shadow-lg shadow-sky-300/55 ring-1 ring-white/30 transition group-hover:shadow-sky-500/25 dark:shadow-blue-950/45 dark:ring-white/20 dark:group-hover:shadow-sky-500/20" aria-hidden="true">
                     <span class="text-sm font-bold text-slate-950">▶</span>
@@ -35,6 +36,7 @@
                 <a href="{{ route('home') }}" class="nav-pill text-[13px] sm:text-sm">Home</a>
                 <a href="{{ route('courses.index') }}" class="nav-pill text-[13px] sm:text-sm">Courses</a>
                 <a href="{{ route('roadmaps.index') }}" class="nav-pill text-[13px] sm:text-sm">Roadmaps</a>
+                <a href="{{ route('playground.show') }}" class="nav-pill text-[13px] sm:text-sm">Playground</a>
                 <button
                     type="button"
                     id="theme-toggle"

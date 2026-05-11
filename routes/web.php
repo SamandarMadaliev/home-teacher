@@ -3,6 +3,7 @@
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\FolderPickerController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PlaygroundController;
 use App\Http\Controllers\RoadmapController;
 use App\Http\Controllers\VideoAttachmentController;
 use App\Http\Controllers\VideoController;
@@ -22,6 +23,10 @@ Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('
 Route::post('/courses/{course}/videos/reorder', [CourseController::class, 'reorderVideos'])->name('courses.videos.reorder');
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
+
+Route::get('/playground', [PlaygroundController::class, 'show'])->name('playground.show');
+Route::post('/playground/run', [PlaygroundController::class, 'run'])->name('playground.run');
+Route::post('/playground/refresh', [PlaygroundController::class, 'refresh'])->name('playground.refresh');
 
 Route::resource('roadmaps', RoadmapController::class);
 Route::post('/roadmaps/{roadmap}/courses/reorder', [RoadmapController::class, 'reorderCourses'])->name('roadmaps.courses.reorder');

@@ -5,7 +5,7 @@
 @section('title', $video->title.' — '.config('app.name'))
 
 @push('head')
-    @vite(['resources/js/player.js'])
+    @vite(['resources/js/player.js', 'resources/js/note-formatter.js'])
 @endpush
 
 @php
@@ -480,16 +480,67 @@
                     action="{{ route('videos.notes.store', $video) }}"
                     method="post"
                     class="mt-5 rounded-2xl border border-slate-200/95 bg-slate-50/96 px-4 py-5 ring-1 ring-slate-200/92 sm:px-5 dark:border-slate-800/90 dark:bg-slate-950/35 dark:ring-slate-800/70"
+                    data-note-editor
                 >
                     @csrf
                     <label for="note-body" class="sr-only">Note</label>
+
+                    <div
+                        class="note-toolbar flex flex-wrap items-center gap-0.5 rounded-t-xl border border-b-0 border-slate-300/95 bg-white/95 px-1.5 py-1 dark:border-slate-700/80 dark:bg-slate-900/70"
+                        role="toolbar"
+                        aria-label="Format note"
+                        data-note-toolbar
+                    >
+                        <button type="button" data-md="bold" class="note-toolbar-btn" title="Bold (⌘/Ctrl+B)" aria-label="Bold">
+                            <span class="font-bold">B</span>
+                        </button>
+                        <button type="button" data-md="italic" class="note-toolbar-btn" title="Italic (⌘/Ctrl+I)" aria-label="Italic">
+                            <span class="italic font-serif">I</span>
+                        </button>
+                        <button type="button" data-md="strike" class="note-toolbar-btn" title="Strikethrough" aria-label="Strikethrough">
+                            <span class="line-through">S</span>
+                        </button>
+                        <button type="button" data-md="code" class="note-toolbar-btn" title="Inline code (⌘/Ctrl+E)" aria-label="Inline code">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m6.75 7.5-4.5 4.5 4.5 4.5m10.5-9 4.5 4.5-4.5 4.5m-3.75-13.5-3 16.5" />
+                            </svg>
+                        </button>
+                        <span class="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700/80" aria-hidden="true"></span>
+                        <button type="button" data-md="heading" class="note-toolbar-btn" title="Heading" aria-label="Heading">
+                            <span class="font-bold">H</span>
+                        </button>
+                        <button type="button" data-md="ul" class="note-toolbar-btn" title="Bulleted list" aria-label="Bulleted list">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-4" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.008v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.008v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.008v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                            </svg>
+                        </button>
+                        <button type="button" data-md="ol" class="note-toolbar-btn" title="Numbered list" aria-label="Numbered list">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-4" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.242 5.992h12m-12 6.003H20.24m-12 5.999h12M4.117 7.495v-3.75H2.99m1.125 3.75H2.99m1.125 0H5.24m-1.92 2.577a1.125 1.125 0 1 1 1.591 1.59l-1.83 1.83h2.16M2.99 15.745h1.125a1.125 1.125 0 0 1 0 2.25H3.74m0-.002.384.001h.376a1.125 1.125 0 1 1 0 2.25H2.99" />
+                            </svg>
+                        </button>
+                        <button type="button" data-md="quote" class="note-toolbar-btn" title="Quote" aria-label="Quote">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-4" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+                            </svg>
+                        </button>
+                        <span class="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700/80" aria-hidden="true"></span>
+                        <button type="button" data-md="link" class="note-toolbar-btn" title="Link (⌘/Ctrl+K)" aria-label="Link">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-4" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                            </svg>
+                        </button>
+                        <span class="ml-auto hidden pr-1 text-[10px] font-mono text-slate-500 dark:text-slate-500 sm:inline">Markdown</span>
+                    </div>
+
                     <textarea
                         id="note-body"
                         name="body"
-                        rows="4"
+                        rows="5"
                         required
-                        placeholder="Write your note here…"
-                        class="input-field min-h-[6.5rem] resize-y text-sm"
+                        placeholder="Write your note here… Markdown supported: **bold**, *italic*, `code`, lists, links."
+                        class="note-textarea block w-full resize-y rounded-b-xl border border-slate-300/95 bg-white px-3 py-2.5 font-sans text-sm text-slate-900 shadow-inner shadow-slate-200/60 transition placeholder:text-slate-500 focus:border-sky-500/80 focus:outline-none focus:ring-2 focus:ring-sky-400/35 dark:border-slate-700/80 dark:bg-slate-950/70 dark:text-slate-100 dark:shadow-black/25 dark:placeholder:text-slate-500 dark:focus:border-sky-600/70 dark:focus:ring-sky-500/35"
+                        data-note-input
                     >{{ old('body') }}</textarea>
 
                     <input type="hidden" name="timestamp_seconds" id="note-timestamp-input" value="{{ old('timestamp_seconds') }}" />
@@ -542,7 +593,7 @@
                                         @else
                                             <p class="mb-2 text-[0.65rem] font-medium uppercase tracking-wider text-slate-600 dark:text-slate-500">Lesson note</p>
                                         @endif
-                                        <p class="whitespace-pre-wrap text-sm leading-relaxed text-slate-800 dark:text-slate-200">{{ $note->body }}</p>
+                                        <div class="note-prose text-sm leading-relaxed text-slate-800 dark:text-slate-200">{!! $note->bodyHtml() !!}</div>
                                     </div>
                                     <form
                                         action="{{ route('videos.notes.destroy', [$video, $note]) }}"

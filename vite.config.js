@@ -11,6 +11,8 @@ export default defineConfig({
                 'resources/js/player.js',
                 'resources/js/course-lessons.js',
                 'resources/js/roadmap-courses.js',
+                'resources/js/playground.js',
+                'resources/js/note-formatter.js',
             ],
             refresh: true,
         }),

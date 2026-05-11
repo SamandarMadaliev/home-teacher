@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class VideoNote extends Model
 {
@@ -23,6 +24,27 @@ class VideoNote extends Model
     public function video(): BelongsTo
     {
         return $this->belongsTo(Video::class);
+    }
+
+    /**
+     * Render the markdown-formatted note body to safe HTML.
+     *
+     * Notes are stored as plain markdown text. We escape any raw HTML the user
+     * may have pasted (`html_input => 'escape'`) and forbid `javascript:` /
+     * `data:` URLs in links (`allow_unsafe_links => false`) so the rendered
+     * markup is safe to drop in with `{!! !!}`.
+     */
+    public function bodyHtml(): string
+    {
+        $body = trim((string) ($this->body ?? ''));
+        if ($body === '') {
+            return '';
+        }
+
+        return Str::markdown($body, [
+            'html_input' => 'escape',
+            'allow_unsafe_links' => false,
+        ]);
     }
 
     /**

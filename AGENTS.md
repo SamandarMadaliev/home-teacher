@@ -25,6 +25,7 @@ Local **Laravel** app to watch **course videos from disk** with **saved progress
 - Videos: `videos.show`, `videos.update` (PATCH — rename lesson), `videos.stream`, `videos.progress` (POST JSON)
 - Notes: `videos.notes.store`, `videos.notes.destroy`
 - Attachments: `videos.attachments.store` (POST, `kind=file|link`; for files send a `file_path` string — absolute or relative to the course folder; for links send `url`), `videos.attachments.download` (GET — streams the file inline from its real on-disk location via `response()->file()`), `videos.attachments.destroy`
+- Playground: `playground.show` (GET — picks up detected runtimes via `LanguageRuntimeProbe`), `playground.run` (POST JSON `{ language, code, stdin? }` → JSON `{ stdout, stderr, exit_code, duration_ms, timed_out, stdout_truncated, stderr_truncated }`), `playground.refresh` (POST — clears the probe cache).
 
 ## Features (do not break casually)
 
@@ -34,6 +35,7 @@ Local **Laravel** app to watch **course videos from disk** with **saved progress
 4. **Lesson notes** under the player: general vs **playhead time**; list shows cues that **seek** — `window.__COURSE_PLAYER__.getCurrentTime` / `.seekTo` from `player.js`.
 5. **Lesson resources** (above notes): two sub-forms — **attach file from disk** (paste a path, absolute or relative to the course folder; nothing is uploaded — the file is read in place via `VideoAttachment::absoluteFilePath()` whenever served) and **add link** (validated URL). List shows each item with a "Open" link (files open inline / download via `response()->file()`; links open in a new tab) and a remove action. Files whose path no longer resolves are rendered with a strikethrough title and a "File missing" hint.
 6. **End of video**: optional redirect via `nextUrl` in `__COURSE_PLAYER__`.
+7. **Code playground** (`/playground`): server-side runner for **JavaScript, Python, PHP, Go**. `app/Services/LanguageRuntimeProbe.php` probes `node`, `python3`, `php`, `go` via `Symfony\Process` and caches the result for 1h under key `playground.runtimes.v1`; the UI only offers languages whose binary was found, and shows install hints (Homebrew / apt) when none are available. `app/Services/CodeRunner.php` writes `main.{ext}` (plus `go.mod` for Go) to a fresh `storage/app/playground/{uuid}/` per run, executes with an **8 s timeout**, caps stdout/stderr at **256 KB each**, and deletes the temp dir in `finally`. The editor is a textarea with Tab indent and **⌘/Ctrl+Enter** to run; last code per language persists in `localStorage` under `home-teacher-playground-code-{lang}`.
 
 ## After clone / pull
 

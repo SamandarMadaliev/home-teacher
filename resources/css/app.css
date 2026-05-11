@@ -405,3 +405,325 @@ html.dark .nav-pill:hover {
     background: rgb(30 41 59 / 0.85);
     color: rgb(248 250 252);
 }
+
+/* —— Playground (CodeMirror-backed IDE) —— */
+
+.playground-shell {
+    overflow: hidden;
+}
+
+.playground-editor {
+    height: clamp(22rem, 60vh, 34rem);
+}
+
+@media (min-width: 1024px) {
+    .playground-editor {
+        height: clamp(28rem, 68vh, 40rem);
+    }
+}
+
+.playground-editor .cm-editor {
+    height: 100%;
+    background: transparent;
+    outline: none;
+}
+
+.playground-editor .cm-editor.cm-focused {
+    outline: none;
+}
+
+.playground-editor .cm-scroller {
+    overflow: auto;
+}
+
+/* Light-mode polish for the default CodeMirror palette */
+html:not(.dark) .playground-editor .cm-editor {
+    background: #ffffff;
+    color: rgb(15 23 42);
+}
+
+html:not(.dark) .playground-editor .cm-gutters {
+    background: rgb(248 250 252);
+    color: rgb(100 116 139);
+    border-right: 1px solid rgb(226 232 240);
+}
+
+html:not(.dark) .playground-editor .cm-activeLine {
+    background: rgb(241 245 249 / 0.7);
+}
+
+html:not(.dark) .playground-editor .cm-activeLineGutter {
+    background: rgb(226 232 240 / 0.85);
+    color: rgb(15 23 42);
+}
+
+html:not(.dark) .playground-editor .cm-selectionBackground,
+html:not(.dark) .playground-editor .cm-content ::selection {
+    background: rgb(186 230 253) !important;
+}
+
+html:not(.dark) .playground-editor .cm-cursor {
+    border-left-color: rgb(2 132 199);
+}
+
+/* Dark-mode tweak: one-dark gutters blend with our slate surround */
+html.dark .playground-editor .cm-editor {
+    background: transparent;
+}
+
+html.dark .playground-editor .cm-gutters {
+    background: transparent;
+    border-right-color: rgb(30 41 59 / 0.7);
+}
+
+/* Toolbar icon buttons */
+.playground-iconbtn {
+    @apply inline-flex items-center gap-1 rounded-md border border-slate-200/90 bg-white px-2 py-1 text-[11px] font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60 dark:border-slate-700/80 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800/70 dark:hover:text-white;
+}
+
+.playground-iconbtn[aria-pressed='true'] {
+    @apply border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700/55 dark:bg-sky-950/45 dark:text-sky-200;
+}
+
+/* File-tab look (hide outline aria-selected indicator since we style it inline) */
+.playground-tab {
+    margin-bottom: -1px;
+}
+
+/* Console pane tabs (VS Code panel style) */
+.playground-console-tab {
+    @apply rounded-t-md px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500 transition hover:text-slate-900 aria-selected:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 dark:aria-selected:text-slate-100;
+    position: relative;
+}
+
+.playground-console-tab[aria-selected='true']::after {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    right: 0.5rem;
+    bottom: -1px;
+    height: 2px;
+    background: linear-gradient(90deg, rgb(56 189 248), rgb(59 130 246));
+    border-radius: 2px;
+}
+
+/* Console panel scrollbar polish */
+.playground-console [data-console-panel]::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.playground-console [data-console-panel]::-webkit-scrollbar-thumb {
+    background: rgb(148 163 184 / 0.5);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+html.dark .playground-console [data-console-panel]::-webkit-scrollbar-thumb {
+    background: rgb(71 85 105 / 0.6);
+    background-clip: padding-box;
+}
+
+/* Hide native marker on details summary inside the playground */
+.playground-stdin > summary {
+    list-style: none;
+}
+
+.playground-stdin > summary::-webkit-details-marker {
+    display: none;
+}
+
+.playground-stdin > summary::marker {
+    content: '';
+}
+
+.playground-stdin[open] > summary > span > svg {
+    transform: rotate(180deg);
+}
+
+.playground-stdin > summary > span > svg {
+    transition: transform 0.15s ease;
+}
+
+/* —— Lesson notes: markdown toolbar + rendered prose —— */
+
+.note-toolbar-btn {
+    @apply inline-flex h-7 min-w-[1.75rem] items-center justify-center rounded-md px-1.5 text-[12px] text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-100;
+}
+
+.note-toolbar-btn:active {
+    @apply bg-slate-200/85 dark:bg-slate-800;
+}
+
+.note-textarea {
+    font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+/*
+ | Saved-note rendered markdown.
+ |
+ | A pared-down "prose" — just enough rules so headings, lists, code, quotes,
+ | and links look right inline with the rest of the note card. We don't import
+ | @tailwindcss/typography for this since the surface area is tiny.
+ */
+.note-prose > * + * {
+    margin-top: 0.55rem;
+}
+
+.note-prose p {
+    margin: 0;
+}
+
+.note-prose h1,
+.note-prose h2,
+.note-prose h3,
+.note-prose h4 {
+    font-weight: 600;
+    line-height: 1.25;
+    color: rgb(15 23 42);
+}
+
+html.dark .note-prose h1,
+html.dark .note-prose h2,
+html.dark .note-prose h3,
+html.dark .note-prose h4 {
+    color: rgb(248 250 252);
+}
+
+.note-prose h1 {
+    font-size: 1.1rem;
+}
+.note-prose h2 {
+    font-size: 1.05rem;
+}
+.note-prose h3,
+.note-prose h4 {
+    font-size: 1rem;
+}
+
+.note-prose strong {
+    font-weight: 700;
+    color: rgb(15 23 42);
+}
+
+html.dark .note-prose strong {
+    color: rgb(248 250 252);
+}
+
+.note-prose em {
+    font-style: italic;
+}
+
+.note-prose del {
+    color: rgb(100 116 139);
+}
+
+html.dark .note-prose del {
+    color: rgb(148 163 184);
+}
+
+.note-prose a {
+    color: rgb(2 132 199);
+    text-decoration: underline;
+    text-decoration-color: rgb(56 189 248 / 0.55);
+    text-underline-offset: 2px;
+    word-break: break-word;
+}
+
+.note-prose a:hover {
+    color: rgb(3 105 161);
+    text-decoration-color: currentColor;
+}
+
+html.dark .note-prose a {
+    color: rgb(125 211 252);
+    text-decoration-color: rgb(56 189 248 / 0.45);
+}
+
+html.dark .note-prose a:hover {
+    color: rgb(186 230 253);
+}
+
+.note-prose ul,
+.note-prose ol {
+    margin: 0;
+    padding-left: 1.35rem;
+}
+
+.note-prose ul {
+    list-style: disc;
+}
+
+.note-prose ol {
+    list-style: decimal;
+}
+
+.note-prose li {
+    margin-top: 0.2rem;
+}
+
+.note-prose li > p {
+    margin: 0;
+}
+
+.note-prose blockquote {
+    margin: 0;
+    padding: 0.35rem 0.85rem;
+    border-left: 3px solid rgb(56 189 248 / 0.6);
+    background: rgb(241 245 249 / 0.7);
+    border-radius: 0 0.5rem 0.5rem 0;
+    color: rgb(51 65 85);
+}
+
+html.dark .note-prose blockquote {
+    background: rgb(15 23 42 / 0.55);
+    border-left-color: rgb(56 189 248 / 0.45);
+    color: rgb(203 213 225);
+}
+
+.note-prose code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    font-size: 0.875em;
+    padding: 0.1rem 0.35rem;
+    border-radius: 0.35rem;
+    background: rgb(241 245 249);
+    color: rgb(15 23 42);
+    border: 1px solid rgb(226 232 240);
+}
+
+html.dark .note-prose code {
+    background: rgb(15 23 42 / 0.85);
+    color: rgb(226 232 240);
+    border-color: rgb(51 65 85 / 0.8);
+}
+
+.note-prose pre {
+    margin: 0;
+    padding: 0.75rem 0.9rem;
+    border-radius: 0.65rem;
+    background: rgb(15 23 42);
+    color: rgb(226 232 240);
+    overflow-x: auto;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.note-prose pre code {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+}
+
+.note-prose hr {
+    border: 0;
+    height: 1px;
+    background: rgb(226 232 240);
+    margin: 0.5rem 0;
+}
+
+html.dark .note-prose hr {
+    background: rgb(51 65 85 / 0.6);
+}
