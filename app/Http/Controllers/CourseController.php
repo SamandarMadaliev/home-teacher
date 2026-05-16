@@ -21,6 +21,7 @@ class CourseController extends Controller
     public function index(): View
     {
         $courses = Course::query()
+            ->forCurrentUser()
             ->active()
             ->with(['videos.progress'])
             ->withCount('videos')
@@ -28,6 +29,7 @@ class CourseController extends Controller
             ->get();
 
         $archivedCourses = Course::query()
+            ->forCurrentUser()
             ->archived()
             ->withCount('videos')
             ->orderByDesc('archived_at')
@@ -57,6 +59,7 @@ class CourseController extends Controller
         }
 
         $course = Course::create([
+            'user_id' => $request->user()->id,
             'title' => $validated['title'],
             'folder_path' => $resolved,
             'archived_at' => null,

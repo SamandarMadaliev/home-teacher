@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,7 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class Course extends Model
 {
+    use BelongsToUser;
+
     protected $fillable = [
+        'user_id',
         'title',
         'folder_path',
         'archived_at',

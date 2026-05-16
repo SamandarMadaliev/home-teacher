@@ -50,6 +50,51 @@ html.dark .app-backdrop {
     @apply inline-flex items-center justify-center rounded-xl border border-slate-300/95 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-800 shadow-sm shadow-slate-200/70 backdrop-blur-sm transition hover:border-sky-500/45 hover:bg-sky-50/95 hover:text-slate-900 dark:border-slate-600/70 dark:bg-slate-900/70 dark:text-slate-100/95 dark:shadow-transparent dark:hover:border-sky-600/55 dark:hover:bg-slate-800/85 dark:hover:text-white;
 }
 
+.btn-google {
+    @apply inline-flex items-center justify-center gap-3 rounded-xl border border-slate-300/95 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-sm shadow-slate-200/70 no-underline transition hover:border-slate-400/95 hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/85 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/70 dark:bg-slate-900/85 dark:text-slate-100 dark:shadow-transparent dark:hover:border-slate-500/80 dark:hover:bg-slate-800/90 dark:hover:text-white dark:focus-visible:ring-offset-slate-900;
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgb(100 116 139);
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgb(203 213 225 / 0.95) 20%,
+        rgb(203 213 225 / 0.95) 80%,
+        transparent
+    );
+}
+
+html.dark .auth-divider {
+    color: rgb(100 116 139);
+}
+
+html.dark .auth-divider::before,
+html.dark .auth-divider::after {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgb(51 65 85 / 0.85) 20%,
+        rgb(51 65 85 / 0.85) 80%,
+        transparent
+    );
+}
+
 .btn-ghost {
     @apply rounded-xl border border-slate-300/90 bg-transparent px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-sky-600/55 hover:bg-sky-50/80 hover:text-slate-900 disabled:opacity-40 dark:border-slate-700/90 dark:text-slate-200/90 dark:hover:border-sky-700/50 dark:hover:bg-slate-800/60 dark:hover:text-white;
 }
@@ -304,6 +349,39 @@ html.dark .home-hero-wrap::after {
 .home-hero-inner {
     position: relative;
     z-index: 1;
+}
+
+.home-guest-feature {
+    border-radius: 1rem;
+    border: 1px solid rgb(203 213 225 / 0.9);
+    background: rgb(255 255 255 / 0.72);
+    padding: 1.15rem 1.2rem;
+    text-align: center;
+    box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.85);
+    backdrop-filter: blur(8px);
+}
+
+html.dark .home-guest-feature {
+    border-color: rgb(51 65 85 / 0.65);
+    background: rgb(15 23 42 / 0.55);
+    box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.04);
+}
+
+.home-guest-feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-inline: auto;
+    border-radius: 0.75rem;
+    border: 1px solid rgb(125 211 252 / 0.45);
+    background: rgb(224 242 254 / 0.85);
+}
+
+html.dark .home-guest-feature-icon {
+    border-color: rgb(14 165 233 / 0.25);
+    background: rgb(12 74 110 / 0.45);
 }
 
 .roadmap-card-home {

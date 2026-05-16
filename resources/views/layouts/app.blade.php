@@ -33,10 +33,12 @@
                 </span>
             </a>
             <nav class="flex max-w-[62%] flex-wrap items-center justify-end gap-0.5 sm:max-w-none sm:gap-1">
-                <a href="{{ route('home') }}" class="nav-pill text-[13px] sm:text-sm">Home</a>
-                <a href="{{ route('courses.index') }}" class="nav-pill text-[13px] sm:text-sm">Courses</a>
-                <a href="{{ route('roadmaps.index') }}" class="nav-pill text-[13px] sm:text-sm">Roadmaps</a>
-                <a href="{{ route('playground.show') }}" class="nav-pill text-[13px] sm:text-sm">Playground</a>
+                @auth
+                    <a href="{{ route('home') }}" class="nav-pill text-[13px] sm:text-sm">Home</a>
+                    <a href="{{ route('courses.index') }}" class="nav-pill text-[13px] sm:text-sm">Courses</a>
+                    <a href="{{ route('roadmaps.index') }}" class="nav-pill text-[13px] sm:text-sm">Roadmaps</a>
+                    <a href="{{ route('playground.show') }}" class="nav-pill text-[13px] sm:text-sm">Playground</a>
+                @endauth
                 <button
                     type="button"
                     id="theme-toggle"
@@ -52,13 +54,30 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                     </svg>
                 </button>
-                <a
-                    href="{{ route('courses.create') }}"
-                    class="ml-1 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-md shadow-sky-400/35 ring-1 ring-white/20 transition hover:from-sky-400 hover:to-blue-500 dark:shadow-blue-950/40 dark:ring-white/15 dark:hover:shadow-sky-900/50 sm:ml-2 sm:px-4 sm:text-sm"
-                >
-                    <span class="sm:hidden">Add</span>
-                    <span class="hidden sm:inline">Add course</span>
-                </a>
+                @auth
+                    <span class="hidden max-w-[8rem] truncate px-2 text-xs font-medium text-slate-600 dark:text-slate-400 sm:inline lg:max-w-[12rem]" title="{{ auth()->user()->email }}">
+                        {{ auth()->user()->name }}
+                    </span>
+                    <form action="{{ route('logout') }}" method="post" class="inline">
+                        @csrf
+                        <button type="submit" class="nav-pill text-[13px] sm:text-sm">Sign out</button>
+                    </form>
+                    <a
+                        href="{{ route('courses.create') }}"
+                        class="ml-1 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-md shadow-sky-400/35 ring-1 ring-white/20 transition hover:from-sky-400 hover:to-blue-500 dark:shadow-blue-950/40 dark:ring-white/15 dark:hover:shadow-sky-900/50 sm:ml-2 sm:px-4 sm:text-sm"
+                    >
+                        <span class="sm:hidden">Add</span>
+                        <span class="hidden sm:inline">Add course</span>
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="nav-pill text-[13px] sm:text-sm">Sign in</a>
+                    <a
+                        href="{{ route('register') }}"
+                        class="ml-1 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-md shadow-sky-400/35 ring-1 ring-white/20 transition hover:from-sky-400 hover:to-blue-500 dark:shadow-blue-950/40 dark:ring-white/15 dark:hover:shadow-sky-900/50 sm:ml-2 sm:px-4 sm:text-sm"
+                    >
+                        Sign up
+                    </a>
+                @endauth
             </nav>
         </div>
     </header>

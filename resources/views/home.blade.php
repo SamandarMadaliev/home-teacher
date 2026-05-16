@@ -5,6 +5,66 @@
 @section('title', 'Home — '.config('app.name'))
 
 @section('content')
+    @if (! empty($guest) && $guest)
+        <section class="home-guest-hero home-hero-wrap border border-sky-400/55 bg-white/93 shadow-2xl shadow-slate-400/35 ring-1 ring-slate-900/6 dark:border-sky-500/25 dark:bg-slate-950/80 dark:shadow-black/40 dark:ring-white/5" aria-label="Welcome">
+            <div class="home-hero-inner px-6 py-12 sm:px-10 sm:py-14 lg:px-12 lg:py-16">
+                <div class="mx-auto max-w-2xl text-center">
+                    <p class="section-eyebrow text-sky-600 dark:text-sky-400/95">{{ config('app.name') }}</p>
+                    <h1 class="home-page-title mt-3 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl lg:text-[2.65rem] lg:leading-tight">
+                        Your courses. Your progress. Your account.
+                    </h1>
+                    <p class="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-slate-600 dark:text-slate-400">
+                        Watch lessons from folders on your machine, save progress, take notes, and build roadmaps — each user gets a private library.
+                    </p>
+                    <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
+                        @if (filled(config('services.google.client_id')) && filled(config('services.google.client_secret')))
+                            <a href="{{ route('auth.google.redirect') }}" class="btn-google min-w-[10.5rem] px-6">
+                                <svg class="size-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                </svg>
+                                Google
+                            </a>
+                        @endif
+                        <a href="{{ route('register') }}" class="btn-primary min-w-[10.5rem] px-6">Create account</a>
+                        <a href="{{ route('login') }}" class="btn-secondary min-w-[10.5rem] px-6">Sign in</a>
+                    </div>
+                </div>
+
+                <ul class="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-3 sm:gap-5" role="list">
+                    <li class="home-guest-feature">
+                        <span class="home-guest-feature-icon text-sky-600 dark:text-sky-400" aria-hidden="true">
+                            <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a3 3 0 01-3 3m-3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </span>
+                        <p class="mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100">Private library</p>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-600 dark:text-slate-500">Courses and progress stay tied to your account.</p>
+                    </li>
+                    <li class="home-guest-feature">
+                        <span class="home-guest-feature-icon text-sky-600 dark:text-sky-400" aria-hidden="true">
+                            <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 00-1.06-.44z" />
+                            </svg>
+                        </span>
+                        <p class="mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100">Local videos</p>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-600 dark:text-slate-500">Point at folders on disk — nothing is uploaded.</p>
+                    </li>
+                    <li class="home-guest-feature">
+                        <span class="home-guest-feature-icon text-sky-600 dark:text-sky-400" aria-hidden="true">
+                            <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                            </svg>
+                        </span>
+                        <p class="mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100">Track progress</p>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-600 dark:text-slate-500">Resume lessons, notes, and roadmaps where you left off.</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    @else
     {{-- Page intro --}}
     <header class="mb-10 sm:mb-12">
         <h1 class="home-page-title text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">Home</h1>
@@ -228,4 +288,5 @@
             </ul>
         @endif
     </section>
+    @endif
 @endsection

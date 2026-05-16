@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class RoadmapController extends Controller
@@ -16,6 +17,7 @@ class RoadmapController extends Controller
     public function index(): View
     {
         $roadmaps = Roadmap::query()
+            ->forCurrentUser()
             ->withCount('courses')
             ->orderByDesc('updated_at')
             ->orderBy('title')
@@ -36,7 +38,10 @@ class RoadmapController extends Controller
             'description' => ['nullable', 'string', 'max:65535'],
         ]);
 
-        $roadmap = Roadmap::create($validated);
+        $roadmap = Roadmap::create([
+            ...$validated,
+            'user_id' => $request->user()->id,
+        ]);
 
         return redirect()->route('roadmaps.show', $roadmap)->with('status', 'Roadmap created. Add courses and drag them into the order you want.');
     }
@@ -57,6 +62,7 @@ class RoadmapController extends Controller
 
         $attachedIds = $courses->pluck('id')->all();
         $availableCourses = Course::query()
+            ->forCurrentUser()
             ->when($attachedIds !== [], fn ($q) => $q->whereNotIn('id', $attachedIds))
             ->orderBy('title')
             ->get(['id', 'title']);
@@ -67,7 +73,7 @@ class RoadmapController extends Controller
             'currentCourse' => $currentCourse,
             'allComplete' => $allComplete,
             'availableCourses' => $availableCourses,
-            'libraryHasCourses' => Course::query()->exists(),
+            'libraryHasCourses' => Course::query()->forCurrentUser()->exists(),
         ]);
     }
 
@@ -141,7 +147,11 @@ class RoadmapController extends Controller
     public function attachCourse(Request $request, Roadmap $roadmap): RedirectResponse
     {
         $data = $request->validate([
-            'course_id' => ['required', 'integer', 'exists:courses,id'],
+            'course_id' => [
+                'required',
+                'integer',
+                Rule::exists('courses', 'id')->where('user_id', $request->user()->id),
+            ],
         ]);
 
         if ($roadmap->courses()->where('courses.id', $data['course_id'])->exists()) {

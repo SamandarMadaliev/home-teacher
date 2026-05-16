@@ -11,13 +11,24 @@ class HomeController extends Controller
 {
     public function index(): View
     {
+        if (! auth()->check()) {
+            return view('home', [
+                'guest' => true,
+            ]);
+        }
+
+        $userId = auth()->id();
+
         $courseId = DB::table('video_progress')
             ->join('videos', 'videos.id', '=', 'video_progress.video_id')
+            ->join('courses', 'courses.id', '=', 'videos.course_id')
+            ->where('courses.user_id', $userId)
             ->orderByDesc('video_progress.updated_at')
             ->value('videos.course_id');
 
         $lastWatchedCourse = $courseId !== null
             ? Course::query()
+                ->forCurrentUser()
                 ->active()
                 ->with(['videos.progress'])
                 ->withCount('videos')
@@ -32,6 +43,7 @@ class HomeController extends Controller
             : null;
 
         $roadmaps = Roadmap::query()
+            ->forCurrentUser()
             ->withCount('courses')
             ->orderByDesc('updated_at')
             ->orderBy('title')
@@ -39,6 +51,7 @@ class HomeController extends Controller
             ->get();
 
         $courses = Course::query()
+            ->forCurrentUser()
             ->active()
             ->with(['videos.progress'])
             ->withCount('videos')
@@ -46,6 +59,7 @@ class HomeController extends Controller
             ->get();
 
         return view('home', [
+            'guest' => false,
             'lastWatchedCourse' => $lastWatchedCourse,
             'continueUrl' => $continueUrl,
             'continueVideo' => $continueVideo,
