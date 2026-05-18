@@ -228,6 +228,24 @@ document.addEventListener('keydown', (e) => {
         e.preventDefault();
         const dur = mediaDuration() ?? Number.POSITIVE_INFINITY;
         player.currentTime = Math.min(player.currentTime + 10, dur);
+        return;
+    }
+
+    if (e.code === 'ArrowUp') {
+        e.preventDefault();
+        player.increaseVolume(0.1);
+        return;
+    }
+
+    if (e.code === 'ArrowDown') {
+        e.preventDefault();
+        player.decreaseVolume(0.1);
+        return;
+    }
+
+    if (e.code === 'KeyF' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        player.fullscreen.toggle();
     }
 });
 

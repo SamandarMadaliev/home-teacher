@@ -7,6 +7,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\FolderPickerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PlaygroundController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoadmapController;
 use App\Http\Controllers\VideoAttachmentController;
 use App\Http\Controllers\VideoController;
@@ -31,6 +32,10 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/account', [ProfileController::class, 'account'])->name('profile.account');
+    Route::get('/profile/notes', [ProfileController::class, 'notes'])->name('profile.notes');
+
     Route::get('/folder-picker', FolderPickerController::class)->name('folder-picker');
 
     Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');

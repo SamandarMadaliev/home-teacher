@@ -54,6 +54,29 @@ html.dark .app-backdrop {
     @apply inline-flex items-center justify-center gap-3 rounded-xl border border-slate-300/95 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-sm shadow-slate-200/70 no-underline transition hover:border-slate-400/95 hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/85 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/70 dark:bg-slate-900/85 dark:text-slate-100 dark:shadow-transparent dark:hover:border-slate-500/80 dark:hover:bg-slate-800/90 dark:hover:text-white dark:focus-visible:ring-offset-slate-900;
 }
 
+.profile-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    border-bottom: 1px solid rgb(203 213 225 / 0.95);
+}
+
+html.dark .profile-tabs {
+    border-bottom-color: rgb(51 65 85 / 0.75);
+}
+
+.profile-tab {
+    @apply -mb-px rounded-t-lg border border-transparent px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100/90 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-100;
+}
+
+.profile-tab--active {
+    @apply border-slate-200/95 border-b-white bg-white/95 font-semibold text-sky-700 shadow-sm dark:border-slate-700/80 dark:border-b-slate-950 dark:bg-slate-900/80 dark:text-sky-300;
+}
+
+.profile-tab-panel {
+    min-height: 12rem;
+}
+
 .auth-divider {
     display: flex;
     align-items: center;

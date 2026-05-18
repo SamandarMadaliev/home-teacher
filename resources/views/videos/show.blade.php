@@ -125,6 +125,15 @@
                         ±10s
                     </span>
                     <span class="inline-flex items-center gap-1.5">
+                        <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">↑</kbd>
+                        <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">↓</kbd>
+                        volume
+                    </span>
+                    <span class="inline-flex items-center gap-1.5">
+                        <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">F</kbd>
+                        fullscreen
+                    </span>
+                    <span class="inline-flex items-center gap-1.5">
                         <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">T</kbd>
                         wider layout
                     </span>

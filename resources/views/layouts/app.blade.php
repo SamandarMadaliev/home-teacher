@@ -55,9 +55,13 @@
                     </svg>
                 </button>
                 @auth
-                    <span class="hidden max-w-[8rem] truncate px-2 text-xs font-medium text-slate-600 dark:text-slate-400 sm:inline lg:max-w-[12rem]" title="{{ auth()->user()->email }}">
+                    <a
+                        href="{{ route('profile.index') }}"
+                        class="nav-pill hidden max-w-[8rem] truncate text-[13px] sm:inline lg:max-w-[12rem] sm:text-sm"
+                        title="{{ auth()->user()->email }}"
+                    >
                         {{ auth()->user()->name }}
-                    </span>
+                    </a>
                     <form action="{{ route('logout') }}" method="post" class="inline">
                         @csrf
                         <button type="submit" class="nav-pill text-[13px] sm:text-sm">Sign out</button>
