@@ -218,9 +218,13 @@
             <div class="min-w-0">
                 <p class="section-eyebrow text-sky-600 dark:text-sky-400/95">Library</p>
                 <h2 id="home-courses-heading" class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">Courses</h2>
-                <p class="mt-2 max-w-xl text-sm leading-relaxed text-slate-600 dark:text-slate-500">Recently active courses appear first. Same order as the full library.</p>
+                <p class="mt-2 max-w-xl text-sm leading-relaxed text-slate-600 dark:text-slate-500">Your three most recently active courses.</p>
             </div>
-            <a href="{{ route('courses.index') }}" class="btn-secondary shrink-0 self-start text-sm sm:self-auto">Full library</a>
+            @if ($coursesTotalCount > 0)
+                <a href="{{ route('courses.index') }}" class="btn-secondary shrink-0 self-start text-sm sm:self-auto">
+                    Show all{{ $coursesTotalCount > 3 ? ' ('.$coursesTotalCount.')' : '' }}
+                </a>
+            @endif
         </div>
 
         @if ($courses->isEmpty())

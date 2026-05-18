@@ -51,3 +51,8 @@
 .dark .course-plyr .plyr__control--overlaid:hover {
     background: rgb(125 211 252);
 }
+
+.course-plyr .plyr__control--theater svg {
+    width: 1.125rem;
+    height: 1.125rem;
+}

@@ -77,6 +77,37 @@ html.dark .profile-tabs {
     min-height: 12rem;
 }
 
+.watch-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    border-bottom: 1px solid rgb(203 213 225 / 0.95);
+}
+
+html.dark .watch-tabs {
+    border-bottom-color: rgb(51 65 85 / 0.75);
+}
+
+.watch-tab {
+    @apply -mb-px inline-flex items-center rounded-t-lg border border-transparent px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100/90 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-100;
+}
+
+.watch-tab--active {
+    @apply border-slate-200/95 border-b-white bg-white/95 font-semibold text-sky-700 shadow-sm dark:border-slate-700/80 dark:border-b-slate-950 dark:bg-slate-900/80 dark:text-sky-300;
+}
+
+.watch-tab-badge {
+    @apply ml-1.5 rounded-full bg-slate-200/95 px-1.5 py-0.5 text-[0.65rem] font-semibold text-slate-700 ring-1 ring-slate-300/90 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700/80;
+}
+
+.watch-tab--active .watch-tab-badge {
+    @apply bg-sky-100 text-sky-800 ring-sky-300/70 dark:bg-sky-950/55 dark:text-sky-300 dark:ring-sky-700/45;
+}
+
+.watch-tab-panel {
+    padding-top: 1.25rem;
+}
+
 .auth-divider {
     display: flex;
     align-items: center;

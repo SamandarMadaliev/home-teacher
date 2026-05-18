@@ -50,13 +50,16 @@ class HomeController extends Controller
             ->limit(9)
             ->get();
 
-        $courses = Course::query()
+        $coursesQuery = Course::query()
             ->forCurrentUser()
             ->active()
             ->with(['videos.progress'])
             ->withCount('videos')
-            ->orderedForLibrary()
-            ->get();
+            ->orderedForLibrary();
+
+        $coursesTotalCount = (clone $coursesQuery)->count();
+
+        $courses = $coursesQuery->limit(3)->get();
 
         return view('home', [
             'guest' => false,
@@ -65,6 +68,7 @@ class HomeController extends Controller
             'continueVideo' => $continueVideo,
             'roadmaps' => $roadmaps,
             'courses' => $courses,
+            'coursesTotalCount' => $coursesTotalCount,
         ]);
     }
 }

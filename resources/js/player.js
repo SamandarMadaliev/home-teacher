@@ -395,3 +395,61 @@ function initLessonNotes() {
 }
 
 initLessonNotes();
+
+function initWatchLessonTabs() {
+    const root = document.getElementById('watch-lesson-tabs');
+    if (!root) {
+        return;
+    }
+
+    const tabs = Array.from(root.querySelectorAll('[data-watch-tab]'));
+    const panels = Array.from(root.querySelectorAll('[data-watch-tab-panel]'));
+    if (tabs.length === 0 || panels.length === 0) {
+        return;
+    }
+
+    function activate(name) {
+        tabs.forEach((tab) => {
+            const active = tab.dataset.watchTab === name;
+            tab.classList.toggle('watch-tab--active', active);
+            tab.setAttribute('aria-selected', active ? 'true' : 'false');
+            tab.setAttribute('tabindex', active ? '0' : '-1');
+        });
+        panels.forEach((panel) => {
+            panel.classList.toggle('hidden', panel.dataset.watchTabPanel !== name);
+        });
+    }
+
+    tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+            activate(tab.dataset.watchTab);
+        });
+    });
+
+    const tablist = root.querySelector('[role="tablist"]');
+    tablist?.addEventListener('keydown', (e) => {
+        const current = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true');
+        if (current < 0) {
+            return;
+        }
+
+        let next = current;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            next = (current + 1) % tabs.length;
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            next = (current - 1 + tabs.length) % tabs.length;
+        } else if (e.key === 'Home') {
+            next = 0;
+        } else if (e.key === 'End') {
+            next = tabs.length - 1;
+        } else {
+            return;
+        }
+
+        e.preventDefault();
+        tabs[next].focus();
+        activate(tabs[next].dataset.watchTab);
+    });
+}
+
+initWatchLessonTabs();
