@@ -40,12 +40,12 @@
         <div class="card-surface p-5">
             <p class="text-2xl font-bold tabular-nums text-slate-900 dark:text-white">{{ $coursesCount }}</p>
             <p class="mt-1 text-sm text-slate-600 dark:text-slate-500">{{ $coursesCount === 1 ? 'Course' : 'Courses' }} in your library</p>
-            <a href="{{ route('courses.index') }}" class="mt-3 inline-block text-xs font-semibold text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-300">View courses →</a>
+            <a href="{{ route('courses.index') }}" class="link-accent mt-3 inline-block text-xs">View courses →</a>
         </div>
         <div class="card-surface p-5">
             <p class="text-2xl font-bold tabular-nums text-slate-900 dark:text-white">{{ $notesCount }}</p>
             <p class="mt-1 text-sm text-slate-600 dark:text-slate-500">{{ $notesCount === 1 ? 'Note' : 'Notes' }} saved</p>
-            <a href="{{ route('profile.notes') }}" class="mt-3 inline-block text-xs font-semibold text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-300">Browse notes →</a>
+            <a href="{{ route('profile.notes') }}" class="link-accent mt-3 inline-block text-xs">Browse notes →</a>
         </div>
     </div>
 @endsection

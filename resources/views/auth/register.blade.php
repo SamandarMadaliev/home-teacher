@@ -5,8 +5,8 @@
 @section('title', 'Create account — '.config('app.name'))
 
 @section('content')
-    <header class="rounded-3xl border border-slate-200/95 bg-gradient-to-br from-white via-white to-sky-50/55 p-6 shadow-lg shadow-slate-300/25 ring-1 ring-sky-100/45 dark:border-slate-800/90 dark:from-slate-900/88 dark:via-slate-900/75 dark:to-sky-950/30 dark:shadow-black/25 dark:ring-sky-950/30 sm:p-7">
-        <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-700 dark:text-sky-400/90">Get started</p>
+    <header class="page-header-card">
+        <p class="text-accent-eyebrow text-[0.65rem] font-semibold uppercase tracking-[0.2em]">Get started</p>
         <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50">Create account</h1>
         <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
             Your courses, progress, and roadmaps stay private to your account.
@@ -77,7 +77,7 @@
                 <button type="submit" class="btn-primary w-full sm:w-auto">Create account</button>
                 <p class="text-center text-sm text-slate-600 dark:text-slate-400 sm:text-right">
                     Already have an account?
-                    <a href="{{ route('login') }}" class="font-semibold text-sky-600 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300">Sign in</a>
+                    <a href="{{ route('login') }}" class="link-accent">Sign in</a>
                 </p>
             </div>
         </form>

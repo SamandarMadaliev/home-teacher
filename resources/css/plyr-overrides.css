@@ -1,30 +1,30 @@
-/* Plyr skin — lighter chrome in light mode, slate blue in dark. */
+/* Plyr skin — uses per-user accent CSS variables. */
 
 .course-plyr {
-    --plyr-color-main: rgb(14 165 233);
+    --plyr-color-main: rgb(var(--accent-500));
     --plyr-video-controls-background: linear-gradient(
         to top,
         rgb(248 250 252 / 0.96) 0%,
         rgb(241 245 249 / 0.75) 55%,
         transparent 100%
     );
-    --plyr-range-thumb-background: rgb(2 132 199);
-    --plyr-range-fill-background: rgb(2 132 199);
+    --plyr-range-thumb-background: rgb(var(--accent-600));
+    --plyr-range-fill-background: rgb(var(--accent-600));
     --plyr-progress-loading-background: rgb(148 163 184 / 0.45);
     --plyr-tooltip-background: rgb(255 255 255);
     --plyr-tooltip-color: rgb(15 23 42);
 }
 
 .dark .course-plyr {
-    --plyr-color-main: rgb(56 189 248);
+    --plyr-color-main: rgb(var(--accent-400));
     --plyr-video-controls-background: linear-gradient(
         to top,
         rgb(15 23 42 / 0.95) 0%,
         rgb(15 23 42 / 0.55) 55%,
         transparent 100%
     );
-    --plyr-range-thumb-background: rgb(56 189 248);
-    --plyr-range-fill-background: rgb(56 189 248);
+    --plyr-range-thumb-background: rgb(var(--accent-400));
+    --plyr-range-fill-background: rgb(var(--accent-400));
     --plyr-progress-loading-background: rgb(51 65 85 / 0.45);
     --plyr-tooltip-background: rgb(30 41 59);
     --plyr-tooltip-color: rgb(241 245 249);
@@ -35,21 +35,21 @@
 }
 
 .course-plyr .plyr__control--overlaid {
-    background: rgb(14 165 233 / 0.95);
-    color: rgb(255 255 255);
+    background: rgb(var(--accent-500) / 0.95);
+    color: rgb(var(--accent-btn-text));
 }
 
 .dark .course-plyr .plyr__control--overlaid {
-    background: rgb(56 189 248 / 0.95);
+    background: rgb(var(--accent-400) / 0.95);
     color: rgb(15 23 42);
 }
 
 .course-plyr .plyr__control--overlaid:hover {
-    background: rgb(125 211 252);
+    background: rgb(var(--accent-300));
 }
 
 .dark .course-plyr .plyr__control--overlaid:hover {
-    background: rgb(125 211 252);
+    background: rgb(var(--accent-300));
 }
 
 .course-plyr .plyr__control--theater svg {

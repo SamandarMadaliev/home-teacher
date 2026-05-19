@@ -56,7 +56,7 @@
         </div>
         @if ($selectedCourseId || $selectedVideoId)
             <p class="mt-4">
-                <a href="{{ route('profile.notes') }}" class="text-sm font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300">
+                <a href="{{ route('profile.notes') }}" class="link-accent text-sm font-medium">
                     Clear filters
                 </a>
             </p>
@@ -92,7 +92,7 @@
                     <div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
                         <a
                             href="{{ route('courses.show', $course) }}"
-                            class="font-semibold text-sky-700 hover:text-sky-900 dark:text-sky-400/95 dark:hover:text-sky-300"
+                            class="link-accent"
                         >
                             {{ $course->title }}
                         </a>
@@ -107,7 +107,7 @@
                             <span class="text-slate-400 dark:text-slate-600" aria-hidden="true">·</span>
                             <a
                                 href="{{ route('videos.show', $lesson) }}"
-                                class="inline-flex items-center rounded-lg bg-sky-100 px-2 py-0.5 font-mono text-[0.7rem] tabular-nums font-semibold text-sky-800 ring-1 ring-sky-400/45 transition hover:bg-sky-200/92 dark:bg-sky-950/55 dark:text-sky-300 dark:ring-sky-600/35 dark:hover:bg-sky-900/55"
+                                class="badge-accent text-[0.7rem]"
                             >
                                 {{ $note->timestampLabel() }}
                             </a>
@@ -116,7 +116,7 @@
                     </div>
                     <div class="note-prose text-sm leading-relaxed text-slate-800 dark:text-slate-200">{!! $note->bodyHtml() !!}</div>
                     <div class="mt-3 flex flex-wrap gap-3">
-                        <a href="{{ route('videos.show', $lesson) }}" class="text-xs font-semibold text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-300">
+                        <a href="{{ route('videos.show', $lesson) }}" class="link-accent text-xs">
                             Open lesson →
                         </a>
                         <form

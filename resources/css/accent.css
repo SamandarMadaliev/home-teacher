@@ -1,0 +1,816 @@
+/*
+ | Per-user primary accent (set via html[data-accent] from the authenticated user).
+ | Default "blue" matches the original sky / blue theme.
+ */
+
+:root,
+html[data-accent='blue'] {
+    --accent-400: 56 189 248;
+    --accent-500: 14 165 233;
+    --accent-600: 37 99 235;
+    --accent-700: 29 78 216;
+    --accent-50: 240 249 255;
+    --accent-100: 224 242 254;
+    --accent-800: 7 89 133;
+    --accent-950: 8 47 73;
+    --accent-300: 125 211 252;
+    --accent-900: 12 74 110;
+    --accent-shadow: 14 165 233;
+    --accent-btn-text: 255 255 255;
+}
+
+html[data-accent='red'] {
+    --accent-400: 248 113 113;
+    --accent-500: 239 68 68;
+    --accent-600: 220 38 38;
+    --accent-700: 185 28 28;
+    --accent-50: 254 242 242;
+    --accent-100: 254 226 226;
+    --accent-800: 153 27 27;
+    --accent-950: 69 10 10;
+    --accent-300: 252 165 165;
+    --accent-900: 127 29 29;
+    --accent-shadow: 239 68 68;
+    --accent-btn-text: 255 255 255;
+}
+
+html[data-accent='green'] {
+    --accent-400: 74 222 128;
+    --accent-500: 34 197 94;
+    --accent-600: 22 163 74;
+    --accent-700: 21 128 61;
+    --accent-50: 240 253 244;
+    --accent-100: 220 252 231;
+    --accent-800: 22 101 52;
+    --accent-950: 5 46 22;
+    --accent-300: 134 239 172;
+    --accent-900: 20 83 45;
+    --accent-shadow: 34 197 94;
+    --accent-btn-text: 255 255 255;
+}
+
+html[data-accent='orange'] {
+    --accent-400: 251 146 60;
+    --accent-500: 249 115 22;
+    --accent-600: 234 88 12;
+    --accent-700: 194 65 12;
+    --accent-50: 255 247 237;
+    --accent-100: 255 237 213;
+    --accent-800: 154 52 18;
+    --accent-950: 67 20 7;
+    --accent-300: 253 186 116;
+    --accent-900: 124 45 18;
+    --accent-shadow: 249 115 22;
+    --accent-btn-text: 255 255 255;
+}
+
+html[data-accent='yellow'] {
+    --accent-400: 250 204 21;
+    --accent-500: 234 179 8;
+    --accent-600: 202 138 4;
+    --accent-700: 161 98 7;
+    --accent-50: 254 252 232;
+    --accent-100: 254 249 195;
+    --accent-800: 133 77 14;
+    --accent-950: 66 32 6;
+    --accent-300: 253 224 71;
+    --accent-900: 113 63 18;
+    --accent-shadow: 202 138 4;
+    --accent-btn-text: 255 255 255;
+}
+
+html[data-accent='light_black'] {
+    --accent-400: 113 113 122;
+    --accent-500: 82 82 91;
+    --accent-600: 63 63 70;
+    --accent-700: 39 39 42;
+    --accent-50: 250 250 250;
+    --accent-100: 244 244 245;
+    --accent-800: 39 39 42;
+    --accent-950: 24 24 27;
+    --accent-300: 161 161 170;
+    --accent-900: 24 24 27;
+    --accent-shadow: 63 63 70;
+    --accent-btn-text: 255 255 255;
+}
+
+/* —— Primary UI (accent-driven) —— */
+
+.btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:focus-visible:ring-offset-slate-950;
+    color: rgb(var(--accent-btn-text));
+    background-image: linear-gradient(to right, rgb(var(--accent-500)), rgb(var(--accent-600)));
+    box-shadow:
+        0 10px 15px -3px rgb(var(--accent-shadow) / 0.3),
+        0 4px 6px -4px rgb(var(--accent-shadow) / 0.3);
+}
+
+.btn-primary:hover {
+    background-image: linear-gradient(to right, rgb(var(--accent-400)), rgb(var(--accent-500)));
+}
+
+.btn-primary:focus-visible {
+    --tw-ring-color: rgb(var(--accent-500) / 0.85);
+}
+
+html.dark .btn-primary {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+}
+
+html.dark .btn-primary:focus-visible {
+    --tw-ring-color: rgb(var(--accent-400) / 0.8);
+}
+
+.btn-header-cta {
+    @apply ml-1 inline-flex items-center justify-center rounded-full px-3.5 py-2 text-xs font-semibold ring-1 ring-white/20 transition sm:ml-2 sm:px-4 sm:text-sm;
+    color: rgb(var(--accent-btn-text));
+    background-image: linear-gradient(to right, rgb(var(--accent-500)), rgb(var(--accent-600)));
+    box-shadow: 0 4px 6px -1px rgb(var(--accent-shadow) / 0.35);
+}
+
+.btn-header-cta:hover {
+    background-image: linear-gradient(to right, rgb(var(--accent-400)), rgb(var(--accent-500)));
+}
+
+html.dark .btn-header-cta {
+    @apply dark:ring-white/15;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+}
+
+.brand-logo {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg ring-1 ring-white/30 transition dark:ring-white/20;
+    background-image: linear-gradient(to bottom right, rgb(var(--accent-400)), rgb(var(--accent-600)));
+    box-shadow: 0 10px 15px -3px rgb(var(--accent-shadow) / 0.35);
+}
+
+html.dark .brand-logo {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.45);
+}
+
+.text-accent {
+    color: rgb(var(--accent-600));
+}
+
+html.dark .text-accent {
+    color: rgb(var(--accent-400));
+}
+
+.text-accent-hover:hover {
+    color: rgb(var(--accent-700));
+}
+
+html.dark .text-accent-hover:hover {
+    color: rgb(var(--accent-300));
+}
+
+.link-accent {
+    @apply font-semibold transition;
+    color: rgb(var(--accent-600));
+}
+
+.link-accent:hover {
+    color: rgb(var(--accent-700));
+}
+
+html.dark .link-accent {
+    color: rgb(var(--accent-400));
+}
+
+html.dark .link-accent:hover {
+    color: rgb(var(--accent-300));
+}
+
+.progress-bar-fill {
+    @apply h-full rounded-full transition-[width] duration-300;
+    background-image: linear-gradient(to right, rgb(var(--accent-500)), rgb(var(--accent-600)));
+}
+
+.status-banner {
+    @apply mb-8 rounded-2xl border px-5 py-4 text-sm shadow-lg ring-1;
+    border-color: rgb(var(--accent-300) / 0.95);
+    background: linear-gradient(
+        to right,
+        rgb(var(--accent-50) / 0.98),
+        rgb(255 255 255 / 0.98),
+        rgb(var(--accent-50) / 0.75)
+    );
+    color: rgb(var(--accent-900));
+    box-shadow: 0 10px 15px -3px rgb(var(--accent-shadow) / 0.15);
+    --tw-ring-color: rgb(var(--accent-100) / 0.8);
+}
+
+html.dark .status-banner {
+    border-color: rgb(var(--accent-800) / 0.5);
+    background: linear-gradient(
+        to right,
+        rgb(var(--accent-950) / 0.45),
+        rgb(2 6 23 / 0.2),
+        rgb(var(--accent-950) / 0.35)
+    );
+    color: rgb(var(--accent-100));
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.25);
+    --tw-ring-color: transparent;
+}
+
+.selection-accent::selection {
+    background-color: rgb(var(--accent-300) / 0.5);
+    color: rgb(15 23 42);
+}
+
+html.dark .selection-accent::selection {
+    background-color: rgb(var(--accent-500) / 0.3);
+    color: rgb(255 255 255);
+}
+
+/* —— Shared accent utilities (use across all pages) —— */
+
+.text-accent-eyebrow {
+    color: rgb(var(--accent-700));
+}
+
+html.dark .text-accent-eyebrow {
+    color: rgb(var(--accent-400) / 0.9);
+}
+
+.text-accent-strong {
+    font-weight: 600;
+    color: rgb(var(--accent-700));
+}
+
+html.dark .text-accent-strong {
+    color: rgb(var(--accent-300) / 0.95);
+}
+
+.text-accent-stat {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: rgb(var(--accent-700));
+}
+
+html.dark .text-accent-stat {
+    color: rgb(var(--accent-300) / 0.95);
+}
+
+.text-accent-stat-muted {
+    font-weight: 600;
+    color: rgb(var(--accent-600));
+}
+
+html.dark .text-accent-stat-muted {
+    color: rgb(var(--accent-400) / 0.8);
+}
+
+.back-link {
+    @apply inline-flex items-center gap-1 text-sm font-medium transition;
+    color: rgb(var(--accent-600));
+}
+
+.back-link:hover {
+    color: rgb(var(--accent-700));
+}
+
+html.dark .back-link {
+    color: rgb(var(--accent-400) / 0.95);
+}
+
+html.dark .back-link:hover {
+    color: rgb(var(--accent-300));
+}
+
+.link-accent-underline {
+    @apply font-semibold underline underline-offset-4 transition;
+    color: rgb(var(--accent-600));
+    text-decoration-color: rgb(var(--accent-500) / 0.5);
+}
+
+.link-accent-underline:hover {
+    color: rgb(var(--accent-800));
+    text-decoration-color: rgb(var(--accent-600) / 0.7);
+}
+
+html.dark .link-accent-underline {
+    color: rgb(var(--accent-400));
+}
+
+html.dark .link-accent-underline:hover {
+    color: rgb(var(--accent-300));
+}
+
+.page-header-card {
+    @apply rounded-3xl border border-slate-200/95 bg-gradient-to-br from-white via-white p-6 shadow-lg shadow-slate-300/25 ring-1 dark:border-slate-800/90 dark:from-slate-900/88 dark:via-slate-900/75 dark:shadow-black/25 sm:p-7;
+    --tw-gradient-to: rgb(var(--accent-50) / 0.55);
+    --tw-ring-color: rgb(var(--accent-100) / 0.45);
+}
+
+html.dark .page-header-card {
+    --tw-gradient-to: rgb(var(--accent-950) / 0.3);
+    --tw-ring-color: rgb(var(--accent-950) / 0.3);
+}
+
+.page-header-card-sm {
+    @apply rounded-3xl border border-slate-200/95 bg-gradient-to-br from-white via-white p-5 shadow-lg shadow-slate-300/25 ring-1 dark:border-slate-800/90 dark:from-slate-900/88 dark:via-slate-900/75 dark:shadow-black/25 sm:p-6;
+    --tw-gradient-to: rgb(var(--accent-50) / 0.55);
+    --tw-ring-color: rgb(var(--accent-100) / 0.45);
+}
+
+html.dark .page-header-card-sm {
+    --tw-gradient-to: rgb(var(--accent-950) / 0.3);
+    --tw-ring-color: rgb(var(--accent-950) / 0.3);
+}
+
+.hero-accent-wrap {
+    @apply border bg-white/93 shadow-2xl shadow-slate-400/35 ring-1 ring-slate-900/6 dark:bg-slate-950/80 dark:shadow-black/40 dark:ring-white/5;
+    border-color: rgb(var(--accent-400) / 0.55);
+}
+
+html.dark .hero-accent-wrap {
+    border-color: rgb(var(--accent-500) / 0.25);
+}
+
+.home-hero-bar {
+    @apply absolute left-0 top-6 bottom-6 w-1 rounded-full sm:top-8 sm:bottom-8 lg:top-10 lg:bottom-10;
+    background-image: linear-gradient(to bottom, rgb(var(--accent-400)), rgb(var(--accent-600)));
+}
+
+.icon-empty-accent {
+    @apply mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl ring-1;
+    background-image: linear-gradient(to bottom right, rgb(var(--accent-500) / 0.3), rgb(var(--accent-600) / 0.14));
+    --tw-ring-color: rgb(var(--accent-400) / 0.44);
+}
+
+html.dark .icon-empty-accent {
+    background-image: linear-gradient(to bottom right, rgb(var(--accent-500) / 0.2), rgb(var(--accent-600) / 0.1));
+    --tw-ring-color: rgb(var(--accent-500) / 0.25);
+}
+
+.icon-empty-accent svg {
+    color: rgb(var(--accent-600));
+}
+
+html.dark .icon-empty-accent svg {
+    color: rgb(var(--accent-400) / 0.7);
+}
+
+.card-hover-accent {
+    @apply transition hover:shadow-lg hover:shadow-slate-400/22 dark:hover:shadow-black/20;
+}
+
+.card-hover-accent:hover {
+    border-color: rgb(var(--accent-500) / 0.52);
+}
+
+html.dark .card-hover-accent:hover {
+    border-color: rgb(var(--accent-700) / 0.45);
+}
+
+.arrow-box-accent {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 ring-1 ring-slate-300/95 transition dark:bg-slate-800/90 dark:ring-slate-600/70;
+    color: rgb(var(--accent-600));
+}
+
+.group:hover .arrow-box-accent {
+    background-color: rgb(var(--accent-50));
+    color: rgb(var(--accent-700));
+    --tw-ring-color: rgb(var(--accent-400) / 0.65);
+}
+
+html.dark .group:hover .arrow-box-accent {
+    background-color: rgb(var(--accent-500) / 0.15);
+    color: rgb(var(--accent-300));
+    --tw-ring-color: rgb(var(--accent-500) / 0.4);
+}
+
+.card-link-label {
+    @apply text-xs font-medium transition;
+    color: rgb(var(--accent-600));
+}
+
+.group:hover .card-link-label {
+    color: rgb(var(--accent-800));
+}
+
+html.dark .card-link-label {
+    color: rgb(var(--accent-400) / 0.95);
+}
+
+html.dark .group:hover .card-link-label {
+    color: rgb(var(--accent-300));
+}
+
+.step-badge {
+    @apply flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-bold;
+    background-color: rgb(var(--accent-100));
+    color: rgb(var(--accent-800));
+}
+
+html.dark .step-badge {
+    background-color: rgb(var(--accent-950) / 0.6);
+    color: rgb(var(--accent-300));
+}
+
+.panel-accent-soft {
+    @apply rounded-2xl border p-5 ring-1;
+    border-color: rgb(var(--accent-200) / 0.8);
+    background: linear-gradient(to bottom, rgb(var(--accent-50) / 0.9), rgb(255 255 255 / 0.95));
+    --tw-ring-color: rgb(var(--accent-200) / 0.6);
+}
+
+html.dark .panel-accent-soft {
+    border-color: rgb(var(--accent-900) / 0.5);
+    background: linear-gradient(to bottom, rgb(var(--accent-950) / 0.35), rgb(2 6 23 / 0.6));
+    --tw-ring-color: rgb(var(--accent-900) / 0.4);
+}
+
+.playlist-panel-header {
+    @apply border-b border-slate-200/95 bg-gradient-to-r from-slate-50 px-4 py-4 dark:border-slate-800/90 dark:from-slate-900/80;
+    --tw-gradient-to: rgb(var(--accent-50) / 0.8);
+}
+
+html.dark .playlist-panel-header {
+    --tw-gradient-to: rgb(var(--accent-950) / 0.25);
+}
+
+.player-chrome-ring {
+    @apply ring-1;
+    --tw-ring-color: rgb(var(--accent-500) / 0.25);
+}
+
+html.dark .player-chrome-ring {
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+    --tw-ring-color: rgb(var(--accent-950) / 0.4);
+}
+
+.lesson-row-current {
+    border-color: rgb(var(--accent-400) / 0.65);
+    background-image: linear-gradient(to right, rgb(var(--accent-100) / 0.96), rgb(var(--accent-50) / 0.93));
+    box-shadow: 0 10px 15px -3px rgb(var(--accent-shadow) / 0.15);
+    --tw-ring-color: rgb(var(--accent-400) / 0.45);
+}
+
+html.dark .lesson-row-current {
+    border-color: rgb(var(--accent-500) / 0.45);
+    background-image: linear-gradient(to right, rgb(var(--accent-950) / 0.55), rgb(var(--accent-950) / 0.35));
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.25);
+    --tw-ring-color: rgb(var(--accent-500) / 0.3);
+}
+
+.lesson-row-active {
+    background-color: rgb(var(--accent-100) / 0.98);
+    --tw-ring-color: rgb(var(--accent-500) / 0.42);
+}
+
+html.dark .lesson-row-active {
+    background-color: rgb(var(--accent-950) / 0.45);
+    --tw-ring-color: rgb(var(--accent-500) / 0.35);
+}
+
+.lesson-index-badge {
+    @apply mt-0.5 flex h-7 min-w-7 items-center justify-center rounded-lg bg-slate-100 text-[0.65rem] font-semibold tabular-nums ring-1 ring-slate-300/95 dark:bg-slate-800/90 dark:ring-slate-700/80;
+    color: rgb(var(--accent-700));
+}
+
+html.dark .lesson-index-badge {
+    color: rgb(var(--accent-300) / 0.9);
+}
+
+.lesson-title-link {
+    @apply font-semibold text-slate-900 transition hover:underline underline-offset-2 dark:text-slate-50;
+}
+
+.lesson-title-link:hover {
+    color: rgb(var(--accent-700));
+    text-decoration-color: rgb(var(--accent-600) / 0.55);
+}
+
+html.dark .lesson-title-link:hover {
+    color: rgb(var(--accent-300));
+}
+
+.badge-accent {
+    @apply inline-flex items-center rounded-lg px-2 py-0.5 font-mono text-xs font-semibold tabular-nums ring-1 transition;
+    background-color: rgb(var(--accent-100));
+    color: rgb(var(--accent-800));
+    --tw-ring-color: rgb(var(--accent-400) / 0.45);
+}
+
+.badge-accent:hover {
+    background-color: rgb(var(--accent-200) / 0.92);
+    color: rgb(var(--accent-950));
+}
+
+html.dark .badge-accent {
+    background-color: rgb(var(--accent-950) / 0.55);
+    color: rgb(var(--accent-300));
+    --tw-ring-color: rgb(var(--accent-600) / 0.35);
+}
+
+html.dark .badge-accent:hover {
+    background-color: rgb(var(--accent-900) / 0.55);
+    color: rgb(var(--accent-200));
+}
+
+.badge-accent-pill {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wider ring-1;
+    background-color: rgb(var(--accent-200));
+    color: rgb(var(--accent-950));
+    --tw-ring-color: rgb(var(--accent-400) / 0.55);
+}
+
+html.dark .badge-accent-pill {
+    background-color: rgb(var(--accent-500) / 0.3);
+    color: rgb(var(--accent-100));
+    --tw-ring-color: rgb(var(--accent-400) / 0.35);
+}
+
+.badge-accent-pill-dot {
+    @apply h-1.5 w-1.5 rounded-full;
+    background-color: rgb(var(--accent-700));
+}
+
+html.dark .badge-accent-pill-dot {
+    background-color: rgb(var(--accent-300));
+}
+
+.badge-accent-lg {
+    @apply inline-flex min-w-9 items-center justify-center rounded-lg px-2 py-1 font-mono text-xl font-bold tabular-nums ring-1;
+    background-color: rgb(var(--accent-100));
+    color: rgb(var(--accent-800));
+    --tw-ring-color: rgb(var(--accent-500) / 0.52);
+}
+
+html.dark .badge-accent-lg {
+    background-color: rgb(var(--accent-950) / 0.8);
+    color: rgb(var(--accent-300));
+    --tw-ring-color: rgb(var(--accent-600) / 0.4);
+}
+
+.watch-nav-card-accent {
+    @apply flex min-h-23 flex-col justify-center rounded-2xl border bg-gradient-to-br from-white px-5 py-4 ring-1 transition dark:from-slate-900/92;
+    border-color: rgb(var(--accent-300) / 0.9);
+    --tw-gradient-to: rgb(var(--accent-50) / 0.95);
+    --tw-ring-color: rgb(var(--accent-300) / 0.45);
+}
+
+.watch-nav-card-accent:hover {
+    border-color: rgb(var(--accent-500) / 0.55);
+    --tw-ring-color: rgb(var(--accent-500) / 0.4);
+}
+
+html.dark .watch-nav-card-accent {
+    border-color: rgb(var(--accent-900) / 0.45);
+    --tw-gradient-to: rgb(var(--accent-950) / 0.28);
+    --tw-ring-color: rgb(var(--accent-950) / 0.35);
+}
+
+html.dark .watch-nav-card-accent:hover {
+    border-color: rgb(var(--accent-700) / 0.55);
+    --tw-ring-color: rgb(var(--accent-800) / 0.45);
+}
+
+.watch-nav-title {
+    @apply mt-2 line-clamp-2 text-base font-semibold text-slate-900 underline-offset-4 transition dark:text-slate-100 sm:text-lg;
+    text-decoration-color: rgb(var(--accent-600) / 0.42);
+}
+
+.watch-nav-card-accent:hover .watch-nav-title {
+    color: rgb(var(--accent-950));
+    text-decoration: underline;
+}
+
+html.dark .watch-nav-card-accent:hover .watch-nav-title {
+    color: rgb(255 255 255);
+    text-decoration-color: rgb(var(--accent-600) / 0.5);
+}
+
+.dot-accent-glow {
+    @apply mt-1 h-2 w-2 shrink-0 rounded-full;
+    background-color: rgb(var(--accent-400));
+    box-shadow: 0 0 10px rgb(var(--accent-400) / 0.6);
+}
+
+.focus-accent:focus {
+    border-color: rgb(var(--accent-500) / 0.8);
+    outline: none;
+    --tw-ring-width: 2px;
+    --tw-ring-color: rgb(var(--accent-400) / 0.35);
+}
+
+html.dark .focus-accent:focus {
+    border-color: rgb(var(--accent-500) / 0.7);
+    --tw-ring-color: rgb(var(--accent-500) / 0.35);
+}
+
+.checkbox-accent {
+    @apply size-4 rounded border-slate-300 dark:border-slate-600 dark:bg-slate-900;
+    accent-color: rgb(var(--accent-600));
+}
+
+.btn-ghost-accent {
+    @apply inline-flex items-center gap-1.5 rounded-lg border border-slate-300/95 bg-white/95 px-2.5 py-1.5 text-[0.7rem] font-semibold text-slate-700 shadow-sm transition dark:border-slate-700/85 dark:bg-slate-900/70 dark:text-slate-200;
+}
+
+.btn-ghost-accent:hover {
+    border-color: rgb(var(--accent-500) / 0.45);
+    background-color: rgb(var(--accent-50) / 0.95);
+    color: rgb(var(--accent-800));
+}
+
+html.dark .btn-ghost-accent:hover {
+    border-color: rgb(var(--accent-500) / 0.55);
+    background-color: rgb(var(--accent-950) / 0.35);
+    color: rgb(255 255 255);
+}
+
+details[open] > summary.btn-ghost-accent {
+    border-color: rgb(var(--accent-500) / 0.55);
+    background-color: rgb(var(--accent-50) / 0.85);
+}
+
+html.dark details[open] > summary.btn-ghost-accent {
+    border-color: rgb(var(--accent-500) / 0.55);
+    background-color: rgb(var(--accent-950) / 0.35);
+}
+
+.chip-accent {
+    @apply hidden items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1;
+    background-color: rgb(var(--accent-100));
+    color: rgb(var(--accent-800));
+    --tw-ring-color: rgb(var(--accent-300) / 0.55);
+}
+
+html.dark .chip-accent {
+    background-color: rgb(var(--accent-950) / 0.55);
+    color: rgb(var(--accent-300));
+    --tw-ring-color: rgb(var(--accent-700) / 0.4);
+}
+
+.resource-icon-accent {
+    @apply mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1;
+    background-color: rgb(var(--accent-100));
+    color: rgb(var(--accent-700));
+    --tw-ring-color: rgb(var(--accent-300) / 0.6);
+}
+
+html.dark .resource-icon-accent {
+    background-color: rgb(var(--accent-950) / 0.55);
+    color: rgb(var(--accent-300));
+    --tw-ring-color: rgb(var(--accent-700) / 0.4);
+}
+
+.resource-link-accent {
+    @apply block break-words text-sm font-semibold underline underline-offset-2 transition;
+    color: rgb(var(--accent-700));
+    text-decoration-color: rgb(var(--accent-500) / 0.4);
+}
+
+.resource-link-accent:hover {
+    color: rgb(var(--accent-800));
+    text-decoration-color: rgb(var(--accent-600) / 0.7);
+}
+
+html.dark .resource-link-accent {
+    color: rgb(var(--accent-400) / 0.95);
+    text-decoration-color: rgb(var(--accent-500) / 0.45);
+}
+
+html.dark .resource-link-accent:hover {
+    color: rgb(var(--accent-300));
+}
+
+.focus-ring-accent:focus-visible {
+    outline: none;
+    --tw-ring-width: 2px;
+    --tw-ring-color: rgb(var(--accent-500) / 0.9);
+}
+
+html.dark .focus-ring-accent:focus-visible {
+    --tw-ring-color: rgb(var(--accent-400) / 0.9);
+}
+
+.hover\:bg-accent-soft:hover {
+    background-color: rgb(var(--accent-50));
+}
+
+html.dark .hover\:bg-accent-soft:hover {
+    background-color: rgb(var(--accent-950) / 0.4);
+}
+
+.course-title-card {
+    @apply mt-4 rounded-3xl border border-slate-200/95 bg-gradient-to-br from-white via-white shadow-xl shadow-slate-300/35 ring-1 dark:border-slate-800/90 dark:from-slate-900/85 dark:via-slate-900/70 dark:shadow-black/30;
+    --tw-gradient-to: rgb(var(--accent-50) / 0.65);
+    --tw-ring-color: rgb(var(--accent-100) / 0.55);
+}
+
+html.dark .course-title-card {
+    --tw-gradient-to: rgb(var(--accent-950) / 0.35);
+    --tw-ring-color: rgb(var(--accent-950) / 0.35);
+}
+
+.lesson-sort-badge {
+    background-color: rgb(var(--accent-200));
+    color: rgb(var(--accent-900));
+    --tw-ring-color: rgb(var(--accent-400) / 0.55);
+}
+
+html.dark .lesson-sort-badge {
+    background-color: rgb(var(--accent-500) / 0.35);
+    color: rgb(var(--accent-100));
+    --tw-ring-color: rgb(var(--accent-400) / 0.4);
+}
+
+.modal-accent-ring {
+    --tw-ring-color: rgb(var(--accent-950) / 0.12);
+}
+
+html.dark .modal-accent-ring {
+    --tw-ring-color: rgb(255 255 255 / 0.1);
+}
+
+/* —— Navbar accent picker —— */
+
+.accent-picker > summary {
+    list-style: none;
+}
+
+.accent-picker > summary::-webkit-details-marker {
+    display: none;
+}
+
+.accent-picker > summary::marker {
+    content: '';
+}
+
+.accent-picker-trigger {
+    @apply inline-flex items-center justify-center rounded-full border border-slate-300/90 bg-white/85 p-2 shadow-sm shadow-slate-200/80 ring-1 ring-white/70 transition focus:outline-none focus-visible:ring-2 dark:border-slate-700/90 dark:bg-slate-900/70 dark:shadow-black/35 dark:ring-slate-800/80;
+    color: rgb(var(--accent-600));
+}
+
+.accent-picker-trigger:hover {
+    border-color: rgb(var(--accent-500) / 0.6);
+    background-color: rgb(var(--accent-50) / 0.9);
+}
+
+html.dark .accent-picker-trigger {
+    color: rgb(var(--accent-400));
+}
+
+html.dark .accent-picker-trigger:hover {
+    border-color: rgb(var(--accent-500) / 0.55);
+    background-color: rgb(var(--accent-950) / 0.4);
+}
+
+.accent-picker-trigger:focus-visible {
+    --tw-ring-color: rgb(var(--accent-500) / 0.65);
+}
+
+.accent-picker-swatch {
+    @apply relative h-7 w-7 shrink-0 rounded-full border-2 border-transparent ring-2 ring-transparent transition hover:scale-105 focus:outline-none focus-visible:ring-2;
+    --tw-ring-color: rgb(var(--accent-500) / 0.5);
+}
+
+.accent-picker-swatch--selected {
+    @apply border-white ring-offset-1 ring-offset-slate-200 dark:border-slate-900 dark:ring-offset-slate-800;
+    --tw-ring-color: rgb(15 23 42 / 0.85);
+}
+
+html.dark .accent-picker-swatch--selected {
+    --tw-ring-color: rgb(248 250 252 / 0.9);
+}
+
+.accent-picker-swatch[data-accent-value='blue'] {
+    background: linear-gradient(135deg, rgb(56 189 248), rgb(37 99 235));
+}
+
+.accent-picker-swatch[data-accent-value='red'] {
+    background: linear-gradient(135deg, rgb(248 113 113), rgb(220 38 38));
+}
+
+.accent-picker-swatch[data-accent-value='green'] {
+    background: linear-gradient(135deg, rgb(74 222 128), rgb(22 163 74));
+}
+
+.accent-picker-swatch[data-accent-value='orange'] {
+    background: linear-gradient(135deg, rgb(251 146 60), rgb(234 88 12));
+}
+
+.accent-picker-swatch[data-accent-value='yellow'] {
+    background: linear-gradient(135deg, rgb(250 204 21), rgb(202 138 4));
+}
+
+.accent-picker-swatch[data-accent-value='light_black'] {
+    background: linear-gradient(135deg, rgb(113 113 122), rgb(39 39 42));
+}
+
+.accent-picker-panel {
+    @apply absolute right-0 top-[calc(100%+0.35rem)] z-[60] min-w-[11.5rem] rounded-xl border border-slate-200/95 bg-white/98 p-3 shadow-xl shadow-slate-300/40 ring-1 ring-slate-200/80 backdrop-blur-md dark:border-slate-700/90 dark:bg-slate-900/98 dark:shadow-black/50 dark:ring-slate-800/80;
+}
+
+.accent-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+
+.accent-picker-label {
+    @apply mb-2 text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-500;
+}

@@ -4,7 +4,7 @@
 
 @section('content')
     <header class="mb-6">
-        <p class="section-eyebrow text-sky-600 dark:text-sky-400/95">Profile</p>
+        <p class="section-eyebrow text-accent">Profile</p>
         <h1 class="home-page-title mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
             {{ auth()->user()->name }}
         </h1>

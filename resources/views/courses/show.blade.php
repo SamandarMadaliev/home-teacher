@@ -27,12 +27,12 @@
 @endphp
 
 @section('content')
-    <a href="{{ route('home') }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-600 transition hover:text-sky-700 dark:text-sky-400/95 dark:hover:text-sky-300">
+    <a href="{{ route('home') }}" class="back-link">
         <span aria-hidden="true">←</span> Home
     </a>
 
     <section
-        class="mt-4 rounded-3xl border border-slate-200/95 bg-gradient-to-br from-white via-white to-sky-50/65 shadow-xl shadow-slate-300/35 ring-1 ring-sky-100/55 dark:border-slate-800/90 dark:from-slate-900/85 dark:via-slate-900/70 dark:to-sky-950/35 dark:shadow-black/30 dark:ring-sky-950/35"
+        class="course-title-card"
         aria-label="Course overview"
     >
         <div class="px-5 py-6 sm:px-7 sm:py-7">
@@ -73,7 +73,7 @@
                         <div class="mt-5">
                             <div class="flex items-center justify-between gap-2 text-xs">
                                 <span class="font-medium uppercase tracking-wider text-slate-600 dark:text-slate-400">Overall progress</span>
-                                <span class="tabular-nums font-semibold text-sky-700 dark:text-sky-300/95">{{ $coursePct }}%</span>
+                                <span class="text-accent-stat">{{ $coursePct }}%</span>
                             </div>
                             <div
                                 class="mt-2 h-2.5 overflow-hidden rounded-full bg-slate-200 ring-1 ring-slate-300/95 dark:bg-slate-800 dark:ring-slate-900/80"
@@ -84,7 +84,7 @@
                                 aria-label="Overall course progress"
                             >
                                 <div
-                                    class="h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-500 transition-[width] duration-300"
+                                    class="progress-bar-fill"
                                     style="width: {{ $coursePct }}%"
                                 ></div>
                             </div>
@@ -95,7 +95,7 @@
                 @if ($videosCount > 0 && $currentVideo)
                     <div class="flex shrink-0 flex-col items-stretch gap-3 lg:items-end lg:text-right">
                         <div class="min-w-0 lg:max-w-[20rem]">
-                            <p class="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-sky-700 dark:text-sky-400/90">
+                            <p class="text-accent-eyebrow text-[0.65rem] font-semibold uppercase tracking-[0.18em]">
                                 {{ $allCompleted ? 'Course complete' : ($completedCount > 0 ? 'Pick up where you left off' : 'Next up') }}
                             </p>
                             <p class="mt-1.5 line-clamp-2 text-base font-semibold text-slate-900 dark:text-slate-100">
@@ -130,7 +130,7 @@
                     @csrf
                     <button
                         type="submit"
-                        class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300/95 bg-white/95 px-2.5 py-1.5 text-[0.7rem] font-semibold text-slate-700 shadow-sm transition hover:border-sky-500/45 hover:bg-sky-50/95 hover:text-sky-800 dark:border-slate-700/85 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:border-sky-600/55 dark:hover:bg-slate-800/85 dark:hover:text-white"
+                        class="btn-ghost-accent"
                         title="Adds new files from disk and removes missing ones. Your lesson order and renamed titles are kept."
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-3.5" aria-hidden="true">
@@ -142,7 +142,7 @@
             @endif
 
             <details class="manage-menu group relative ml-auto shrink-0">
-                <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-lg border border-slate-300/95 bg-white/95 px-2.5 py-1.5 text-[0.7rem] font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:text-slate-900 group-open:border-sky-500/55 group-open:bg-sky-50/85 dark:border-slate-700/85 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:text-white dark:group-open:border-sky-600/55 dark:group-open:bg-slate-800/85">
+                <summary class="btn-ghost-accent inline-flex cursor-pointer list-none items-center gap-1.5">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-3.5" aria-hidden="true">
                         <path d="M12 6.75a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm0 6.75a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm0 6.75a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z" />
                     </svg>
@@ -200,7 +200,7 @@
         <div class="card-surface mt-8 px-8 py-12 text-center text-slate-600 dark:text-slate-400">
             This course has no lessons yet.
             @if ($course->folder_path)
-                Use <strong class="text-sky-600 dark:text-sky-300/95">Rescan folder</strong> if videos are already on disk.
+                Use <strong class="text-accent-strong">Rescan folder</strong> if videos are already on disk.
             @else
                 Add a folder path to this course to scan for lessons.
             @endif
@@ -242,7 +242,7 @@
                         data-video-id="{{ $video->id }}"
                         class="group relative overflow-hidden rounded-2xl border transition
                             @if ($isCurrent)
-                                border-sky-400/65 bg-gradient-to-r from-sky-100/96 to-blue-50/93 shadow-lg shadow-sky-300/30 ring-1 ring-sky-400/45 dark:border-sky-500/45 dark:from-sky-950/55 dark:to-blue-950/35 dark:shadow-blue-950/25 dark:ring-sky-500/30
+                                lesson-row-current border shadow-lg ring-1
                             @elseif ($completed)
                                 border-emerald-200/85 bg-emerald-50/35 ring-1 ring-emerald-200/60 dark:border-emerald-900/40 dark:bg-emerald-950/15 dark:ring-emerald-900/30
                             @else
@@ -265,7 +265,7 @@
                                             @if ($completed)
                                                 bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300/60 dark:bg-emerald-950/55 dark:text-emerald-300 dark:ring-emerald-700/40
                                             @elseif ($isCurrent)
-                                                bg-sky-200 text-sky-900 ring-1 ring-sky-400/55 dark:bg-sky-500/35 dark:text-sky-100 dark:ring-sky-400/40
+                                                lesson-sort-badge ring-1
                                             @else
                                                 bg-slate-100 text-slate-600 ring-1 ring-slate-300/95 dark:bg-slate-800/80 dark:text-slate-400 dark:ring-slate-700/80
                                             @endif">
@@ -284,7 +284,7 @@
                                                     <div class="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
                                                         <a
                                                             href="{{ route('videos.show', $video) }}"
-                                                            class="min-w-0 max-w-[min(100%,28rem)] truncate font-semibold text-slate-900 transition hover:text-sky-700 hover:underline decoration-sky-600/55 underline-offset-2 dark:text-slate-50 dark:hover:text-sky-300"
+                                                            class="lesson-title-link min-w-0 max-w-[min(100%,28rem)] truncate"
                                                         >
                                                             {{ $video->title }}
                                                         </a>
@@ -301,8 +301,8 @@
 
                                                     <div class="mt-1.5 flex flex-wrap items-center gap-1.5 text-[0.65rem]">
                                                         @if ($isCurrent)
-                                                            <span class="inline-flex items-center gap-1 rounded-full bg-sky-200 px-2 py-0.5 font-semibold uppercase tracking-wider text-sky-950 ring-1 ring-sky-400/55 dark:bg-sky-500/30 dark:text-sky-100 dark:ring-sky-400/35">
-                                                                <span class="h-1.5 w-1.5 rounded-full bg-sky-700 dark:bg-sky-300" aria-hidden="true"></span>
+                                                            <span class="badge-accent-pill">
+                                                                <span class="badge-accent-pill-dot" aria-hidden="true"></span>
                                                                 Current
                                                             </span>
                                                         @endif
@@ -357,7 +357,7 @@
                                             <div
                                                 class="h-full rounded-full
                                                     @if ($completed) bg-gradient-to-r from-emerald-400 to-emerald-500
-                                                    @else bg-gradient-to-r from-sky-500 to-blue-500
+                                                    @else progress-bar-fill
                                                     @endif transition-[width] duration-300"
                                                 style="width: {{ $pct }}%"
                                             ></div>

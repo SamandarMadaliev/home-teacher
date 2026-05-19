@@ -7,7 +7,7 @@
 @section('content')
     <div class="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-            <p class="section-eyebrow text-sky-600 dark:text-sky-400/95">Your library</p>
+            <p class="section-eyebrow text-accent">Your library</p>
             <h1 class="home-page-title mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">Courses</h1>
             <p class="mt-2 max-w-lg text-sm leading-relaxed text-slate-600 dark:text-slate-500">
                 Watch locally. Progress saves automatically. Courses you watched most recently appear first.
@@ -20,14 +20,14 @@
 
     @if ($courses->isEmpty())
         <div class="card-surface px-8 py-14 text-center">
-            <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500/30 to-blue-600/14 ring-1 ring-sky-400/44 dark:from-sky-500/20 dark:to-blue-600/10 dark:ring-sky-500/25" aria-hidden="true">
-                <svg class="h-8 w-8 text-sky-600 dark:text-sky-400/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <div class="icon-empty-accent" aria-hidden="true">
+                <svg class="h-8 w-8 text-accent/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
                 </svg>
             </div>
             <p class="text-lg font-medium text-slate-800 dark:text-slate-100">No courses yet</p>
             <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                <a href="{{ route('courses.create') }}" class="font-semibold text-sky-600 underline decoration-sky-500/50 underline-offset-4 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-300">
+                <a href="{{ route('courses.create') }}" class="link-accent-underline">
                     Add a course
                 </a>
                 <span class="text-slate-600 dark:text-slate-500"> and choose the folder where your videos live.</span>
@@ -68,7 +68,7 @@
                                         aria-label="Overall progress for {{ $course->title }}"
                                     >
                                         <div
-                                            class="h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-500 transition-[width]"
+                                            class="progress-bar-fill"
                                             style="width: {{ $coursePct }}%"
                                         ></div>
                                     </div>
@@ -76,11 +76,11 @@
                             @endif
                         </div>
                         <div class="mt-6 flex items-center justify-between border-t border-slate-200/98 pt-4 dark:border-slate-700/60">
-                            <span class="text-xs font-medium text-sky-600 transition group-hover:text-sky-800 dark:text-sky-400/95 dark:group-hover:text-sky-300">
+                            <span class="card-link-label">
                                 Open
                             </span>
                             <span
-                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sky-600 ring-1 ring-slate-300/95 transition group-hover:bg-sky-50 group-hover:text-sky-700 group-hover:ring-sky-400/65 dark:bg-slate-800/95 dark:text-sky-400/95 dark:ring-slate-600/80 dark:group-hover:bg-sky-500/15 dark:group-hover:text-sky-300 dark:group-hover:ring-sky-500/40"
+                                class="arrow-box-accent"
                                 aria-hidden="true"
                             >
                                 →

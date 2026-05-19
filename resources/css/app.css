@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './accent.css';
 
 /* Class-based dark theme: <html class="dark"> */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -22,7 +23,23 @@ html.dark {
 }
 
 .theme-toggle-btn {
-    @apply inline-flex items-center justify-center rounded-full border border-slate-300/90 bg-white/85 p-2 text-slate-600 shadow-sm shadow-slate-200/80 ring-1 ring-white/70 transition hover:border-sky-400/60 hover:bg-sky-50/90 hover:text-sky-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/65 dark:border-slate-700/90 dark:bg-slate-900/70 dark:text-slate-400 dark:shadow-black/35 dark:ring-slate-800/80 dark:hover:border-sky-600/55 dark:hover:bg-sky-950/40 dark:hover:text-sky-300;
+    @apply inline-flex items-center justify-center rounded-full border border-slate-300/90 bg-white/85 p-2 text-slate-600 shadow-sm shadow-slate-200/80 ring-1 ring-white/70 transition focus:outline-none focus-visible:ring-2 dark:border-slate-700/90 dark:bg-slate-900/70 dark:text-slate-400 dark:shadow-black/35 dark:ring-slate-800/80;
+}
+
+.theme-toggle-btn:hover {
+    border-color: rgb(var(--accent-500) / 0.6);
+    background-color: rgb(var(--accent-50) / 0.9);
+    color: rgb(var(--accent-700));
+}
+
+html.dark .theme-toggle-btn:hover {
+    border-color: rgb(var(--accent-500) / 0.55);
+    background-color: rgb(var(--accent-950) / 0.4);
+    color: rgb(var(--accent-300));
+}
+
+.theme-toggle-btn:focus-visible {
+    --tw-ring-color: rgb(var(--accent-500) / 0.65);
 }
 
 /* Page canvas — light default, navy night sky when .dark */
@@ -42,16 +59,26 @@ html.dark .app-backdrop {
         radial-gradient(ellipse 55% 45% at 0% 85%, oklch(0.28 0.08 240 / 0.18), transparent 45%);
 }
 
-.btn-primary {
-    @apply inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-400/30 transition hover:from-sky-400 hover:to-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/85 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:focus-visible:ring-sky-400/80 dark:focus-visible:ring-offset-slate-950 dark:shadow-blue-950/40 dark:hover:shadow-blue-900/45;
+.btn-secondary {
+    @apply inline-flex items-center justify-center rounded-xl border border-slate-300/95 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-800 shadow-sm shadow-slate-200/70 backdrop-blur-sm transition dark:border-slate-600/70 dark:bg-slate-900/70 dark:text-slate-100/95 dark:shadow-transparent dark:hover:bg-slate-800/85 dark:hover:text-white;
 }
 
-.btn-secondary {
-    @apply inline-flex items-center justify-center rounded-xl border border-slate-300/95 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-800 shadow-sm shadow-slate-200/70 backdrop-blur-sm transition hover:border-sky-500/45 hover:bg-sky-50/95 hover:text-slate-900 dark:border-slate-600/70 dark:bg-slate-900/70 dark:text-slate-100/95 dark:shadow-transparent dark:hover:border-sky-600/55 dark:hover:bg-slate-800/85 dark:hover:text-white;
+.btn-secondary:hover {
+    border-color: rgb(var(--accent-500) / 0.45);
+    background-color: rgb(var(--accent-50) / 0.95);
+    color: rgb(15 23 42);
+}
+
+html.dark .btn-secondary:hover {
+    border-color: rgb(var(--accent-500) / 0.55);
 }
 
 .btn-google {
-    @apply inline-flex items-center justify-center gap-3 rounded-xl border border-slate-300/95 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-sm shadow-slate-200/70 no-underline transition hover:border-slate-400/95 hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/85 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/70 dark:bg-slate-900/85 dark:text-slate-100 dark:shadow-transparent dark:hover:border-slate-500/80 dark:hover:bg-slate-800/90 dark:hover:text-white dark:focus-visible:ring-offset-slate-900;
+    @apply inline-flex items-center justify-center gap-3 rounded-xl border border-slate-300/95 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-sm shadow-slate-200/70 no-underline transition hover:border-slate-400/95 hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/70 dark:bg-slate-900/85 dark:text-slate-100 dark:shadow-transparent dark:hover:border-slate-500/80 dark:hover:bg-slate-800/90 dark:hover:text-white dark:focus-visible:ring-offset-slate-900;
+}
+
+.btn-google:focus-visible {
+    --tw-ring-color: rgb(var(--accent-500) / 0.85);
 }
 
 .profile-tabs {
@@ -70,7 +97,12 @@ html.dark .profile-tabs {
 }
 
 .profile-tab--active {
-    @apply border-slate-200/95 border-b-white bg-white/95 font-semibold text-sky-700 shadow-sm dark:border-slate-700/80 dark:border-b-slate-950 dark:bg-slate-900/80 dark:text-sky-300;
+    @apply border-slate-200/95 border-b-white bg-white/95 font-semibold shadow-sm dark:border-slate-700/80 dark:border-b-slate-950 dark:bg-slate-900/80;
+    color: rgb(var(--accent-700));
+}
+
+html.dark .profile-tab--active {
+    color: rgb(var(--accent-300));
 }
 
 .profile-tab-panel {
@@ -93,7 +125,12 @@ html.dark .watch-tabs {
 }
 
 .watch-tab--active {
-    @apply border-slate-200/95 border-b-white bg-white/95 font-semibold text-sky-700 shadow-sm dark:border-slate-700/80 dark:border-b-slate-950 dark:bg-slate-900/80 dark:text-sky-300;
+    @apply border-slate-200/95 border-b-white bg-white/95 font-semibold shadow-sm dark:border-slate-700/80 dark:border-b-slate-950 dark:bg-slate-900/80;
+    color: rgb(var(--accent-700));
+}
+
+html.dark .watch-tab--active {
+    color: rgb(var(--accent-300));
 }
 
 .watch-tab-badge {
@@ -101,7 +138,15 @@ html.dark .watch-tabs {
 }
 
 .watch-tab--active .watch-tab-badge {
-    @apply bg-sky-100 text-sky-800 ring-sky-300/70 dark:bg-sky-950/55 dark:text-sky-300 dark:ring-sky-700/45;
+    background-color: rgb(var(--accent-100));
+    color: rgb(var(--accent-800));
+    --tw-ring-color: rgb(var(--accent-300) / 0.7);
+}
+
+html.dark .watch-tab--active .watch-tab-badge {
+    background-color: rgb(var(--accent-950) / 0.55);
+    color: rgb(var(--accent-300));
+    --tw-ring-color: rgb(var(--accent-700) / 0.45);
 }
 
 .watch-tab-panel {
@@ -150,7 +195,17 @@ html.dark .auth-divider::after {
 }
 
 .btn-ghost {
-    @apply rounded-xl border border-slate-300/90 bg-transparent px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-sky-600/55 hover:bg-sky-50/80 hover:text-slate-900 disabled:opacity-40 dark:border-slate-700/90 dark:text-slate-200/90 dark:hover:border-sky-700/50 dark:hover:bg-slate-800/60 dark:hover:text-white;
+    @apply rounded-xl border border-slate-300/90 bg-transparent px-3 py-1.5 text-xs font-medium text-slate-700 transition disabled:opacity-40 dark:border-slate-700/90 dark:text-slate-200/90 dark:hover:bg-slate-800/60 dark:hover:text-white;
+}
+
+.btn-ghost:hover {
+    border-color: rgb(var(--accent-600) / 0.55);
+    background-color: rgb(var(--accent-50) / 0.8);
+    color: rgb(15 23 42);
+}
+
+html.dark .btn-ghost:hover {
+    border-color: rgb(var(--accent-700) / 0.5);
 }
 
 .card-surface {
@@ -158,7 +213,17 @@ html.dark .auth-divider::after {
 }
 
 .input-field {
-    @apply w-full rounded-xl border border-slate-300/95 bg-white/95 px-4 py-2.5 text-slate-900 shadow-inner shadow-slate-200/60 transition placeholder:text-slate-500 focus:border-sky-500/80 focus:outline-none focus:ring-2 focus:ring-sky-400/35 dark:border-slate-700/80 dark:bg-slate-900/85 dark:text-slate-50 dark:shadow-inner dark:shadow-black/25 dark:placeholder:text-slate-500 dark:focus:border-sky-600/70 dark:focus:ring-sky-500/35;
+    @apply w-full rounded-xl border border-slate-300/95 bg-white/95 px-4 py-2.5 text-slate-900 shadow-inner shadow-slate-200/60 transition placeholder:text-slate-500 focus:outline-none focus:ring-2 dark:border-slate-700/80 dark:bg-slate-900/85 dark:text-slate-50 dark:shadow-inner dark:shadow-black/25 dark:placeholder:text-slate-500;
+}
+
+.input-field:focus {
+    border-color: rgb(var(--accent-500) / 0.8);
+    --tw-ring-color: rgb(var(--accent-400) / 0.35);
+}
+
+html.dark .input-field:focus {
+    border-color: rgb(var(--accent-500) / 0.7);
+    --tw-ring-color: rgb(var(--accent-500) / 0.35);
 }
 
 /* Lesson rename: default view-only; expands to Save / Cancel on demand */
@@ -171,7 +236,25 @@ html.dark .auth-divider::after {
 }
 
 .lesson-rename-trigger {
-    @apply inline-flex shrink-0 items-center justify-center rounded-lg border border-slate-300/90 bg-white/85 p-2 text-slate-500 shadow-sm shadow-slate-200/75 ring-1 ring-slate-200/85 transition hover:border-sky-500/45 hover:bg-sky-50/95 hover:text-sky-700 hover:ring-sky-300/55 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/55 dark:border-slate-700/75 dark:bg-slate-900/60 dark:text-slate-400 dark:shadow-black/20 dark:ring-slate-800/80 dark:hover:border-sky-600/55 dark:hover:bg-sky-950/35 dark:hover:text-sky-300 dark:hover:ring-sky-800/55;
+    @apply inline-flex shrink-0 items-center justify-center rounded-lg border border-slate-300/90 bg-white/85 p-2 text-slate-500 shadow-sm shadow-slate-200/75 ring-1 ring-slate-200/85 transition focus:outline-none focus-visible:ring-2 dark:border-slate-700/75 dark:bg-slate-900/60 dark:text-slate-400 dark:shadow-black/20 dark:ring-slate-800/80;
+}
+
+.lesson-rename-trigger:hover {
+    border-color: rgb(var(--accent-500) / 0.45);
+    background-color: rgb(var(--accent-50) / 0.95);
+    color: rgb(var(--accent-700));
+    --tw-ring-color: rgb(var(--accent-300) / 0.55);
+}
+
+html.dark .lesson-rename-trigger:hover {
+    border-color: rgb(var(--accent-500) / 0.55);
+    background-color: rgb(var(--accent-950) / 0.35);
+    color: rgb(var(--accent-300));
+    --tw-ring-color: rgb(var(--accent-800) / 0.55);
+}
+
+.lesson-rename-trigger:focus-visible {
+    --tw-ring-color: rgb(var(--accent-500) / 0.55);
 }
 
 /* Course "Manage" overflow menu (built on <details>/<summary>) */
@@ -260,7 +343,7 @@ html.dark .course-card-box {
     background: rgb(255 255 255 / 0.99);
     box-shadow:
         0 28px 52px -16px rgb(30 58 138 / 0.15),
-        0 0 0 1px rgb(56 189 248 / 0.2);
+        0 0 0 1px rgb(var(--accent-400) / 0.2);
     transform: translateY(-2px);
 }
 
@@ -268,15 +351,15 @@ html.dark .course-card-box:hover {
     background: rgb(15 23 42 / 0.88);
     box-shadow:
         0 28px 56px -16px rgb(0 0 0 / 0.4),
-        0 0 0 1px rgb(56 189 248 / 0.12);
+        0 0 0 1px rgb(var(--accent-400) / 0.12);
 }
 
 .course-card-accent-sky {
-    border: 2px solid rgb(14 165 233 / 0.45);
+    border: 2px solid rgb(var(--accent-500) / 0.45);
 }
 
 html.dark .course-card-accent-sky {
-    border: 2px solid rgb(56 189 248 / 0.45);
+    border: 2px solid rgb(var(--accent-400) / 0.45);
 }
 
 .course-card-accent-slate {
@@ -374,16 +457,16 @@ html.dark .section-divider {
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(ellipse 90% 70% at 90% 10%, rgb(56 189 248 / 0.28), transparent 52%),
-        radial-gradient(ellipse 60% 50% at 0% 100%, rgb(99 102 241 / 0.16), transparent 45%);
+        radial-gradient(ellipse 90% 70% at 90% 10%, rgb(var(--accent-400) / 0.28), transparent 52%),
+        radial-gradient(ellipse 60% 50% at 0% 100%, rgb(var(--accent-600) / 0.16), transparent 45%);
     pointer-events: none;
     z-index: 0;
 }
 
 html.dark .home-hero-wrap::before {
     background:
-        radial-gradient(ellipse 90% 70% at 90% 10%, rgb(56 189 248 / 0.18), transparent 52%),
-        radial-gradient(ellipse 60% 50% at 0% 100%, rgb(99 102 241 / 0.12), transparent 45%);
+        radial-gradient(ellipse 90% 70% at 90% 10%, rgb(var(--accent-400) / 0.18), transparent 52%),
+        radial-gradient(ellipse 60% 50% at 0% 100%, rgb(var(--accent-600) / 0.12), transparent 45%);
 }
 
 .home-hero-wrap::after {
@@ -429,13 +512,15 @@ html.dark .home-guest-feature {
     height: 2.5rem;
     margin-inline: auto;
     border-radius: 0.75rem;
-    border: 1px solid rgb(125 211 252 / 0.45);
-    background: rgb(224 242 254 / 0.85);
+    border: 1px solid rgb(var(--accent-300) / 0.45);
+    background: rgb(var(--accent-100) / 0.85);
+    color: rgb(var(--accent-600));
 }
 
 html.dark .home-guest-feature-icon {
-    border-color: rgb(14 165 233 / 0.25);
-    background: rgb(12 74 110 / 0.45);
+    border-color: rgb(var(--accent-500) / 0.25);
+    background: rgb(var(--accent-950) / 0.45);
+    color: rgb(var(--accent-400));
 }
 
 .roadmap-card-home {
@@ -595,7 +680,7 @@ html:not(.dark) .playground-editor .cm-content ::selection {
 }
 
 html:not(.dark) .playground-editor .cm-cursor {
-    border-left-color: rgb(2 132 199);
+    border-left-color: rgb(var(--accent-600));
 }
 
 /* Dark-mode tweak: one-dark gutters blend with our slate surround */
@@ -610,11 +695,23 @@ html.dark .playground-editor .cm-gutters {
 
 /* Toolbar icon buttons */
 .playground-iconbtn {
-    @apply inline-flex items-center gap-1 rounded-md border border-slate-200/90 bg-white px-2 py-1 text-[11px] font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60 dark:border-slate-700/80 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800/70 dark:hover:text-white;
+    @apply inline-flex items-center gap-1 rounded-md border border-slate-200/90 bg-white px-2 py-1 text-[11px] font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 dark:border-slate-700/80 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800/70 dark:hover:text-white;
+}
+
+.playground-iconbtn:focus-visible {
+    --tw-ring-color: rgb(var(--accent-400) / 0.6);
 }
 
 .playground-iconbtn[aria-pressed='true'] {
-    @apply border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700/55 dark:bg-sky-950/45 dark:text-sky-200;
+    border-color: rgb(var(--accent-300));
+    background-color: rgb(var(--accent-50));
+    color: rgb(var(--accent-700));
+}
+
+html.dark .playground-iconbtn[aria-pressed='true'] {
+    border-color: rgb(var(--accent-700) / 0.55);
+    background-color: rgb(var(--accent-950) / 0.45);
+    color: rgb(var(--accent-300));
 }
 
 /* File-tab look (hide outline aria-selected indicator since we style it inline) */
@@ -635,7 +732,7 @@ html.dark .playground-editor .cm-gutters {
     right: 0.5rem;
     bottom: -1px;
     height: 2px;
-    background: linear-gradient(90deg, rgb(56 189 248), rgb(59 130 246));
+    background: linear-gradient(90deg, rgb(var(--accent-400)), rgb(var(--accent-600)));
     border-radius: 2px;
 }
 
@@ -681,7 +778,11 @@ html.dark .playground-console [data-console-panel]::-webkit-scrollbar-thumb {
 /* —— Lesson notes: markdown toolbar + rendered prose —— */
 
 .note-toolbar-btn {
-    @apply inline-flex h-7 min-w-[1.75rem] items-center justify-center rounded-md px-1.5 text-[12px] text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-100;
+    @apply inline-flex h-7 min-w-[1.75rem] items-center justify-center rounded-md px-1.5 text-[12px] text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-100;
+}
+
+.note-toolbar-btn:focus-visible {
+    --tw-ring-color: rgb(var(--accent-400) / 0.6);
 }
 
 .note-toolbar-btn:active {

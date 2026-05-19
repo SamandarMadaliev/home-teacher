@@ -118,7 +118,7 @@
                         rows="5"
                         required
                         placeholder="Write your note here… Markdown supported: **bold**, *italic*, `code`, lists, links."
-                        class="note-textarea block w-full resize-y rounded-b-xl border border-slate-300/95 bg-white px-3 py-2.5 font-sans text-sm text-slate-900 shadow-inner shadow-slate-200/60 transition placeholder:text-slate-500 focus:border-sky-500/80 focus:outline-none focus:ring-2 focus:ring-sky-400/35 dark:border-slate-700/80 dark:bg-slate-950/70 dark:text-slate-100 dark:shadow-black/25 dark:placeholder:text-slate-500 dark:focus:border-sky-600/70 dark:focus:ring-sky-500/35"
+                        class="note-textarea input-field block w-full resize-y rounded-b-xl rounded-t-none border-x-0 border-b-0 shadow-inner"
                         data-note-input
                     >{{ old('body') }}</textarea>
 
@@ -161,7 +161,7 @@
                                             <div class="mb-2 flex flex-wrap items-center gap-2">
                                                 <button
                                                     type="button"
-                                                    class="inline-flex items-center rounded-lg bg-sky-100 px-2.5 py-1 font-mono text-xs tabular-nums font-semibold text-sky-800 ring-1 ring-sky-400/45 transition hover:bg-sky-200/92 hover:text-sky-950 dark:bg-sky-950/55 dark:text-sky-300 dark:ring-sky-600/35 dark:hover:bg-sky-900/55 dark:hover:text-sky-200"
+                                                    class="badge-accent px-2.5 py-1"
                                                     data-note-seek="{{ $note->timestamp_seconds }}"
                                                     aria-label="Jump to {{ $note->timestampLabel() }} in this video"
                                                 >
@@ -213,7 +213,7 @@
                     >
                         @csrf
                         <input type="hidden" name="kind" value="file" />
-                        <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-700 dark:text-sky-400/90">File on disk</p>
+                        <p class="text-accent-eyebrow text-[0.65rem] font-semibold uppercase tracking-[0.2em]">File on disk</p>
 
                         <label for="attachment-file-title" class="mt-3 block text-xs font-medium text-slate-700 dark:text-slate-300">Label <span class="font-normal text-slate-500 dark:text-slate-500">(optional)</span></label>
                         <input
@@ -299,7 +299,7 @@
                                 <div class="flex flex-wrap items-start justify-between gap-3">
                                     <div class="flex min-w-0 flex-1 items-start gap-3">
                                         @if ($attachment->isFile())
-                                            <span class="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-700 ring-1 ring-sky-300/60 dark:bg-sky-950/55 dark:text-sky-300 dark:ring-sky-700/40" aria-hidden="true">
+                                            <span class="resource-icon-accent" aria-hidden="true">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                                                 </svg>
@@ -320,7 +320,7 @@
                                                         href="{{ route('videos.attachments.download', [$video, $attachment]) }}"
                                                         target="_blank"
                                                         rel="noopener"
-                                                        class="block break-words text-sm font-semibold text-sky-700 underline decoration-sky-500/40 underline-offset-2 hover:text-sky-800 hover:decoration-sky-600/70 dark:text-sky-400/95 dark:decoration-sky-500/45 dark:hover:text-sky-300"
+                                                        class="resource-link-accent"
                                                     >
                                                         {{ $attachment->title }}
                                                     </a>
@@ -345,7 +345,7 @@
                                                     href="{{ $attachment->url }}"
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    class="block break-words text-sm font-semibold text-sky-700 underline decoration-sky-500/40 underline-offset-2 hover:text-sky-800 hover:decoration-sky-600/70 dark:text-sky-400/95 dark:decoration-sky-500/45 dark:hover:text-sky-300"
+                                                    class="resource-link-accent"
                                                 >
                                                     {{ $attachment->title }}
                                                 </a>

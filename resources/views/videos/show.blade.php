@@ -21,10 +21,10 @@
     <div id="watch-layout" class="watch-layout">
         <div class="watch-player-stack min-w-0">
             <section
-                class="watch-hero rounded-3xl border border-slate-200/95 bg-gradient-to-br from-white via-white to-sky-50/55 p-5 shadow-lg shadow-slate-300/25 ring-1 ring-sky-100/45 dark:border-slate-800/90 dark:from-slate-900/88 dark:via-slate-900/75 dark:to-sky-950/30 dark:shadow-black/25 dark:ring-sky-950/30 sm:p-6"
+                class="watch-hero page-header-card-sm"
                 aria-label="This lesson"
             >
-                <a href="{{ route('courses.show', $video->course) }}" class="inline-flex items-center gap-1.5 text-sm font-medium text-sky-600 transition hover:text-sky-700 dark:text-sky-400/95 dark:hover:text-sky-300">
+                <a href="{{ route('courses.show', $video->course) }}" class="back-link">
                     <span aria-hidden="true">←</span> {{ $video->course->title }}
                 </a>
 
@@ -94,7 +94,7 @@
                     <div class="watch-hero-progress mt-5 max-w-md">
                         <div class="flex items-center justify-between gap-2 text-xs">
                             <span class="font-medium text-slate-700 dark:text-slate-300">Progress on this lesson</span>
-                            <span class="tabular-nums font-semibold text-sky-700 dark:text-sky-300/95">{{ $lessonPct }}%</span>
+                            <span class="text-accent-stat">{{ $lessonPct }}%</span>
                         </div>
                         <div
                             class="mt-2 h-2 overflow-hidden rounded-full bg-slate-200 ring-1 ring-slate-300/95 dark:bg-slate-800 dark:ring-slate-900/80"
@@ -105,7 +105,7 @@
                             aria-label="This lesson watch progress"
                         >
                             <div
-                                class="h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-500 transition-[width] duration-300"
+                                class="progress-bar-fill"
                                 style="width: {{ $lessonPct }}%"
                             ></div>
                         </div>
@@ -153,7 +153,7 @@
                 </button>
             </div>
 
-            <div class="course-plyr mt-4 overflow-hidden rounded-2xl border border-slate-300/95 bg-black shadow-2xl shadow-slate-400/45 ring-1 ring-sky-500/25 dark:border-slate-800/90 dark:shadow-blue-950/40 dark:ring-sky-950/40">
+            <div class="course-plyr player-chrome-ring mt-4 overflow-hidden rounded-2xl border border-slate-300/95 bg-black shadow-2xl shadow-slate-400/45 dark:border-slate-800/90">
                 <video
                     id="course-video"
                     class="aspect-video w-full"
@@ -167,17 +167,17 @@
 
             <p class="mt-3 text-center text-[0.65rem] text-slate-500 dark:text-slate-500">
                 Player:
-                <a href="https://github.com/sampotts/plyr" class="text-sky-600 underline decoration-sky-500/45 hover:text-sky-800 dark:text-sky-400/90 dark:hover:text-sky-300" target="_blank" rel="noopener noreferrer">Plyr</a>
+                <a href="https://github.com/sampotts/plyr" class="link-accent underline decoration-accent" target="_blank" rel="noopener noreferrer">Plyr</a>
             </p>
         </div>
 
         <aside class="watch-lessons-sidebar w-full shrink-0 xl:w-auto xl:min-w-[18rem]" aria-label="Course lessons">
             <div class="card-surface overflow-hidden xl:sticky xl:top-28">
-                <div class="border-b border-slate-200/95 bg-gradient-to-r from-slate-50 to-sky-50/80 px-4 py-4 dark:border-slate-800/90 dark:from-slate-900/80 dark:to-sky-950/25">
-                    <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-700 dark:text-sky-400/90">Playlist</p>
+                <div class="playlist-panel-header">
+                    <p class="text-accent-eyebrow text-[0.65rem] font-semibold uppercase tracking-[0.2em]">Playlist</p>
                     <p class="mt-1.5 truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{{ $video->course->title }}</p>
                     <p class="mt-1 text-xs tabular-nums text-slate-600 dark:text-slate-400">{{ $totalLessons }} {{ $totalLessons === 1 ? 'lesson' : 'lessons' }}</p>
-                    <a href="{{ route('courses.show', $video->course) }}" class="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-sky-600 transition hover:text-sky-800 hover:underline dark:text-sky-400/90 dark:hover:text-sky-300">
+                    <a href="{{ route('courses.show', $video->course) }}" class="mt-3 inline-flex items-center gap-1 text-xs link-accent hover:underline">
                         Course overview
                         <span aria-hidden="true">→</span>
                     </a>
@@ -193,10 +193,10 @@
                             <a
                                 href="{{ route('videos.show', $lesson) }}"
                                 class="{{ $active
-                                    ? 'bg-sky-100/98 ring-1 ring-inset ring-sky-500/42 dark:bg-sky-950/45 dark:ring-sky-500/35'
+                                    ? 'lesson-row-active ring-1 ring-inset'
                                     : 'hover:bg-slate-100/96 dark:hover:bg-slate-800/55' }} flex gap-3 px-4 py-3.5 transition"
                             >
-                                <span class="mt-0.5 flex h-7 min-w-7 items-center justify-center rounded-lg bg-slate-100 text-[0.65rem] font-semibold tabular-nums text-sky-700 ring-1 ring-slate-300/95 dark:bg-slate-800/90 dark:text-sky-300/90 dark:ring-slate-700/80">
+                                <span class="lesson-index-badge">
                                     {{ $lesson->sort_order }}
                                 </span>
                                 <span class="min-w-0 flex-1">
@@ -206,14 +206,14 @@
                                     @endif
                                     <span class="mt-2 flex items-center gap-2">
                                         <span class="h-1 flex-1 overflow-hidden rounded-full bg-slate-200 ring-1 ring-slate-300/95 dark:bg-slate-800 dark:ring-slate-900/80">
-                                            <span class="block h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-500 transition-[width]" style="width: {{ $pct }}%"></span>
+                                            <span class="progress-bar-fill block h-full" style="width: {{ $pct }}%"></span>
                                         </span>
                                         <span class="shrink-0 text-[0.65rem] tabular-nums text-slate-600 dark:text-slate-500">{{ $pct }}%</span>
                                     </span>
                                 </span>
                                 @if ($active)
                                     <span class="sr-only">(playing)</span>
-                                    <span class="mt-1 h-2 w-2 shrink-0 rounded-full bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.6)]" aria-hidden="true"></span>
+                                    <span class="dot-accent-glow" aria-hidden="true"></span>
                                 @endif
                             </a>
                         </li>
@@ -227,15 +227,15 @@
                 @if ($previousVideo)
                     <a
                         href="{{ route('videos.show', $previousVideo) }}"
-                        class="watch-nav-card group flex min-h-23 flex-col justify-center rounded-2xl border border-sky-300/90 bg-gradient-to-br from-white to-sky-50/95 px-5 py-4 ring-1 ring-sky-300/45 transition hover:border-sky-500/55 hover:ring-sky-500/40 dark:border-sky-900/45 dark:from-slate-900/92 dark:to-sky-950/28 dark:ring-sky-950/35 dark:hover:border-sky-700/55 dark:hover:ring-sky-800/45"
+                        class="watch-nav-card-accent"
                     >
-                        <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-sky-700 dark:text-sky-400/85">
+                        <span class="text-accent-eyebrow inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4 shrink-0" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                             </svg>
                             Previous lesson
                         </span>
-                        <p class="mt-2 line-clamp-2 text-base font-semibold text-slate-900 decoration-sky-600/42 underline-offset-4 transition group-hover:text-sky-950 group-hover:underline dark:text-slate-100 dark:decoration-sky-600/50 dark:group-hover:text-white sm:text-lg">
+                        <p class="watch-nav-title">
                             {{ $previousVideo->title }}
                         </p>
                     </a>
@@ -257,15 +257,15 @@
                 @if ($nextVideo)
                     <a
                         href="{{ route('videos.show', $nextVideo) }}"
-                        class="watch-nav-card group flex min-h-23 flex-col justify-center rounded-2xl border border-sky-300/90 bg-gradient-to-br from-white to-sky-50/95 px-5 py-4 ring-1 ring-sky-300/45 transition hover:border-sky-500/55 hover:ring-sky-500/40 dark:border-sky-900/45 dark:from-slate-900/92 dark:to-sky-950/28 dark:ring-sky-950/35 dark:hover:border-sky-700/55 dark:hover:ring-sky-800/45"
+                        class="watch-nav-card-accent"
                     >
-                        <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-sky-700 dark:text-sky-400/85">
+                        <span class="text-accent-eyebrow inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider">
                             Next lesson
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4 shrink-0" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                             </svg>
                         </span>
-                        <p class="mt-2 line-clamp-2 text-base font-semibold text-slate-900 decoration-sky-600/42 underline-offset-4 transition group-hover:text-sky-950 group-hover:underline dark:text-slate-100 dark:decoration-sky-600/50 dark:group-hover:text-white sm:text-lg">
+                        <p class="watch-nav-title">
                             {{ $nextVideo->title }}
                         </p>
                     </a>
@@ -306,11 +306,11 @@
                 aria-label="Dismiss — stay on this lesson"
             ></button>
             <div
-                class="relative z-10 mx-auto mb-2 w-full max-w-lg overflow-hidden rounded-2xl border border-slate-300/92 bg-white/96 shadow-2xl shadow-slate-400/30 ring-1 ring-sky-950/12 sm:mb-4 dark:border-slate-700/90 dark:bg-slate-900/95 dark:shadow-black/50 dark:ring-white/10"
+                class="modal-accent-ring relative z-10 mx-auto mb-2 w-full max-w-lg overflow-hidden rounded-2xl border border-slate-300/92 bg-white/96 shadow-2xl shadow-slate-400/30 ring-1 sm:mb-4 dark:border-slate-700/90 dark:bg-slate-900/95 dark:shadow-black/50"
             >
                 <div class="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-5">
                     <div class="min-w-0 flex-1">
-                        <p id="up-next-heading" class="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-sky-700 dark:text-sky-400/95">
+                        <p id="up-next-heading" class="text-accent-eyebrow text-[0.65rem] font-semibold uppercase tracking-[0.18em]">
                             Up next
                         </p>
                         <p id="up-next-title" class="mt-2 line-clamp-2 text-base font-semibold leading-snug text-slate-900 dark:text-white sm:text-lg">
@@ -320,7 +320,7 @@
                             <span>Playing in</span>
                             <span
                                 id="up-next-seconds"
-                                class="inline-flex min-w-9 items-center justify-center rounded-lg bg-sky-100 px-2 py-1 font-mono text-xl font-bold tabular-nums text-sky-800 ring-1 ring-sky-500/52 dark:bg-sky-950/80 dark:text-sky-300 dark:ring-sky-600/40"
+                                class="badge-accent-lg"
                                 aria-live="polite"
                                 aria-atomic="true"
                             >{{ 5 }}</span>

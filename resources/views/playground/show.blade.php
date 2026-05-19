@@ -27,7 +27,7 @@
 
     $langAccent = [
         'javascript' => 'text-amber-500',
-        'python' => 'text-sky-500',
+        'python' => 'text-accent',
         'php' => 'text-indigo-500',
         'go' => 'text-cyan-500',
     ];
@@ -36,12 +36,12 @@
 @section('content')
     {{-- Header card --}}
     <section
-        class="rounded-3xl border border-slate-200/95 bg-gradient-to-br from-white via-white to-sky-50/55 p-5 shadow-lg shadow-slate-300/25 ring-1 ring-sky-100/45 dark:border-slate-800/90 dark:from-slate-900/88 dark:via-slate-900/75 dark:to-sky-950/30 dark:shadow-black/25 dark:ring-sky-950/30 sm:p-6"
+        class="page-header-card-sm"
         aria-label="Playground overview"
     >
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
             <div class="min-w-0">
-                <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-700 dark:text-sky-400/90">Playground</p>
+                <p class="text-accent-eyebrow text-[0.65rem] font-semibold uppercase tracking-[0.2em]">Playground</p>
                 <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-3xl">Run code, locally</h1>
                 <p class="mt-1.5 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-400">
                     Sandboxed in a fresh temp folder per run · capped at {{ $limits['timeout_seconds'] }}s · {{ $limits['max_output_kb'] }} KB output per stream.
@@ -141,7 +141,7 @@
                         $key = $lang['key'];
                         $ext = $fileExtMap[$key] ?? $key;
                         $icon = $langIcons[$key] ?? strtoupper(substr($key, 0, 2));
-                        $accent = $langAccent[$key] ?? 'text-sky-500';
+                        $accent = $langAccent[$key] ?? 'text-accent';
                     @endphp
                     <button
                         type="button"
@@ -213,7 +213,7 @@
                     <div class="playground-statusbar flex flex-wrap items-center justify-between gap-2 border-t border-slate-200/85 bg-slate-50/85 px-3 py-1.5 text-[11px] text-slate-600 dark:border-slate-800/80 dark:bg-slate-900/55 dark:text-slate-400">
                         <div class="flex items-center gap-2">
                             <span class="inline-flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300">
-                                <span class="size-1.5 rounded-full bg-sky-500"></span>
+                                <span class="dot-accent-glow size-1.5"></span>
                                 <span data-status-lang>—</span>
                             </span>
                             <span class="hidden font-mono text-slate-500 dark:text-slate-500 sm:inline" data-info-binary></span>
@@ -238,7 +238,7 @@
                         </summary>
                         <textarea
                             data-stdin
-                            class="block h-24 w-full resize-y border-t border-slate-200/85 bg-white px-3 py-2 font-mono text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-400/35 dark:border-slate-800/80 dark:bg-slate-950/70 dark:text-slate-100"
+                            class="block h-24 w-full resize-y border-t border-slate-200/85 bg-white px-3 py-2 font-mono text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-inset focus-accent dark:border-slate-800/80 dark:bg-slate-950/70 dark:text-slate-100"
                             placeholder="Text piped into the program's stdin"
                         ></textarea>
                     </details>
@@ -307,7 +307,7 @@
                                 <span data-info-timed-out class="hidden inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-800 ring-1 ring-amber-300/55 dark:bg-amber-950/55 dark:text-amber-300 dark:ring-amber-700/40">
                                     Timed out
                                 </span>
-                                <span data-info-truncated class="hidden inline-flex items-center gap-1 rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sky-800 ring-1 ring-sky-300/55 dark:bg-sky-950/55 dark:text-sky-300 dark:ring-sky-700/40">
+                                <span data-info-truncated class="hidden chip-accent">
                                     Output truncated
                                 </span>
                             </div>

@@ -11,7 +11,7 @@
 @section('content')
     <div class="mb-10 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div class="min-w-0">
-            <a href="{{ route('roadmaps.index') }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-600 transition hover:text-sky-800 dark:text-sky-400/95 dark:hover:text-sky-300">
+            <a href="{{ route('roadmaps.index') }}" class="back-link">
                 <span aria-hidden="true">←</span> All roadmaps
             </a>
             <h1 class="mt-4 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-4xl">{{ $roadmap->title }}</h1>
@@ -68,7 +68,7 @@
             @else
                 <p>
                     You do not have any courses yet.
-                    <a href="{{ route('courses.create') }}" class="font-semibold text-sky-600 underline decoration-sky-500/45 underline-offset-4 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-300">Add a course</a>
+                    <a href="{{ route('courses.create') }}" class="link-accent-underline">Add a course</a>
                     <span class="text-slate-600 dark:text-slate-500"> to index a folder of videos, then return here to build your order.</span>
                 </p>
             @endif
@@ -151,7 +151,7 @@
                                     aria-label="Overall progress for {{ $course->title }}"
                                 >
                                     <div
-                                        class="h-full rounded-full bg-gradient-to-r from-violet-500 to-blue-500 transition-[width] duration-300"
+                                        class="progress-bar-fill duration-300"
                                         style="width: {{ $pct }}%"
                                     ></div>
                                 </div>

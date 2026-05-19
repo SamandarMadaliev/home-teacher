@@ -6,10 +6,10 @@
 
 @section('content')
     @if (! empty($guest) && $guest)
-        <section class="home-guest-hero home-hero-wrap border border-sky-400/55 bg-white/93 shadow-2xl shadow-slate-400/35 ring-1 ring-slate-900/6 dark:border-sky-500/25 dark:bg-slate-950/80 dark:shadow-black/40 dark:ring-white/5" aria-label="Welcome">
+        <section class="home-guest-hero home-hero-wrap hero-accent-wrap" aria-label="Welcome">
             <div class="home-hero-inner px-6 py-12 sm:px-10 sm:py-14 lg:px-12 lg:py-16">
                 <div class="mx-auto max-w-2xl text-center">
-                    <p class="section-eyebrow text-sky-600 dark:text-sky-400/95">{{ config('app.name') }}</p>
+                    <p class="section-eyebrow text-accent">{{ config('app.name') }}</p>
                     <h1 class="home-page-title mt-3 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl lg:text-[2.65rem] lg:leading-tight">
                         Your courses. Your progress. Your account.
                     </h1>
@@ -35,7 +35,7 @@
 
                 <ul class="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-3 sm:gap-5" role="list">
                     <li class="home-guest-feature">
-                        <span class="home-guest-feature-icon text-sky-600 dark:text-sky-400" aria-hidden="true">
+                        <span class="home-guest-feature-icon text-accent" aria-hidden="true">
                             <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a3 3 0 01-3 3m-3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -44,7 +44,7 @@
                         <p class="mt-1.5 text-xs leading-relaxed text-slate-600 dark:text-slate-500">Courses and progress stay tied to your account.</p>
                     </li>
                     <li class="home-guest-feature">
-                        <span class="home-guest-feature-icon text-sky-600 dark:text-sky-400" aria-hidden="true">
+                        <span class="home-guest-feature-icon text-accent" aria-hidden="true">
                             <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 00-1.06-.44z" />
                             </svg>
@@ -53,7 +53,7 @@
                         <p class="mt-1.5 text-xs leading-relaxed text-slate-600 dark:text-slate-500">Point at folders on disk — nothing is uploaded.</p>
                     </li>
                     <li class="home-guest-feature">
-                        <span class="home-guest-feature-icon text-sky-600 dark:text-sky-400" aria-hidden="true">
+                        <span class="home-guest-feature-icon text-accent" aria-hidden="true">
                             <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
                             </svg>
@@ -79,13 +79,13 @@
             @php
                 $heroPct = $lastWatchedCourse->aggregateProgressPercent();
             @endphp
-            <div class="home-hero-wrap border border-sky-400/55 bg-white/93 shadow-2xl shadow-slate-400/35 ring-1 ring-slate-900/6 dark:border-sky-500/25 dark:bg-slate-950/80 dark:shadow-black/40 dark:ring-white/5">
-                <a href="{{ $continueUrl }}" class="home-hero-inner group block text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100 dark:focus-visible:ring-sky-400/90 dark:focus-visible:ring-offset-slate-950">
+            <div class="home-hero-wrap hero-accent-wrap">
+                <a href="{{ $continueUrl }}" class="home-hero-inner group block text-left focus:outline-none focus-visible:ring-2 focus-ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100 dark:focus-visible:ring-offset-slate-950">
                     <div class="relative flex flex-col gap-8 p-6 sm:flex-row sm:items-stretch sm:gap-10 sm:p-8 lg:p-10">
-                        <span class="absolute left-0 top-6 bottom-6 w-1 rounded-full bg-gradient-to-b from-sky-400 via-blue-500 to-indigo-600 sm:top-8 sm:bottom-8 lg:top-10 lg:bottom-10" aria-hidden="true"></span>
+                        <span class="home-hero-bar sm:top-8 sm:bottom-8 lg:top-10 lg:bottom-10" aria-hidden="true"></span>
                         <div class="flex min-w-0 flex-1 flex-col pl-4 sm:pl-6">
                             <div class="flex flex-wrap items-center gap-2">
-                                <span class="section-eyebrow text-sky-600 dark:text-sky-400/95">Continue watching</span>
+                                <span class="section-eyebrow text-accent">Continue watching</span>
                                 <span class="rounded-full bg-slate-900/[0.04] px-2.5 py-0.5 text-[11px] font-medium tabular-nums text-slate-600 ring-1 ring-slate-300/85 dark:bg-white/5 dark:text-slate-500 dark:ring-white/10">
                                     {{ $lastWatchedCourse->videos_count }} {{ $lastWatchedCourse->videos_count === 1 ? 'lesson' : 'lessons' }}
                                 </span>
@@ -105,7 +105,7 @@
                             @endif
 
                             <div class="mt-8 flex flex-wrap items-center gap-4">
-                                <span class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-500/35 ring-1 ring-white/25 transition group-hover:from-sky-400 group-hover:to-blue-500 dark:shadow-sky-950/45 dark:ring-white/15 dark:group-hover:shadow-sky-900/50">
+                                <span class="btn-primary px-5 py-2.5 shadow-lg ring-1 ring-white/25 dark:ring-white/15">
                                     Resume
                                     <svg class="h-4 w-4 transition group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -119,7 +119,7 @@
                             <div class="flex w-full shrink-0 flex-col justify-center border-t border-slate-200/98 pt-6 sm:w-72 sm:border-l sm:border-t-0 sm:border-slate-200/98 sm:pl-10 sm:pt-0 lg:w-80 dark:border-white/5 sm:dark:border-white/10">
                                 <div class="flex items-end justify-between gap-3">
                                     <span class="text-xs font-medium text-slate-600 dark:text-slate-500">Overall progress</span>
-                                    <span class="text-2xl font-bold tabular-nums tracking-tight text-sky-600 dark:text-sky-300">{{ $heroPct }}<span class="text-lg font-semibold text-sky-500 dark:text-sky-400/80">%</span></span>
+                                    <span class="text-2xl font-bold tabular-nums tracking-tight text-accent-stat">{{ $heroPct }}<span class="text-lg font-semibold text-accent-stat-muted">%</span></span>
                                 </div>
                                 <div
                                     class="mt-4 h-3 overflow-hidden rounded-full bg-slate-200 ring-1 ring-slate-300/95 dark:bg-slate-900 dark:ring-slate-700/90"
@@ -129,7 +129,7 @@
                                     aria-valuemax="100"
                                 >
                                     <div
-                                        class="h-full rounded-full bg-gradient-to-r from-sky-400 via-sky-500 to-blue-500 transition-[width] duration-500 ease-out"
+                                        class="progress-bar-fill duration-500 ease-out"
                                         style="width: {{ $heroPct }}%"
                                     ></div>
                                 </div>
@@ -141,8 +141,8 @@
             </div>
         @else
             <div class="empty-state-soft px-6 py-14 text-center sm:px-12 sm:py-16">
-                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500/35 to-blue-600/22 ring-1 ring-sky-500/38 dark:from-sky-500/25 dark:to-blue-600/15 dark:ring-sky-500/30">
-                    <svg class="h-8 w-8 text-sky-600 dark:text-sky-400/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <div class="icon-empty-accent">
+                    <svg class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
                     </svg>
                 </div>
@@ -216,7 +216,7 @@
     <section aria-labelledby="home-courses-heading">
         <div class="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div class="min-w-0">
-                <p class="section-eyebrow text-sky-600 dark:text-sky-400/95">Library</p>
+                <p class="section-eyebrow text-accent">Library</p>
                 <h2 id="home-courses-heading" class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">Courses</h2>
                 <p class="mt-2 max-w-xl text-sm leading-relaxed text-slate-600 dark:text-slate-500">Your three most recently active courses.</p>
             </div>
@@ -231,7 +231,7 @@
             <div class="empty-state-soft px-8 py-14 text-center">
                 <p class="text-lg font-medium text-slate-800 dark:text-slate-100">No courses yet</p>
                 <p class="mt-2 text-sm text-slate-600 dark:text-slate-500">
-                    <a href="{{ route('courses.create') }}" class="font-semibold text-sky-600 underline decoration-sky-500/55 underline-offset-4 transition hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-300">Add a course</a>
+                    <a href="{{ route('courses.create') }}" class="link-accent-underline">Add a course</a>
                     <span class="text-slate-600 dark:text-slate-600"> by pointing at a folder of videos.</span>
                 </p>
             </div>
@@ -270,7 +270,7 @@
                                             aria-label="Overall progress for {{ $course->title }}"
                                         >
                                             <div
-                                                class="h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-500 transition-[width] duration-300"
+                                                class="progress-bar-fill"
                                                 style="width: {{ $coursePct }}%"
                                             ></div>
                                         </div>
@@ -278,9 +278,9 @@
                                 @endif
                             </div>
                             <div class="mt-6 flex items-center justify-between border-t border-slate-200/97 pt-4 dark:border-slate-700/50">
-                                <span class="text-xs font-semibold text-sky-600 transition group-hover:text-sky-800 dark:text-sky-400/95 dark:group-hover:text-sky-300">Open course</span>
+                                <span class="card-link-label">Open course</span>
                                 <span
-                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sky-600 ring-1 ring-slate-300/95 transition group-hover:bg-sky-100 group-hover:text-sky-700 group-hover:ring-sky-400/55 dark:bg-slate-800/90 dark:text-sky-400 dark:ring-slate-600/70 dark:group-hover:bg-sky-500/15 dark:group-hover:text-sky-300 dark:group-hover:ring-sky-500/35"
+                                    class="arrow-box-accent"
                                     aria-hidden="true"
                                 >
                                     →

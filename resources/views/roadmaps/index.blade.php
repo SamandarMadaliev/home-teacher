@@ -27,7 +27,7 @@
             </div>
             <p class="text-lg font-medium text-slate-900 dark:text-slate-100">No roadmaps yet</p>
             <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                <a href="{{ route('roadmaps.create') }}" class="font-semibold text-sky-600 underline decoration-sky-500/45 underline-offset-4 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-300">
+                <a href="{{ route('roadmaps.create') }}" class="link-accent-underline">
                     Create a roadmap
                 </a>
                 <span class="text-slate-600 dark:text-slate-500"> and add your courses in the right sequence.</span>
@@ -39,10 +39,10 @@
                 <li>
                     <a
                         href="{{ route('roadmaps.show', $roadmap) }}"
-                        class="card-surface group flex flex-col gap-4 p-6 transition hover:border-sky-500/52 hover:shadow-lg hover:shadow-slate-400/22 dark:hover:border-sky-700/45 dark:hover:shadow-sky-950/20 sm:flex-row sm:items-center sm:justify-between"
+                        class="card-surface card-hover-accent group flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between"
                     >
                         <div class="min-w-0">
-                            <h2 class="text-lg font-semibold text-slate-900 transition group-hover:text-sky-950 dark:text-slate-50 dark:group-hover:text-white">
+                            <h2 class="text-lg font-semibold text-slate-900 transition group-hover:text-accent-strong dark:text-slate-50 dark:group-hover:text-white">
                                 {{ $roadmap->title }}
                             </h2>
                             @if ($roadmap->description)
@@ -54,9 +54,9 @@
                                 {{ $roadmap->courses_count }} {{ $roadmap->courses_count === 1 ? 'course' : 'courses' }}
                             </p>
                         </div>
-                        <span class="inline-flex shrink-0 items-center gap-2 text-sm font-medium text-sky-600 transition group-hover:text-sky-800 dark:text-sky-400/95 dark:group-hover:text-sky-300">
+                        <span class="inline-flex shrink-0 items-center gap-2 card-link-label text-sm font-medium">
                             Open
-                            <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-200/98 text-sky-700 ring-1 ring-slate-400/62 transition group-hover:bg-sky-100 dark:bg-slate-800/95 dark:text-sky-400 dark:ring-slate-600/80 dark:group-hover:bg-sky-500/15" aria-hidden="true">→</span>
+                            <span class="arrow-box-accent" aria-hidden="true">→</span>
                         </span>
                     </a>
                 </li>

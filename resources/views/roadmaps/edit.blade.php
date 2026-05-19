@@ -4,10 +4,10 @@
 
 @section('content')
     <div class="mb-10">
-        <a href="{{ route('roadmaps.show', $roadmap) }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-600 transition hover:text-sky-800 dark:text-sky-400/95 dark:hover:text-sky-300">
+        <a href="{{ route('roadmaps.show', $roadmap) }}" class="back-link">
             <span aria-hidden="true">←</span> {{ $roadmap->title }}
         </a>
-        <p class="mt-6 text-sm font-medium uppercase tracking-widest text-sky-600 dark:text-sky-500/90">Learning path</p>
+        <p class="mt-6 text-sm font-medium uppercase tracking-widest text-accent">Learning path</p>
         <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-4xl">Edit roadmap</h1>
     </div>
 

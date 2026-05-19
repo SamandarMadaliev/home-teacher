@@ -5,27 +5,27 @@
 @section('title', 'Add course — '.config('app.name'))
 
 @section('content')
-    <a href="{{ route('courses.index') }}" class="inline-flex items-center gap-1 text-sm font-medium text-sky-600 transition hover:text-sky-700 dark:text-sky-400/95 dark:hover:text-sky-300">
+    <a href="{{ route('courses.index') }}" class="back-link">
         <span aria-hidden="true">←</span> Courses
     </a>
 
-    <header class="mt-5 rounded-3xl border border-slate-200/95 bg-gradient-to-br from-white via-white to-sky-50/55 p-6 shadow-lg shadow-slate-300/25 ring-1 ring-sky-100/45 dark:border-slate-800/90 dark:from-slate-900/88 dark:via-slate-900/75 dark:to-sky-950/30 dark:shadow-black/25 dark:ring-sky-950/30 sm:p-7">
-        <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-700 dark:text-sky-400/90">New course</p>
+    <header class="mt-5 page-header-card">
+        <p class="text-accent-eyebrow text-[0.65rem] font-semibold uppercase tracking-[0.2em]">New course</p>
         <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-4xl">Add a course</h1>
         <p class="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-400">
             Point at a folder on <strong class="font-semibold text-slate-900 dark:text-slate-200">this computer</strong> where your lesson videos live. We only store the path and index filenames — nothing is uploaded or moved.
         </p>
         <ol class="mt-5 grid gap-3 text-sm text-slate-700 dark:text-slate-300 sm:grid-cols-3">
             <li class="flex gap-2 rounded-xl bg-white/80 px-3 py-2.5 ring-1 ring-slate-200/95 dark:bg-slate-950/40 dark:ring-slate-800/80">
-                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-xs font-bold text-sky-800 dark:bg-sky-950/60 dark:text-sky-300">1</span>
+                <span class="step-badge">1</span>
                 <span class="pt-0.5 leading-snug">Name the course</span>
             </li>
             <li class="flex gap-2 rounded-xl bg-white/80 px-3 py-2.5 ring-1 ring-slate-200/95 dark:bg-slate-950/40 dark:ring-slate-800/80">
-                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-xs font-bold text-sky-800 dark:bg-sky-950/60 dark:text-sky-300">2</span>
+                <span class="step-badge">2</span>
                 <span class="pt-0.5 leading-snug">Pick the video folder</span>
             </li>
             <li class="flex gap-2 rounded-xl bg-white/80 px-3 py-2.5 ring-1 ring-slate-200/95 dark:bg-slate-950/40 dark:ring-slate-800/80">
-                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-xs font-bold text-sky-800 dark:bg-sky-950/60 dark:text-sky-300">3</span>
+                <span class="step-badge">3</span>
                 <span class="pt-0.5 leading-snug">We scan for supported videos</span>
             </li>
         </ol>
@@ -86,7 +86,7 @@
                     Must be a real directory on disk. After you submit, we scan once for supported video files.
                 </p>
                 <details class="details-plain group mt-3 rounded-xl border border-slate-200/95 bg-slate-50/80 px-3 py-2 ring-1 ring-slate-200/90 dark:border-slate-800/90 dark:bg-slate-950/35 dark:ring-slate-800/70">
-                    <summary class="cursor-pointer text-xs font-semibold text-sky-700 transition hover:text-sky-800 dark:text-sky-400/90 dark:hover:text-sky-300">
+                    <summary class="cursor-pointer text-xs font-semibold link-accent">
                         <span class="inline-flex items-center gap-1.5">
                             <span aria-hidden="true" class="text-slate-400 group-open:rotate-90 transition-transform">▸</span>
                             Permissions, browse roots &amp; formats
@@ -101,10 +101,10 @@
 
                 <div
                     id="folder-picker-panel"
-                    class="mt-5 hidden rounded-2xl border border-sky-200/80 bg-gradient-to-b from-sky-50/90 to-white/95 p-5 ring-1 ring-sky-200/60 dark:border-sky-900/50 dark:from-sky-950/35 dark:to-slate-950/60 dark:ring-sky-900/40"
+                    class="mt-5 hidden panel-accent-soft"
                     data-picker-url="{{ route('folder-picker') }}"
                 >
-                    <p class="text-xs font-semibold uppercase tracking-wider text-sky-800 dark:text-sky-300/90">Folder browser</p>
+                    <p class="text-accent-eyebrow text-xs font-semibold uppercase tracking-wider">Folder browser</p>
                     <p class="mt-1 text-[0.7rem] text-slate-600 dark:text-slate-500">Click a folder to open it, then <strong class="font-medium text-slate-800 dark:text-slate-300">Use this folder</strong> fills the field above.</p>
                     <div class="mt-4 flex flex-wrap items-center gap-2 border-b border-slate-200/90 pb-3 dark:border-slate-800/85">
                         <button type="button" id="folder-picker-back" class="btn-ghost py-1.5 text-xs" disabled>
@@ -113,7 +113,7 @@
                         <button type="button" id="folder-picker-roots" class="btn-ghost py-1.5 text-xs" disabled>
                             All places
                         </button>
-                        <span id="folder-picker-current" class="min-w-0 flex-1 truncate rounded-lg bg-white/90 px-2 py-1.5 font-mono text-[0.7rem] text-sky-800 ring-1 ring-slate-200/95 dark:bg-slate-900/80 dark:text-sky-300/85 dark:ring-slate-700/80"></span>
+                        <span id="folder-picker-current" class="min-w-0 flex-1 truncate rounded-lg bg-white/90 px-2 py-1.5 font-mono text-[0.7rem] text-accent-strong ring-1 ring-slate-200/95 dark:bg-slate-900/80 dark:ring-slate-700/80"></span>
                     </div>
                     <div
                         id="folder-picker-list"
@@ -200,7 +200,7 @@
                         const btn = document.createElement('button');
                         btn.type = 'button';
                         btn.className =
-                            'flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-800 transition hover:bg-sky-50 hover:text-slate-950 dark:text-slate-200 dark:hover:bg-sky-950/40 dark:hover:text-white';
+                            'flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-800 transition hover:bg-accent-soft dark:text-slate-200 dark:hover:bg-accent-soft dark:hover:text-white';
                         btn.textContent = item.name;
                         btn.addEventListener('click', function () {
                             load(item.path);
