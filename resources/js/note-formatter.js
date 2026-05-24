@@ -21,11 +21,21 @@ editors.forEach(setupEditor);
 function setupEditor(root) {
     const textarea = root.querySelector('[data-note-input]');
     const toolbar = root.querySelector('[data-note-toolbar]');
+    const previewPanel = root.querySelector('[data-note-preview]');
+    const previewBtn = root.querySelector('[data-note-preview-btn]');
+    const previewUrl = root.dataset.notePreviewUrl ?? '';
+
     if (!textarea || !toolbar) return;
+
+    /** @type {boolean} */
+    let previewMode = false;
 
     toolbar.querySelectorAll('button[data-md]').forEach((btn) => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
+            if (previewMode) {
+                return;
+            }
             apply(textarea, btn.dataset.md);
             textarea.focus();
         });
@@ -38,8 +48,103 @@ function setupEditor(root) {
         const action = map[key];
         if (!action) return;
         e.preventDefault();
+        if (previewMode) {
+            return;
+        }
         apply(textarea, action);
     });
+
+    if (previewBtn && previewPanel && previewUrl) {
+        previewBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            if (previewMode) {
+                exitPreviewMode();
+                return;
+            }
+            await enterPreviewMode();
+        });
+    }
+
+    function setToolbarFormattingEnabled(enabled) {
+        toolbar.querySelectorAll('button[data-md]').forEach((btn) => {
+            btn.disabled = !enabled;
+            btn.classList.toggle('note-toolbar-btn--disabled', !enabled);
+        });
+    }
+
+    function exitPreviewMode() {
+        previewMode = false;
+        previewPanel.hidden = true;
+        previewPanel.classList.add('hidden');
+        textarea.classList.remove('hidden');
+        textarea.hidden = false;
+        previewBtn.textContent = 'Preview';
+        previewBtn.setAttribute('aria-label', 'Preview note');
+        previewBtn.setAttribute('aria-pressed', 'false');
+        previewBtn.classList.remove('note-toolbar-btn--active');
+        setToolbarFormattingEnabled(true);
+        textarea.focus();
+    }
+
+    async function enterPreviewMode() {
+        const body = textarea.value;
+
+        previewMode = true;
+        previewPanel.hidden = false;
+        previewPanel.classList.remove('hidden');
+        textarea.classList.add('hidden');
+        textarea.hidden = true;
+        previewBtn.textContent = 'Edit';
+        previewBtn.setAttribute('aria-label', 'Back to editing note');
+        previewBtn.setAttribute('aria-pressed', 'true');
+        previewBtn.classList.add('note-toolbar-btn--active');
+        setToolbarFormattingEnabled(false);
+
+        if (body.trim() === '') {
+            previewPanel.innerHTML =
+                '<p class="note-preview-empty">Nothing to preview yet. Switch back to Edit and add some text.</p>';
+            return;
+        }
+
+        previewPanel.innerHTML = '<p class="note-preview-loading">Loading preview…</p>';
+
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+
+        try {
+            const res = await fetch(previewUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': csrf,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ body }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Preview failed');
+            }
+
+            const payload = await res.json();
+            previewPanel.innerHTML = payload.html?.trim()
+                ? payload.html
+                : '<p class="note-preview-empty">Nothing to preview yet.</p>';
+        } catch {
+            previewPanel.innerHTML =
+                '<p class="note-preview-error">Could not load preview. Check your connection and try again.</p>';
+            previewMode = false;
+            previewPanel.hidden = true;
+            previewPanel.classList.add('hidden');
+            textarea.classList.remove('hidden');
+            textarea.hidden = false;
+            previewBtn.textContent = 'Preview';
+            previewBtn.setAttribute('aria-pressed', 'false');
+            previewBtn.classList.remove('note-toolbar-btn--active');
+            setToolbarFormattingEnabled(true);
+            textarea.focus();
+        }
+    }
 }
 
 /**

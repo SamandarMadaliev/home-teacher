@@ -48,4 +48,8 @@
             <a href="{{ route('profile.notes') }}" class="link-accent mt-3 inline-block text-xs">Browse notes →</a>
         </div>
     </div>
+
+    <p class="mt-4 text-center text-sm text-slate-600 dark:text-slate-500">
+        <a href="{{ route('profile.analytics') }}" class="link-accent">View progress analytics →</a>
+    </p>
 @endsection

@@ -95,6 +95,27 @@ class Course extends Model
     }
 
     /**
+     * True when the course has at least one lesson and every lesson is marked completed.
+     */
+    public function isFullyCompleted(): bool
+    {
+        $this->loadMissing(['videos.progress']);
+        $videos = $this->videos;
+
+        if ($videos->isEmpty()) {
+            return false;
+        }
+
+        foreach ($videos as $video) {
+            if (! $video->progress?->completed) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Average lesson completion for this course (0–100). Uses each lesson's VideoProgress.
      */
     public function aggregateProgressPercent(): int

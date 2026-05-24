@@ -109,6 +109,137 @@ html.dark .profile-tab--active {
     min-height: 12rem;
 }
 
+.analytics-month-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.analytics-month-chart__row {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr) 2rem;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.analytics-month-chart__label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: rgb(100 116 139);
+}
+
+html.dark .analytics-month-chart__label {
+    color: rgb(148 163 184);
+}
+
+.analytics-month-chart__track {
+    height: 0.5rem;
+    overflow: hidden;
+    border-radius: 9999px;
+    background-color: rgb(226 232 240 / 0.95);
+}
+
+html.dark .analytics-month-chart__track {
+    background-color: rgb(30 41 59 / 0.9);
+}
+
+.analytics-month-chart__bar {
+    display: block;
+    height: 100%;
+    min-width: 0;
+    border-radius: 9999px;
+}
+
+.analytics-month-chart__value {
+    text-align: right;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgb(51 65 85);
+}
+
+html.dark .analytics-month-chart__value {
+    color: rgb(203 213 225);
+}
+
+.course-complete-toast {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 80;
+    max-width: min(22rem, calc(100vw - 2rem));
+    padding: 1rem 1.15rem;
+    border-radius: 1rem;
+    border: 1px solid rgb(203 213 225 / 0.95);
+    background-color: rgb(255 255 255 / 0.97);
+    box-shadow:
+        0 20px 25px -5px rgb(15 23 42 / 0.12),
+        0 8px 10px -6px rgb(15 23 42 / 0.08);
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.98);
+    transition:
+        opacity 0.35s ease,
+        transform 0.35s ease;
+    pointer-events: none;
+}
+
+html.dark .course-complete-toast {
+    border-color: rgb(51 65 85 / 0.85);
+    background-color: rgb(15 23 42 / 0.96);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.45);
+}
+
+.course-complete-toast--visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.course-complete-toast__eyebrow {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(var(--accent-600));
+}
+
+html.dark .course-complete-toast__eyebrow {
+    color: rgb(var(--accent-400));
+}
+
+.course-complete-toast__title {
+    margin-top: 0.35rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: rgb(15 23 42);
+}
+
+html.dark .course-complete-toast__title {
+    color: rgb(248 250 252);
+}
+
+.course-complete-toast__link {
+    display: inline-block;
+    margin-top: 0.65rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgb(var(--accent-700));
+}
+
+html.dark .course-complete-toast__link {
+    color: rgb(var(--accent-300));
+}
+
+.course-complete-toast__link:hover {
+    text-decoration: underline;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .course-complete-toast {
+        transition: none;
+    }
+}
+
 .watch-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -233,6 +364,20 @@ html.dark .input-field:focus {
 
 .lesson-rename.lesson-rename--editing .lesson-rename-view {
     display: none;
+}
+
+/* Watch page: title + edit — grid keeps the button out of the text flow */
+.lesson-rename-view--hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.75rem;
+}
+
+.lesson-rename-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .lesson-rename-trigger {
@@ -791,6 +936,51 @@ html.dark .playground-console [data-console-panel]::-webkit-scrollbar-thumb {
 
 .note-textarea {
     font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.note-toolbar-btn--preview {
+    @apply px-2 text-[11px] font-semibold tracking-wide;
+}
+
+.note-toolbar-btn--active {
+    background-color: rgb(var(--accent-100) / 0.95);
+    color: rgb(var(--accent-800));
+}
+
+html.dark .note-toolbar-btn--active {
+    background-color: rgb(var(--accent-950) / 0.55);
+    color: rgb(var(--accent-300));
+}
+
+.note-toolbar-btn--disabled,
+.note-toolbar-btn:disabled {
+    @apply cursor-not-allowed opacity-45 hover:bg-transparent dark:hover:bg-transparent;
+}
+
+.note-preview {
+    @apply block min-h-[7.5rem] resize-y overflow-auto rounded-b-xl rounded-t-none border-x-0 border-b-0 bg-white/95 px-4 py-3 text-sm shadow-inner dark:bg-slate-950/50;
+    border-top: 1px solid rgb(203 213 225 / 0.95);
+}
+
+html.dark .note-preview {
+    border-top-color: rgb(51 65 85 / 0.8);
+}
+
+.note-preview-empty,
+.note-preview-loading,
+.note-preview-error {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: rgb(100 116 139);
+}
+
+.note-preview-error {
+    color: rgb(190 18 60);
+}
+
+html.dark .note-preview-error {
+    color: rgb(251 113 133);
 }
 
 /*

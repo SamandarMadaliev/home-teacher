@@ -45,13 +45,16 @@
                     class="lesson-rename mt-3 max-w-4xl {{ $errors->has('title') ? 'lesson-rename--editing' : '' }}"
                     data-lesson-rename
                 >
-                    <div class="lesson-rename-view flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-                        <h1 class="min-w-0 flex-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-3xl">
+                    <div class="lesson-rename-view lesson-rename-view--hero">
+                        <h1
+                            class="lesson-rename-title text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-3xl"
+                            title="{{ $video->title }}"
+                        >
                             {{ $video->title }}
                         </h1>
                         <button
                             type="button"
-                            class="lesson-rename-trigger shrink-0 self-start sm:mt-1"
+                            class="lesson-rename-trigger"
                             aria-label="Rename this lesson"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4" aria-hidden="true">
@@ -348,6 +351,24 @@
         </div>
     @endif
 
+    <div
+        id="course-complete-toast"
+        class="course-complete-toast hidden"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+    >
+        <p class="course-complete-toast__eyebrow">Course complete</p>
+        <p id="course-complete-toast-title" class="course-complete-toast__title"></p>
+        <a
+            id="course-complete-toast-link"
+            href="{{ route('courses.show', $video->course) }}"
+            class="course-complete-toast__link"
+        >
+            View course overview →
+        </a>
+    </div>
+
     <script>
         window.__COURSE_PLAYER__ = {
             videoId: {{ $video->id }},
@@ -355,6 +376,8 @@
             initialPosition: {{ json_encode($initialPosition) }},
             nextUrl: @json($nextVideo ? route('videos.show', $nextVideo) : null),
             nextTitle: @json($nextVideo ? $nextVideo->title : null),
+            courseTitle: @json($video->course->title),
+            courseUrl: @json(route('courses.show', $video->course)),
         };
         document.getElementById('lesson-sidebar-active')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     </script>

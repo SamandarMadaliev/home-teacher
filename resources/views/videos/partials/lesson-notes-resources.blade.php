@@ -60,6 +60,7 @@
                     method="post"
                     class="mt-5 rounded-2xl border border-slate-200/95 bg-slate-50/96 px-4 py-5 ring-1 ring-slate-200/92 sm:px-5 dark:border-slate-800/90 dark:bg-slate-950/35 dark:ring-slate-800/70"
                     data-note-editor
+                    data-note-preview-url="{{ route('videos.notes.preview', $video) }}"
                 >
                     @csrf
                     <label for="note-body" class="sr-only">Note</label>
@@ -109,6 +110,17 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
                             </svg>
                         </button>
+                        <span class="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700/80" aria-hidden="true"></span>
+                        <button
+                            type="button"
+                            class="note-toolbar-btn note-toolbar-btn--preview"
+                            data-note-preview-btn
+                            title="Preview formatted note"
+                            aria-label="Preview note"
+                            aria-pressed="false"
+                        >
+                            Preview
+                        </button>
                         <span class="ml-auto hidden pr-1 text-[10px] font-mono text-slate-500 dark:text-slate-500 sm:inline">Markdown</span>
                     </div>
 
@@ -121,6 +133,14 @@
                         class="note-textarea input-field block w-full resize-y rounded-b-xl rounded-t-none border-x-0 border-b-0 shadow-inner"
                         data-note-input
                     >{{ old('body') }}</textarea>
+
+                    <div
+                        id="note-body-preview"
+                        class="note-preview note-prose hidden"
+                        data-note-preview
+                        hidden
+                        aria-live="polite"
+                    ></div>
 
                     <input type="hidden" name="timestamp_seconds" id="note-timestamp-input" value="{{ old('timestamp_seconds') }}" />
 

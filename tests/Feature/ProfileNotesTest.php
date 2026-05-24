@@ -17,6 +17,7 @@ class ProfileNotesTest extends TestCase
     {
         $this->get(route('profile.index'))->assertRedirect(route('login'));
         $this->get(route('profile.notes'))->assertRedirect(route('login'));
+        $this->get(route('profile.analytics'))->assertRedirect(route('login'));
         $this->get(route('profile.account'))->assertRedirect(route('login'));
     }
 

@@ -4,6 +4,7 @@ import '../css/plyr-overrides.css';
 import '../css/theater-mode.css';
 import '../css/up-next.css';
 import { initLessonRename } from './lesson-rename.js';
+import { celebrateCourseComplete } from './confetti.js';
 
 const cfg = window.__COURSE_PLAYER__;
 
@@ -33,8 +34,23 @@ function mediaDuration() {
     return Number.isFinite(d) && d > 0 ? d : null;
 }
 
+/** @type {boolean} */
+let courseCelebrationShown = false;
+
+function maybeCelebrateCourseComplete(payload) {
+    if (courseCelebrationShown || !payload?.course_just_completed) {
+        return;
+    }
+
+    courseCelebrationShown = true;
+    celebrateCourseComplete({
+        title: payload.course_title ?? cfg.courseTitle,
+        courseUrl: cfg.courseUrl,
+    });
+}
+
 function sendProgress() {
-    fetch(cfg.progressUrl, {
+    return fetch(cfg.progressUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -46,7 +62,14 @@ function sendProgress() {
             current_time: player.currentTime,
             duration: mediaDuration(),
         }),
-    }).catch(() => {});
+    })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((payload) => {
+            if (payload) {
+                maybeCelebrateCourseComplete(payload);
+            }
+        })
+        .catch(() => {});
 }
 
 let tick;

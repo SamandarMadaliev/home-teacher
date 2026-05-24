@@ -8,12 +8,17 @@ use App\Http\Controllers\FolderPickerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PlaygroundController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserAccentController;
 use App\Http\Controllers\RoadmapController;
+use App\Http\Controllers\UserAccentController;
 use App\Http\Controllers\VideoAttachmentController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\VideoNoteController;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpFoundation\Response;
+
+Route::get('/favicon.ico', function (): Response {
+    return response()->file(public_path('favicon.svg'), ['Content-Type' => 'image/svg+xml']);
+});
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -35,6 +40,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/account', [ProfileController::class, 'account'])->name('profile.account');
+    Route::get('/profile/analytics', [ProfileController::class, 'analytics'])->name('profile.analytics');
     Route::get('/profile/notes', [ProfileController::class, 'notes'])->name('profile.notes');
     Route::patch('/profile/accent', [UserAccentController::class, 'update'])->name('profile.accent.update');
 
@@ -63,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/videos/{video}', [VideoController::class, 'update'])->name('videos.update');
     Route::get('/videos/{video}/stream', [VideoController::class, 'stream'])->name('videos.stream');
     Route::post('/videos/{video}/progress', [VideoController::class, 'progress'])->name('videos.progress');
+    Route::post('/videos/{video}/notes/preview', [VideoNoteController::class, 'preview'])->name('videos.notes.preview');
     Route::post('/videos/{video}/notes', [VideoNoteController::class, 'store'])->name('videos.notes.store');
     Route::delete('/videos/{video}/notes/{note}', [VideoNoteController::class, 'destroy'])->name('videos.notes.destroy');
     Route::post('/videos/{video}/attachments', [VideoAttachmentController::class, 'store'])->name('videos.attachments.store');

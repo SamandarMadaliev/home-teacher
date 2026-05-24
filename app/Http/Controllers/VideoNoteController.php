@@ -4,11 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Models\Video;
 use App\Models\VideoNote;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class VideoNoteController extends Controller
 {
+    public function preview(Request $request, Video $video): JsonResponse
+    {
+        $data = $request->validate([
+            'body' => ['nullable', 'string', 'max:10000'],
+        ]);
+
+        $html = VideoNote::markdownToHtml($data['body'] ?? '');
+
+        return response()->json([
+            'html' => $html,
+        ]);
+    }
+
     public function store(Request $request, Video $video): RedirectResponse
     {
         if ($request->input('timestamp_seconds') === '') {

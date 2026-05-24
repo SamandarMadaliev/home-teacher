@@ -81,15 +81,25 @@ class VideoController extends Controller
 
         $duration = isset($data['duration']) ? (float) $data['duration'] : null;
 
+        $video->load(['course.videos.progress']);
+        $course = $video->course;
+        $wasFullyCompleted = $course->isFullyCompleted();
+
         $row = $this->progressService->sync(
             $video,
             (float) $data['current_time'],
             $duration
         );
 
+        $course->load(['videos.progress']);
+        $isFullyCompleted = $course->isFullyCompleted();
+
         return response()->json([
             'last_position' => $row->last_position,
             'completed' => $row->completed,
+            'course_completed' => $isFullyCompleted,
+            'course_just_completed' => $isFullyCompleted && ! $wasFullyCompleted,
+            'course_title' => $course->title,
         ]);
     }
 }

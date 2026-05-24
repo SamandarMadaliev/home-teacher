@@ -10,6 +10,13 @@
         Account
     </a>
     <a
+        href="{{ route('profile.analytics') }}"
+        @class(['profile-tab', 'profile-tab--active' => $active === 'analytics'])
+        @if ($active === 'analytics') aria-current="page" @endif
+    >
+        Progress
+    </a>
+    <a
         href="{{ route('profile.notes') }}"
         @class(['profile-tab', 'profile-tab--active' => $active === 'notes'])
         @if ($active === 'notes') aria-current="page" @endif

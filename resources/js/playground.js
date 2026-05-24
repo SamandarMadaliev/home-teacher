@@ -7,6 +7,7 @@
  *   syntax theme when light).
  * - Per-language code is auto-saved to localStorage under
  *   `home-teacher-playground-code-{lang}`.
+ * - Last selected language is saved under `home-teacher-playground-last-lang`.
  * - Cmd/Ctrl+Enter triggers a run; result is posted to `data-run-url` on the
  *   `#playground` container as JSON.
  */
@@ -89,6 +90,7 @@ function bootstrap(root) {
     const versions = Object.fromEntries(tabs.map((t) => [t.dataset.langTab, t.dataset.version ?? '']));
     const binaries = Object.fromEntries(tabs.map((t) => [t.dataset.langTab, t.dataset.binary ?? '']));
     const storageKey = (lang) => `home-teacher-playground-code-${lang}`;
+    const lastLangKey = 'home-teacher-playground-last-lang';
 
     const languageExtensions = {
         javascript: () => javascript(),
@@ -101,7 +103,7 @@ function bootstrap(root) {
     const themeCompartment = new Compartment();
     const wrapCompartment = new Compartment();
 
-    let currentLang = currentSelectedTab() ?? tabs[0].dataset.langTab;
+    let currentLang = resolveInitialLang();
     let wrapEnabled = false;
 
     const editor = new EditorView({
@@ -189,6 +191,19 @@ function bootstrap(root) {
         return tabs.find((t) => t.getAttribute('aria-selected') === 'true')?.dataset.langTab ?? null;
     }
 
+    function resolveInitialLang() {
+        const available = tabs.map((t) => t.dataset.langTab);
+        const saved = readStorage(lastLangKey);
+        if (saved && available.includes(saved) && languageExtensions[saved]) {
+            return saved;
+        }
+        return currentSelectedTab() ?? tabs[0].dataset.langTab;
+    }
+
+    function setTabSelected(lang) {
+        tabs.forEach((t) => t.setAttribute('aria-selected', t.dataset.langTab === lang ? 'true' : 'false'));
+    }
+
     function loadDocFor(lang) {
         const saved = readStorage(storageKey(lang));
         return saved ?? samples[lang] ?? '';
@@ -208,8 +223,9 @@ function bootstrap(root) {
 
     function selectLang(lang) {
         if (!languageExtensions[lang]) return;
-        tabs.forEach((t) => t.setAttribute('aria-selected', t.dataset.langTab === lang ? 'true' : 'false'));
+        setTabSelected(lang);
         currentLang = lang;
+        writeStorage(lastLangKey, lang);
 
         editor.dispatch({
             changes: { from: 0, to: editor.state.doc.length, insert: loadDocFor(lang) },
@@ -415,6 +431,7 @@ function bootstrap(root) {
     });
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
+    setTabSelected(currentLang);
     setActiveConsole('stdout');
     updateStatus();
 }

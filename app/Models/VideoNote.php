@@ -36,7 +36,15 @@ class VideoNote extends Model
      */
     public function bodyHtml(): string
     {
-        $body = trim((string) ($this->body ?? ''));
+        return self::markdownToHtml((string) ($this->body ?? ''));
+    }
+
+    /**
+     * Render markdown note text to safe HTML (same rules as saved notes).
+     */
+    public static function markdownToHtml(string $body): string
+    {
+        $body = trim($body);
         if ($body === '') {
             return '';
         }

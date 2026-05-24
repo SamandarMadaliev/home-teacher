@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Video;
 use App\Models\VideoNote;
+use App\Services\ProfileAnalyticsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    public function __construct(
+        private readonly ProfileAnalyticsService $analytics,
+    ) {}
+
     public function index(): RedirectResponse
     {
         return redirect()->route('profile.account');
@@ -31,6 +36,16 @@ class ProfileController extends Controller
             'user' => $user,
             'coursesCount' => $coursesCount,
             'notesCount' => $notesCount,
+        ]);
+    }
+
+    public function analytics(Request $request): View
+    {
+        $stats = $this->analytics->forUser($request->user());
+
+        return view('profile.analytics', [
+            'activeTab' => 'analytics',
+            'stats' => $stats,
         ]);
     }
 
