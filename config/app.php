@@ -56,6 +56,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Force HTTPS URLs
+    |--------------------------------------------------------------------------
+    |
+    | When true, url(), route(), asset(), and @vite tags always use https://.
+    | Defaults to true when APP_URL starts with https://, or set FORCE_HTTPS=true.
+    |
+    */
+
+    'force_https' => (bool) env('FORCE_HTTPS', str_starts_with((string) env('APP_URL', ''), 'https://')),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
