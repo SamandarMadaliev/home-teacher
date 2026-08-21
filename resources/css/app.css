@@ -1150,3 +1150,11 @@ html.dark .note-prose code {
 html.dark .note-prose hr {
     background: rgb(51 65 85 / 0.6);
 }
+
+body.course-preview-open {
+    overflow: hidden;
+}
+
+.course-preview-modal:not(.course-preview-modal--open) {
+    pointer-events: none;
+}

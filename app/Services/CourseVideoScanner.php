@@ -75,8 +75,13 @@ class CourseVideoScanner
                 continue;
             }
 
-            $ext = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
+            $filename = $file->getFilename();
+            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
             if (! in_array($ext, self::VIDEO_EXTENSIONS, true)) {
+                continue;
+            }
+
+            if (strtolower(pathinfo($filename, PATHINFO_FILENAME)) === 'preview') {
                 continue;
             }
 

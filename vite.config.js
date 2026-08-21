@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/player.js',
                 'resources/js/course-lessons.js',
+                'resources/js/course-preview.js',
                 'resources/js/roadmap-courses.js',
                 'resources/js/playground.js',
                 'resources/js/note-formatter.js',

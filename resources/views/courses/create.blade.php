@@ -18,7 +18,7 @@
         <ol class="mt-5 grid gap-3 text-sm text-slate-700 dark:text-slate-300 sm:grid-cols-3">
             <li class="flex gap-2 rounded-xl bg-white/80 px-3 py-2.5 ring-1 ring-slate-200/95 dark:bg-slate-950/40 dark:ring-slate-800/80">
                 <span class="step-badge">1</span>
-                <span class="pt-0.5 leading-snug">Name the course</span>
+                <span class="pt-0.5 leading-snug">Name the course <span class="font-normal text-slate-500 dark:text-slate-500">(optional)</span></span>
             </li>
             <li class="flex gap-2 rounded-xl bg-white/80 px-3 py-2.5 ring-1 ring-slate-200/95 dark:bg-slate-950/40 dark:ring-slate-800/80">
                 <span class="step-badge">2</span>
@@ -39,19 +39,19 @@
                 <label for="title" class="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
                     <span class="flex h-6 w-6 items-center justify-center rounded-md bg-slate-100 text-[0.65rem] font-bold text-slate-600 ring-1 ring-slate-200/95 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-700/80">1</span>
                     Course title
+                    <span class="text-xs font-normal text-slate-500 dark:text-slate-500">(optional)</span>
                 </label>
                 <input
                     type="text"
                     name="title"
                     id="title"
                     value="{{ old('title') }}"
-                    required
                     maxlength="255"
                     class="input-field mt-2 font-sans"
-                    placeholder="e.g. Laravel Deep Dive"
+                    placeholder="Leave blank to use the folder name"
                     autocomplete="off"
                 />
-                <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-500">Shown in your library and on the course page.</p>
+                <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-500">Shown in your library. If empty, we use the video folder’s name.</p>
             </div>
 
             <div class="border-t border-slate-200/90 pt-6 dark:border-slate-800/85">

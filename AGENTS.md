@@ -23,7 +23,7 @@ Local **Laravel** app to watch **course videos from disk** with **saved progress
 
 - Courses: `courses.index`, `courses.show`, `courses.create`, `courses.store`, `courses.rescan`, `courses.videos.reorder` (POST JSON `{ video_ids: number[] }` — full permutation of that course’s lessons)
 - Videos: `videos.show`, `videos.update` (PATCH — rename lesson), `videos.stream`, `videos.progress` (POST JSON)
-- Notes: `videos.notes.store`, `videos.notes.destroy`, `videos.notes.preview` (POST JSON `{ body }` → `{ html }` — same markdown rendering as saved notes; used by the watch-page Preview toolbar button)
+- Notes: `videos.notes.store` (POST JSON `{ body, timestamp_seconds? }` → `{ message, note: { id, html } }` — watch page saves via fetch, no reload), `videos.notes.destroy`, `videos.notes.preview` (POST JSON `{ body }` → `{ html }` — Preview toolbar)
 - Profile: `profile.account`, `profile.analytics` (watch stats / monthly activity), `profile.notes`, `profile.accent.update`
 - Attachments: `videos.attachments.store` (POST, `kind=file|link`; for files send a `file_path` string — absolute or relative to the course folder; for links send `url`), `videos.attachments.download` (GET — streams the file inline from its real on-disk location via `response()->file()`), `videos.attachments.destroy`
 - Playground: `playground.show` (GET — picks up detected runtimes via `LanguageRuntimeProbe`), `playground.run` (POST JSON `{ language, code, stdin? }` → JSON `{ stdout, stderr, exit_code, duration_ms, timed_out, stdout_truncated, stderr_truncated }`), `playground.refresh` (POST — clears the probe cache).

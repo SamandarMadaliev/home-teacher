@@ -51,10 +51,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/courses/{course}/rescan', [CourseController::class, 'rescan'])->name('courses.rescan');
     Route::post('/courses/{course}/archive', [CourseController::class, 'archive'])->name('courses.archive');
     Route::post('/courses/{course}/restore', [CourseController::class, 'restore'])->name('courses.restore');
+    Route::post('/courses/{course}/reset-progress', [CourseController::class, 'resetProgress'])->name('courses.reset-progress');
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
     Route::post('/courses/{course}/videos/reorder', [CourseController::class, 'reorderVideos'])->name('courses.videos.reorder');
     Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
     Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
+    Route::get('/courses/{course}/preview/stream', [CourseController::class, 'previewStream'])->name('courses.preview.stream');
 
     Route::get('/playground', [PlaygroundController::class, 'show'])->name('playground.show');
     Route::post('/playground/run', [PlaygroundController::class, 'run'])->name('playground.run');

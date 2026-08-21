@@ -404,14 +404,16 @@ function initLessonNotes() {
         updateLabel();
     });
 
-    document.querySelectorAll('[data-note-seek]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            const s = Number(btn.getAttribute('data-note-seek'));
-            if (!Number.isFinite(s)) {
-                return;
-            }
-            cfg.seekTo(s);
-        });
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-note-seek]');
+        if (!btn) {
+            return;
+        }
+        const s = Number(btn.getAttribute('data-note-seek'));
+        if (!Number.isFinite(s)) {
+            return;
+        }
+        cfg.seekTo(s);
     });
 
     updateLabel();

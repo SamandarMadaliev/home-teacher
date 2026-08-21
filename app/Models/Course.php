@@ -116,6 +116,75 @@ class Course extends Model
     }
 
     /**
+     * True when any lesson has watch progress or is marked completed.
+     */
+    public function hasBeenStarted(): bool
+    {
+        $this->loadMissing(['videos.progress']);
+
+        foreach ($this->videos as $video) {
+            $progress = $video->progress;
+            if ($progress !== null && ($progress->completed || $progress->last_position > 0)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Optional preview clip at the course folder root: preview.{mp4,webm,...}
+     */
+    public function previewAbsolutePath(): ?string
+    {
+        $root = $this->folderRootReal();
+        if ($root === null) {
+            return null;
+        }
+
+        $rootReal = realpath($root);
+        if ($rootReal === false) {
+            return null;
+        }
+
+        foreach (self::VIDEO_EXTENSIONS as $ext) {
+            $candidate = $rootReal.DIRECTORY_SEPARATOR.'preview.'.$ext;
+            $real = realpath($candidate);
+            if ($real !== false && is_file($real) && str_starts_with($real, $rootReal.DIRECTORY_SEPARATOR)) {
+                return $real;
+            }
+        }
+
+        $prefix = $rootReal.DIRECTORY_SEPARATOR;
+        foreach (scandir($rootReal) ?: [] as $entry) {
+            if ($entry === '.' || $entry === '..') {
+                continue;
+            }
+
+            $full = $rootReal.DIRECTORY_SEPARATOR.$entry;
+            if (! is_file($full)) {
+                continue;
+            }
+
+            $base = pathinfo($entry, PATHINFO_FILENAME);
+            $ext = strtolower(pathinfo($entry, PATHINFO_EXTENSION));
+            if (strtolower($base) !== 'preview' || ! in_array($ext, self::VIDEO_EXTENSIONS, true)) {
+                continue;
+            }
+
+            $real = realpath($full);
+            if ($real !== false && str_starts_with($real, $prefix)) {
+                return $real;
+            }
+        }
+
+        return null;
+    }
+
+    /** @var list<string> */
+    private const VIDEO_EXTENSIONS = ['mp4', 'webm', 'mkv', 'mov', 'm4v', 'ogv', 'avi'];
+
+    /**
      * Average lesson completion for this course (0–100). Uses each lesson's VideoProgress.
      */
     public function aggregateProgressPercent(): int

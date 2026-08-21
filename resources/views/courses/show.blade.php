@@ -111,6 +111,19 @@
                             </svg>
                             {{ $resumeLabel }}
                         </a>
+                        @if ($showCoursePreview ?? false)
+                            <button
+                                type="button"
+                                id="course-preview-open"
+                                class="btn-secondary inline-flex items-center justify-center gap-2 px-5 py-3 text-sm sm:text-base"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-4" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                </svg>
+                                Watch preview
+                            </button>
+                        @endif
                     </div>
                 @endif
             </div>
@@ -177,6 +190,20 @@
                             </button>
                         </form>
                     @endif
+                    <form action="{{ route('courses.reset-progress', $course) }}" method="post" class="border-t border-slate-200/95 dark:border-slate-800/85">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="flex w-full items-center gap-2 px-3.5 py-2.5 text-left text-xs font-medium text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800/80"
+                            onclick="return confirm('Reset progress for this course? This will remove all watched progress and completed lesson marks.')"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4 text-slate-500" aria-hidden="true">
+                                <path d="M12 4a8 8 0 1 0 8 8h-1.5a6.5 6.5 0 1 1-6.5-6.5V4z" />
+                                <path d="M11 7h2v6h-2V7zm0 8h2v2h-2v-2z" />
+                            </svg>
+                            Reset progress
+                        </button>
+                    </form>
                     <form action="{{ route('courses.destroy', $course) }}" method="post" class="border-t border-slate-200/95 dark:border-slate-800/85">
                         @csrf
                         @method('DELETE')
@@ -375,5 +402,12 @@
         <script>
             document.getElementById('lesson-current')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
         </script>
+    @endif
+
+    @if ($showCoursePreview ?? false)
+        @include('courses.partials.preview-modal')
+        @push('scripts')
+            @vite(['resources/js/course-preview.js'])
+        @endpush
     @endif
 @endsection

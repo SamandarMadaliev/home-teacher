@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class CourseController extends Controller
 {
@@ -47,7 +48,7 @@ class CourseController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['nullable', 'string', 'max:255'],
             'folder_path' => ['required', 'string', 'max:4096'],
         ]);
 
@@ -58,9 +59,14 @@ class CourseController extends Controller
             ]);
         }
 
+        $title = trim($validated['title'] ?? '');
+        if ($title === '') {
+            $title = basename($resolved) ?: 'Untitled course';
+        }
+
         $course = Course::create([
             'user_id' => $request->user()->id,
-            'title' => $validated['title'],
+            'title' => $title,
             'folder_path' => $resolved,
             'archived_at' => null,
         ]);
@@ -88,11 +94,39 @@ class CourseController extends Controller
                 : null;
         }
 
+        $previewStreamUrl = null;
+        $showCoursePreview = false;
+        if ($videos->isNotEmpty() && ! $course->hasBeenStarted()) {
+            if ($course->previewAbsolutePath() !== null) {
+                $previewStreamUrl = route('courses.preview.stream', $course);
+                $showCoursePreview = true;
+            } else {
+                $firstLesson = $videos->first();
+                if ($firstLesson !== null && $firstLesson->absoluteFilePath() !== null) {
+                    $previewStreamUrl = route('videos.stream', $firstLesson);
+                    $showCoursePreview = true;
+                }
+            }
+        }
+
         return view('courses.show', [
             'course' => $course,
             'currentVideo' => $current,
             'nextVideo' => $nextAfterCurrent,
+            'showCoursePreview' => $showCoursePreview,
+            'previewStreamUrl' => $previewStreamUrl,
         ]);
+    }
+
+    public function previewStream(Course $course): BinaryFileResponse
+    {
+        $path = $course->previewAbsolutePath();
+
+        if ($path === null || ! is_file($path)) {
+            abort(404);
+        }
+
+        return response()->file($path);
     }
 
     public function reorderVideos(Request $request, Course $course): JsonResponse
@@ -168,6 +202,19 @@ class CourseController extends Controller
         ])->save();
 
         return redirect()->route('courses.show', $course)->with('status', 'Course restored.');
+    }
+
+    public function resetProgress(Course $course): RedirectResponse
+    {
+        $videoIds = $course->videos()->pluck('id');
+
+        if ($videoIds->isNotEmpty()) {
+            DB::table('video_progress')
+                ->whereIn('video_id', $videoIds)
+                ->delete();
+        }
+
+        return back()->with('status', 'Course progress reset.');
     }
 
     public function destroy(Course $course): RedirectResponse

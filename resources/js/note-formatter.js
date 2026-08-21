@@ -24,6 +24,16 @@ function setupEditor(root) {
     const previewPanel = root.querySelector('[data-note-preview]');
     const previewBtn = root.querySelector('[data-note-preview-btn]');
     const previewUrl = root.dataset.notePreviewUrl ?? '';
+    const storeUrl = root.dataset.noteStoreUrl ?? '';
+    const saveBtn = root.querySelector('[data-note-save-btn]');
+    const saveStatus = root.querySelector('[data-note-save-status]');
+    const timestampInput = document.getElementById('note-timestamp-input');
+    const timestampLabel = document.getElementById('note-timestamp-label');
+    const notesPanel = root.closest('[data-watch-tab-panel="notes"]');
+    const notesRoot = notesPanel?.querySelector('[data-lesson-notes-root]') ?? null;
+    const notesList = notesRoot?.querySelector('[data-lesson-notes-list]') ?? null;
+    const notesEmpty = notesRoot?.querySelector('[data-lesson-notes-empty]') ?? null;
+    const notesTabBtn = document.getElementById('watch-tab-btn-notes');
 
     if (!textarea || !toolbar) return;
 
@@ -143,6 +153,143 @@ function setupEditor(root) {
             previewBtn.classList.remove('note-toolbar-btn--active');
             setToolbarFormattingEnabled(true);
             textarea.focus();
+        }
+    }
+
+    if (storeUrl && saveBtn) {
+        root.addEventListener('submit', (e) => {
+            e.preventDefault();
+            void saveNote();
+        });
+    }
+
+    /** @param {string} message */
+    function setSaveStatus(message, isError = false) {
+        if (!saveStatus) {
+            return;
+        }
+        if (!message) {
+            saveStatus.hidden = true;
+            saveStatus.textContent = '';
+            saveStatus.classList.remove('text-rose-600', 'dark:text-rose-400', 'text-emerald-700', 'dark:text-emerald-400');
+            return;
+        }
+        saveStatus.hidden = false;
+        saveStatus.textContent = message;
+        saveStatus.classList.toggle('text-rose-600', isError);
+        saveStatus.classList.toggle('dark:text-rose-400', isError);
+        saveStatus.classList.toggle('text-emerald-700', !isError);
+        saveStatus.classList.toggle('dark:text-emerald-400', !isError);
+    }
+
+    function resetEditorAfterSave() {
+        textarea.value = '';
+        if (timestampInput) {
+            timestampInput.value = '';
+        }
+        if (timestampLabel) {
+            timestampLabel.classList.add('hidden');
+            timestampLabel.textContent = '';
+        }
+        if (previewMode) {
+            exitPreviewMode();
+        }
+    }
+
+    function updateNotesTabBadge() {
+        if (!notesTabBtn || !notesList) {
+            return;
+        }
+        const count = notesList.querySelectorAll('[data-note-id]').length;
+        let badge = notesTabBtn.querySelector('.watch-tab-badge');
+        if (count > 0) {
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'watch-tab-badge tabular-nums';
+                notesTabBtn.appendChild(badge);
+            }
+            badge.textContent = String(count);
+        } else if (badge) {
+            badge.remove();
+        }
+    }
+
+    /**
+     * @param {string} html
+     * @param {number} noteId
+     */
+    function appendSavedNote(html, noteId) {
+        if (!notesList || !notesEmpty) {
+            return;
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = html.trim();
+        const item = wrapper.firstElementChild;
+        if (!item || item.nodeName !== 'LI') {
+            return;
+        }
+
+        item.setAttribute('data-note-id', String(noteId));
+        notesList.appendChild(item);
+        notesList.hidden = false;
+        notesEmpty.classList.add('hidden');
+        updateNotesTabBadge();
+    }
+
+    async function saveNote() {
+        const body = textarea.value.trim();
+        if (body === '') {
+            setSaveStatus('Write something before saving.', true);
+            textarea.focus();
+            return;
+        }
+
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+        const timestampRaw = timestampInput?.value.trim() ?? '';
+        const payload = { body };
+        if (timestampRaw !== '') {
+            payload.timestamp_seconds = Number(timestampRaw);
+        }
+
+        const defaultLabel = saveBtn.textContent;
+        saveBtn.disabled = true;
+        setSaveStatus('');
+
+        try {
+            const res = await fetch(storeUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': csrf,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await res.json().catch(() => ({}));
+
+            if (!res.ok) {
+                const message =
+                    data?.message ??
+                    (data?.errors?.body?.[0] ?? 'Could not save the note. Try again.');
+                setSaveStatus(message, true);
+                return;
+            }
+
+            if (data.note?.html && data.note?.id) {
+                appendSavedNote(data.note.html, data.note.id);
+            }
+
+            resetEditorAfterSave();
+            setSaveStatus(data.message ?? 'Note saved.');
+            window.setTimeout(() => setSaveStatus(''), 3000);
+        } catch {
+            setSaveStatus('Could not save the note. Check your connection and try again.', true);
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.textContent = defaultLabel;
         }
     }
 }
