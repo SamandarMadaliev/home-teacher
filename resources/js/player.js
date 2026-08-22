@@ -25,6 +25,7 @@ const player = new Plyr(el, {
     keyboard: { focused: true, global: false },
     tooltips: { controls: true, seek: true },
     resetOnEnd: false,
+    fullscreen: { enabled: true, fallback: true, iosNative: true },
 });
 
 const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
