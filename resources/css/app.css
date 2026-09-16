@@ -22,6 +22,39 @@ html.dark {
     color-scheme: dark;
 }
 
+/* Visible, styled scrollbars everywhere — some platforms auto-hide overlay scrollbars until
+   actively scrolling, which made scrollable panes (document viewer, lesson list, ...) look
+   like they had no scrollbar at all. */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(148 163 184 / 0.6) transparent;
+}
+
+html.dark {
+    scrollbar-color: rgb(71 85 105 / 0.7) transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: rgb(148 163 184 / 0.5);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+html.dark *::-webkit-scrollbar-thumb {
+    background: rgb(71 85 105 / 0.6);
+    background-clip: padding-box;
+}
+
 .theme-toggle-btn {
     @apply inline-flex items-center justify-center rounded-full border border-slate-300/90 bg-white/85 p-2 text-slate-600 shadow-sm shadow-slate-200/80 ring-1 ring-white/70 transition focus:outline-none focus-visible:ring-2 dark:border-slate-700/90 dark:bg-slate-900/70 dark:text-slate-400 dark:shadow-black/35 dark:ring-slate-800/80;
 }
@@ -883,24 +916,6 @@ html.dark .playground-iconbtn[aria-pressed='true'] {
     height: 2px;
     background: linear-gradient(90deg, rgb(var(--accent-400)), rgb(var(--accent-600)));
     border-radius: 2px;
-}
-
-/* Console panel scrollbar polish */
-.playground-console [data-console-panel]::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-
-.playground-console [data-console-panel]::-webkit-scrollbar-thumb {
-    background: rgb(148 163 184 / 0.5);
-    border-radius: 9999px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-}
-
-html.dark .playground-console [data-console-panel]::-webkit-scrollbar-thumb {
-    background: rgb(71 85 105 / 0.6);
-    background-clip: padding-box;
 }
 
 /* Hide native marker on details summary inside the playground */

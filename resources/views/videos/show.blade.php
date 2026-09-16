@@ -196,7 +196,8 @@
                     <a href="https://github.com/sampotts/plyr" class="link-accent underline decoration-accent" target="_blank" rel="noopener noreferrer">Plyr</a>
                 </p>
             @elseif ($video->isPdf())
-                <div class="document-viewer player-chrome-ring mt-4 overflow-hidden rounded-2xl border border-slate-300/95 bg-slate-100 shadow-2xl shadow-slate-400/45 dark:border-slate-800/90 dark:bg-slate-950">
+                <div id="document-viewer" class="document-viewer player-chrome-ring relative mt-4 overflow-hidden rounded-2xl border border-slate-300/95 bg-slate-100 shadow-2xl shadow-slate-400/45 dark:border-slate-800/90 dark:bg-slate-950">
+                    @include('videos.partials.document-viewer-expand-button')
                     <iframe
                         src="{{ route('videos.stream', $video) }}"
                         title="{{ $video->title }}"
@@ -208,7 +209,8 @@
                     <a href="{{ route('videos.stream', $video) }}" class="link-accent underline decoration-accent" target="_blank" rel="noopener noreferrer">Open PDF in a new tab</a>
                 </p>
             @elseif ($video->isHtml())
-                <div class="document-viewer player-chrome-ring mt-4 overflow-hidden rounded-2xl border border-slate-300/95 bg-white shadow-2xl shadow-slate-400/45 dark:border-slate-800/90 dark:bg-slate-950">
+                <div id="document-viewer" class="document-viewer player-chrome-ring relative mt-4 overflow-hidden rounded-2xl border border-slate-300/95 bg-white shadow-2xl shadow-slate-400/45 dark:border-slate-800/90 dark:bg-slate-950">
+                    @include('videos.partials.document-viewer-expand-button')
                     <iframe
                         src="{{ route('videos.stream', $video) }}"
                         title="{{ $video->title }}"

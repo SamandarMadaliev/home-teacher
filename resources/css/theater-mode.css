@@ -75,3 +75,23 @@ html.dark.theater-watch .course-plyr,
 html.dark.theater-watch .document-viewer {
     box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.45);
 }
+
+/*
+ * PDF/HTML "Expand" button (initDocumentViewerExpand() in player.js): Fullscreen API on
+ * .document-viewer itself, so the frame fills the screen in place instead of opening a new tab.
+ */
+.document-viewer:fullscreen,
+.document-viewer:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.document-viewer:fullscreen iframe,
+.document-viewer:-webkit-full-screen iframe {
+    height: 100% !important;
+    min-height: 0;
+}

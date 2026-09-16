@@ -417,6 +417,44 @@ function initManualCompletion() {
 
 initManualCompletion();
 
+/**
+ * "Expand" toggle for PDF/HTML lessons: uses the Fullscreen API on `.document-viewer` so the
+ * document fills the screen in place — no new tab, and the iframe's own scrollbar is used
+ * instead of being clipped by the (now borderless) container.
+ */
+function initDocumentViewerExpand() {
+    const viewer = document.getElementById('document-viewer');
+    const btn = document.getElementById('document-viewer-expand');
+
+    if (!viewer || !btn || !viewer.requestFullscreen) {
+        btn?.remove();
+        return;
+    }
+
+    const applyState = (expanded) => {
+        btn.setAttribute('aria-pressed', expanded ? 'true' : 'false');
+        btn.title = expanded
+            ? (btn.getAttribute('data-label-on') ?? 'Exit expanded view')
+            : (btn.getAttribute('data-label-off') ?? 'Expand');
+        btn.querySelector('[data-expand-icon]')?.classList.toggle('hidden', expanded);
+        btn.querySelector('[data-collapse-icon]')?.classList.toggle('hidden', !expanded);
+    };
+
+    btn.addEventListener('click', () => {
+        if (document.fullscreenElement === viewer) {
+            document.exitFullscreen();
+        } else {
+            viewer.requestFullscreen().catch(() => {});
+        }
+    });
+
+    document.addEventListener('fullscreenchange', () => {
+        applyState(document.fullscreenElement === viewer);
+    });
+}
+
+initDocumentViewerExpand();
+
 function initLessonNotes() {
     const input = document.getElementById('note-timestamp-input');
     const label = document.getElementById('note-timestamp-label');
