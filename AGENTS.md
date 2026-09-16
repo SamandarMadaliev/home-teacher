@@ -15,14 +15,15 @@ Local **Laravel** app to watch **course videos from disk** with **saved progress
 ## Data model (short)
 
 - **Course** — `title`, `folder_path`; has many **Video** (`sort_order`)
-- **VideoProgress** — per-lesson watch state; `progressPercent()` powers bars
+- **Video** — a "lesson"; `type` ∈ {`video`, `pdf`, `html`} (`Video::TYPE_*`), set by `CourseVideoScanner` from the file extension. `video` lessons play in Plyr and track position; `pdf`/`html` lessons render in an iframe on the watch page (`videos/show.blade.php` branches on `$video->isVideo()/isPdf()/isHtml()`) and have no play position — completion is a manual "Mark as done" toggle (`videos.mark-complete` route, `VideoProgressService::setManualCompletion()`). HTML lessons are framed with `sandbox="allow-scripts"` (no `allow-same-origin`) since the file's own script could otherwise run with the viewer's session — do not drop that attribute.
+- **VideoProgress** — per-lesson watch state; `progressPercent()` powers bars (for manual-completion lessons this is just 0 or 100, no duration)
 - **VideoNote** — `body`, optional `timestamp_seconds` (lesson notes vs time cues)
 - **VideoAttachment** — file or link resource per lesson; `kind` ∈ {`file`, `link`}, `title`, `url` (links), `file_path`/`mime_type`/`size_bytes` (files), `sort_order`. **Files are referenced, not uploaded** — `file_path` is either an absolute path or a path relative to the parent course's `folder_path`, mirroring how videos work. `VideoAttachment::absoluteFilePath()` resolves it safely (no traversal, must be a real file). Deleting an attachment row leaves the original file on disk untouched.
 
 ## Routes worth knowing
 
 - Courses: `courses.index`, `courses.show`, `courses.create`, `courses.store`, `courses.rescan`, `courses.videos.reorder` (POST JSON `{ video_ids: number[] }` — full permutation of that course’s lessons)
-- Videos: `videos.show`, `videos.update` (PATCH — rename lesson), `videos.stream`, `videos.progress` (POST JSON)
+- Videos: `videos.show`, `videos.update` (PATCH — rename lesson), `videos.stream`, `videos.progress` (POST JSON, video lessons only), `videos.mark-complete` (POST JSON `{ completed: bool }`, pdf/html lessons)
 - Notes: `videos.notes.store` (POST JSON `{ body, timestamp_seconds? }` → `{ message, note: { id, html } }` — watch page saves via fetch, no reload), `videos.notes.destroy`, `videos.notes.preview` (POST JSON `{ body }` → `{ html }` — Preview toolbar)
 - Profile: `profile.account`, `profile.analytics` (watch stats / monthly activity), `profile.notes`, `profile.accent.update`
 - Attachments: `videos.attachments.store` (POST, `kind=file|link`; for files send a `file_path` string — absolute or relative to the course folder; for links send `url`), `videos.attachments.download` (GET — streams the file inline from its real on-disk location via `response()->file()`), `videos.attachments.destroy`

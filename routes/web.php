@@ -71,6 +71,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/videos/{video}', [VideoController::class, 'update'])->name('videos.update');
     Route::get('/videos/{video}/stream', [VideoController::class, 'stream'])->name('videos.stream');
     Route::post('/videos/{video}/progress', [VideoController::class, 'progress'])->name('videos.progress');
+    Route::post('/videos/{video}/mark-complete', [VideoController::class, 'markComplete'])->name('videos.mark-complete');
     Route::post('/videos/{video}/notes/preview', [VideoNoteController::class, 'preview'])->name('videos.notes.preview');
     Route::post('/videos/{video}/notes', [VideoNoteController::class, 'store'])->name('videos.notes.store');
     Route::delete('/videos/{video}/notes/{note}', [VideoNoteController::class, 'destroy'])->name('videos.notes.destroy');

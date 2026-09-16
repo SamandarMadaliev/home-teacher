@@ -34,11 +34,17 @@
                             Lesson {{ $lessonNum }} of {{ $totalLessons }}
                         </span>
                     @endif
-                    @if ($lessonDone)
-                        <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-emerald-800 ring-1 ring-emerald-300/60 dark:bg-emerald-950/50 dark:text-emerald-300 dark:ring-emerald-700/40">
-                            Completed
+                    @if ($video->typeBadgeLabel())
+                        <span class="rounded-full bg-slate-100 px-2.5 py-1 ring-1 ring-slate-200/95 dark:bg-slate-800/90 dark:ring-slate-700/80">
+                            {{ $video->typeBadgeLabel() }}
                         </span>
                     @endif
+                    <span
+                        id="lesson-completed-badge"
+                        class="rounded-full bg-emerald-100 px-2.5 py-1 text-emerald-800 ring-1 ring-emerald-300/60 dark:bg-emerald-950/50 dark:text-emerald-300 dark:ring-emerald-700/40 {{ $lessonDone ? '' : 'hidden' }}"
+                    >
+                        Completed
+                    </span>
                 </div>
 
                 <div
@@ -93,7 +99,7 @@
                     </form>
                 </div>
 
-                @if ($totalLessons > 0)
+                @if ($video->isVideo() && $totalLessons > 0)
                     <div class="watch-hero-progress mt-5 max-w-md">
                         <div class="flex items-center justify-between gap-2 text-xs">
                             <span class="font-medium text-slate-700 dark:text-slate-300">Progress on this lesson</span>
@@ -113,29 +119,45 @@
                             ></div>
                         </div>
                     </div>
+                @elseif ($video->hasManualCompletion())
+                    <div class="mt-5">
+                        <button
+                            type="button"
+                            id="mark-complete-btn"
+                            class="btn-secondary mark-complete-btn inline-flex items-center gap-2 py-2.5 text-xs font-semibold sm:text-sm {{ $lessonDone ? 'mark-complete-btn--done' : '' }}"
+                            aria-pressed="{{ $lessonDone ? 'true' : 'false' }}"
+                            data-mark-complete-url="{{ route('videos.mark-complete', $video) }}"
+                            data-label-off="Mark as done"
+                            data-label-on="Completed ✓"
+                        >
+                            {{ $lessonDone ? 'Completed ✓' : 'Mark as done' }}
+                        </button>
+                    </div>
                 @endif
             </section>
 
             <div class="watch-player-toolbar mt-5 hidden gap-3 xl:flex xl:items-center xl:justify-between">
                 <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.7rem] text-slate-600 dark:text-slate-400">
-                    <span class="inline-flex items-center gap-1.5">
-                        <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">Space</kbd>
-                        play
-                    </span>
-                    <span class="inline-flex items-center gap-1.5">
-                        <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">←</kbd>
-                        <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">→</kbd>
-                        ±10s
-                    </span>
-                    <span class="inline-flex items-center gap-1.5">
-                        <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">↑</kbd>
-                        <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">↓</kbd>
-                        volume
-                    </span>
-                    <span class="inline-flex items-center gap-1.5">
-                        <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">F</kbd>
-                        fullscreen
-                    </span>
+                    @if ($video->isVideo())
+                        <span class="inline-flex items-center gap-1.5">
+                            <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">Space</kbd>
+                            play
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">←</kbd>
+                            <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">→</kbd>
+                            ±10s
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">↑</kbd>
+                            <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">↓</kbd>
+                            volume
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">F</kbd>
+                            fullscreen
+                        </span>
+                    @endif
                     <span class="inline-flex items-center gap-1.5">
                         <kbd class="rounded-md bg-slate-200/95 px-1.5 py-0.5 font-mono text-[0.65rem] text-slate-800 ring-1 ring-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">T</kbd>
                         wider layout
@@ -156,22 +178,50 @@
                 </button>
             </div>
 
-            <div class="course-plyr player-chrome-ring mt-4 overflow-hidden rounded-2xl border border-slate-300/95 bg-black shadow-2xl shadow-slate-400/45 dark:border-slate-800/90">
-                <video
-                    id="course-video"
-                    class="aspect-video w-full"
-                    playsinline
-                    preload="metadata"
-                >
-                    <source src="{{ route('videos.stream', $video) }}" type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
-            </div>
+            @if ($video->isVideo())
+                <div class="course-plyr player-chrome-ring mt-4 overflow-hidden rounded-2xl border border-slate-300/95 bg-black shadow-2xl shadow-slate-400/45 dark:border-slate-800/90">
+                    <video
+                        id="course-video"
+                        class="aspect-video w-full"
+                        playsinline
+                        preload="metadata"
+                    >
+                        <source src="{{ route('videos.stream', $video) }}" type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
 
-            <p class="mt-3 text-center text-[0.65rem] text-slate-500 dark:text-slate-500">
-                Player:
-                <a href="https://github.com/sampotts/plyr" class="link-accent underline decoration-accent" target="_blank" rel="noopener noreferrer">Plyr</a>
-            </p>
+                <p class="mt-3 text-center text-[0.65rem] text-slate-500 dark:text-slate-500">
+                    Player:
+                    <a href="https://github.com/sampotts/plyr" class="link-accent underline decoration-accent" target="_blank" rel="noopener noreferrer">Plyr</a>
+                </p>
+            @elseif ($video->isPdf())
+                <div class="document-viewer player-chrome-ring mt-4 overflow-hidden rounded-2xl border border-slate-300/95 bg-slate-100 shadow-2xl shadow-slate-400/45 dark:border-slate-800/90 dark:bg-slate-950">
+                    <iframe
+                        src="{{ route('videos.stream', $video) }}"
+                        title="{{ $video->title }}"
+                        class="h-[75vh] w-full min-h-[420px] border-0"
+                    ></iframe>
+                </div>
+
+                <p class="mt-3 text-center text-[0.65rem] text-slate-500 dark:text-slate-500">
+                    <a href="{{ route('videos.stream', $video) }}" class="link-accent underline decoration-accent" target="_blank" rel="noopener noreferrer">Open PDF in a new tab</a>
+                </p>
+            @elseif ($video->isHtml())
+                <div class="document-viewer player-chrome-ring mt-4 overflow-hidden rounded-2xl border border-slate-300/95 bg-white shadow-2xl shadow-slate-400/45 dark:border-slate-800/90 dark:bg-slate-950">
+                    <iframe
+                        src="{{ route('videos.stream', $video) }}"
+                        title="{{ $video->title }}"
+                        class="h-[75vh] w-full min-h-[420px] border-0 bg-white"
+                        sandbox="allow-scripts"
+                        referrerpolicy="no-referrer"
+                    ></iframe>
+                </div>
+
+                <p class="mt-3 text-center text-[0.65rem] text-slate-500 dark:text-slate-500">
+                    Shown in a sandboxed frame — scripts in this file can't see your session or your other lessons.
+                </p>
+            @endif
         </div>
 
         <aside class="watch-lessons-sidebar w-full shrink-0 xl:w-auto xl:min-w-[18rem]" aria-label="Course lessons">
@@ -203,7 +253,14 @@
                                     {{ $lesson->sort_order }}
                                 </span>
                                 <span class="min-w-0 flex-1">
-                                    <span class="block truncate text-sm font-medium {{ $active ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-200' }}">{{ $lesson->title }}</span>
+                                    <span class="flex min-w-0 items-center gap-1.5">
+                                        <span class="block truncate text-sm font-medium {{ $active ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-200' }}">{{ $lesson->title }}</span>
+                                        @if ($lesson->typeBadgeLabel())
+                                            <span class="shrink-0 rounded-full bg-slate-200 px-1.5 py-0.5 text-[0.55rem] font-semibold uppercase tracking-wider text-slate-600 ring-1 ring-slate-300/70 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-700/70">
+                                                {{ $lesson->typeBadgeLabel() }}
+                                            </span>
+                                        @endif
+                                    </span>
                                     @if ($p?->completed && ! $active)
                                         <span class="mt-0.5 block text-[0.65rem] font-medium text-emerald-700 dark:text-emerald-400/85">Done</span>
                                     @endif

@@ -73,6 +73,10 @@ html.dark .btn-secondary:hover {
     border-color: rgb(var(--accent-500) / 0.55);
 }
 
+.mark-complete-btn--done {
+    @apply border-emerald-300/70 bg-emerald-50/90 text-emerald-800 dark:border-emerald-700/50 dark:bg-emerald-950/40 dark:text-emerald-300;
+}
+
 .btn-google {
     @apply inline-flex items-center justify-center gap-3 rounded-xl border border-slate-300/95 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-sm shadow-slate-200/70 no-underline transition hover:border-slate-400/95 hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600/70 dark:bg-slate-900/85 dark:text-slate-100 dark:shadow-transparent dark:hover:border-slate-500/80 dark:hover:bg-slate-800/90 dark:hover:text-white dark:focus-visible:ring-offset-slate-900;
 }

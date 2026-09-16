@@ -3,15 +3,21 @@
 namespace App\Services;
 
 use App\Models\Course;
+use App\Models\Video;
 use Illuminate\Support\Facades\DB;
 
 class CourseVideoScanner
 {
-    /** @var list<string> */
-    private const VIDEO_EXTENSIONS = ['mp4', 'webm', 'mkv', 'mov', 'm4v', 'ogv', 'avi'];
+    /** @var array<string, list<string>> Extension => lesson type, checked in this order */
+    private const TYPE_EXTENSIONS = [
+        Video::TYPE_VIDEO => ['mp4', 'webm', 'mkv', 'mov', 'm4v', 'ogv', 'avi'],
+        Video::TYPE_PDF => ['pdf'],
+        Video::TYPE_HTML => ['html', 'htm'],
+    ];
 
     /**
-     * Index video files under the course folder. Files stay on disk; only DB rows are created/updated.
+     * Index video/PDF/HTML files under the course folder. Files stay on disk; only DB rows
+     * are created/updated.
      *
      * @return int Number of lessons after sync
      */
@@ -22,14 +28,14 @@ class CourseVideoScanner
             return 0;
         }
 
-        $relativePaths = $this->discoverRelativePaths($root);
+        $discovered = $this->discoverRelativePaths($root);
 
-        DB::transaction(function () use ($course, $relativePaths): void {
+        DB::transaction(function () use ($course, $discovered): void {
             $existing = $course->videos()->get()->keyBy(fn ($v) => $this->normalizeKey($v->file_path));
             $keepIds = [];
             $nextOrder = (int) ($course->videos()->max('sort_order') ?? 0);
 
-            foreach ($relativePaths as $relPath) {
+            foreach ($discovered as $relPath => $type) {
                 $title = $this->titleFromRelativePath($relPath);
                 $key = $this->normalizeKey($relPath);
 
@@ -40,6 +46,7 @@ class CourseVideoScanner
                     $video = $course->videos()->create([
                         'title' => $title,
                         'file_path' => $relPath,
+                        'type' => $type,
                         'sort_order' => $nextOrder,
                     ]);
                     $keepIds[] = $video->id;
@@ -57,7 +64,7 @@ class CourseVideoScanner
     }
 
     /**
-     * @return list<string> Paths relative to root, using forward slashes
+     * @return array<string, string> Paths relative to root (forward slashes) => lesson type
      */
     private function discoverRelativePaths(string $absoluteRoot): array
     {
@@ -77,11 +84,14 @@ class CourseVideoScanner
 
             $filename = $file->getFilename();
             $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-            if (! in_array($ext, self::VIDEO_EXTENSIONS, true)) {
+            $type = $this->typeForExtension($ext);
+            if ($type === null) {
                 continue;
             }
 
-            if (strtolower(pathinfo($filename, PATHINFO_FILENAME)) === 'preview') {
+            // "preview.{ext}" at any depth is reserved for the course's auto-preview clip
+            // (Course::previewAbsolutePath()) and only applies to actual video files.
+            if ($type === Video::TYPE_VIDEO && strtolower(pathinfo($filename, PATHINFO_FILENAME)) === 'preview') {
                 continue;
             }
 
@@ -101,12 +111,23 @@ class CourseVideoScanner
                 continue;
             }
 
-            $paths[] = $relative;
+            $paths[$relative] = $type;
         }
 
-        sort($paths, SORT_NATURAL | SORT_FLAG_CASE);
+        uksort($paths, fn ($a, $b) => strnatcasecmp($a, $b));
 
         return $paths;
+    }
+
+    private function typeForExtension(string $ext): ?string
+    {
+        foreach (self::TYPE_EXTENSIONS as $type => $extensions) {
+            if (in_array($ext, $extensions, true)) {
+                return $type;
+            }
+        }
+
+        return null;
     }
 
     private function normalizeKey(string $filePath): string

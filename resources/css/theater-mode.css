@@ -66,10 +66,12 @@ html.theater-watch .watch-lessons-sidebar .card-surface {
     top: auto;
 }
 
-html.theater-watch .course-plyr {
+html.theater-watch .course-plyr,
+html.theater-watch .document-viewer {
     box-shadow: 0 25px 50px -12px rgb(15 23 42 / 0.18);
 }
 
-html.dark.theater-watch .course-plyr {
+html.dark.theater-watch .course-plyr,
+html.dark.theater-watch .document-viewer {
     box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.45);
 }

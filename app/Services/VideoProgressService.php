@@ -40,4 +40,19 @@ class VideoProgressService
 
         return ($currentTime / $duration) >= self::COMPLETED_THRESHOLD;
     }
+
+    /**
+     * Set completion for a lesson with no play position (PDF / HTML). There is no
+     * duration/current_time to speak of, so this is a plain on/off toggle.
+     */
+    public function setManualCompletion(Video $video, bool $completed): VideoProgress
+    {
+        /** @var VideoProgress $row */
+        $row = VideoProgress::query()->updateOrCreate(
+            ['video_id' => $video->getKey()],
+            ['completed' => $completed]
+        );
+
+        return $row->fresh() ?? $row;
+    }
 }

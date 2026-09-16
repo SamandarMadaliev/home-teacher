@@ -142,23 +142,25 @@
 
                     <input type="hidden" name="timestamp_seconds" id="note-timestamp-input" value="{{ old('timestamp_seconds') }}" />
 
-                    <div class="mt-3 flex flex-wrap items-center gap-2">
-                        <button
-                            type="button"
-                            id="note-at-current-time"
-                            class="btn-secondary py-2 text-xs font-semibold"
-                        >
-                            Use current play time
-                        </button>
-                        <button
-                            type="button"
-                            id="note-clear-timestamp"
-                            class="btn-secondary py-2 text-xs font-semibold"
-                        >
-                            Lesson note (no time)
-                        </button>
-                    </div>
-                    <p id="note-timestamp-label" class="mt-2 hidden text-xs text-slate-600 dark:text-slate-500" aria-live="polite"></p>
+                    @if ($video->isVideo())
+                        <div class="mt-3 flex flex-wrap items-center gap-2">
+                            <button
+                                type="button"
+                                id="note-at-current-time"
+                                class="btn-secondary py-2 text-xs font-semibold"
+                            >
+                                Use current play time
+                            </button>
+                            <button
+                                type="button"
+                                id="note-clear-timestamp"
+                                class="btn-secondary py-2 text-xs font-semibold"
+                            >
+                                Lesson note (no time)
+                            </button>
+                        </div>
+                        <p id="note-timestamp-label" class="mt-2 hidden text-xs text-slate-600 dark:text-slate-500" aria-live="polite"></p>
+                    @endif
 
                     <div class="mt-4 flex flex-wrap items-center gap-3">
                         <button type="submit" class="btn-primary text-sm" data-note-save-btn>Save note</button>

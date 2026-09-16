@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use App\Models\Video;
 use App\Services\VideoProgressService;
 use Illuminate\Http\JsonResponse;
@@ -81,9 +82,7 @@ class VideoController extends Controller
 
         $duration = isset($data['duration']) ? (float) $data['duration'] : null;
 
-        $video->load(['course.videos.progress']);
-        $course = $video->course;
-        $wasFullyCompleted = $course->isFullyCompleted();
+        [$wasFullyCompleted, $course] = $this->beforeCompletionChange($video);
 
         $row = $this->progressService->sync(
             $video,
@@ -91,15 +90,54 @@ class VideoController extends Controller
             $duration
         );
 
+        return response()->json(array_merge(
+            ['last_position' => $row->last_position, 'completed' => $row->completed],
+            $this->completionPayload($course, $wasFullyCompleted)
+        ));
+    }
+
+    /**
+     * Manual completion toggle for lessons with no play position (PDF / HTML).
+     */
+    public function markComplete(Request $request, Video $video): JsonResponse
+    {
+        $data = $request->validate([
+            'completed' => ['required', 'boolean'],
+        ]);
+
+        [$wasFullyCompleted, $course] = $this->beforeCompletionChange($video);
+
+        $row = $this->progressService->setManualCompletion($video, (bool) $data['completed']);
+
+        return response()->json(array_merge(
+            ['completed' => $row->completed],
+            $this->completionPayload($course, $wasFullyCompleted)
+        ));
+    }
+
+    /**
+     * @return array{0: bool, 1: Course} [was the course already fully completed, the course]
+     */
+    private function beforeCompletionChange(Video $video): array
+    {
+        $video->load(['course.videos.progress']);
+        $course = $video->course;
+
+        return [$course->isFullyCompleted(), $course];
+    }
+
+    /**
+     * @return array{course_completed: bool, course_just_completed: bool, course_title: string}
+     */
+    private function completionPayload(Course $course, bool $wasFullyCompleted): array
+    {
         $course->load(['videos.progress']);
         $isFullyCompleted = $course->isFullyCompleted();
 
-        return response()->json([
-            'last_position' => $row->last_position,
-            'completed' => $row->completed,
+        return [
             'course_completed' => $isFullyCompleted,
             'course_just_completed' => $isFullyCompleted && ! $wasFullyCompleted,
             'course_title' => $course->title,
-        ]);
+        ];
     }
 }

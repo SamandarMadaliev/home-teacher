@@ -14,26 +14,7 @@ if (!cfg || !cfg.progressUrl) {
 
 initLessonRename();
 
-const el = document.getElementById('course-video');
-
-if (!el) {
-    throw new Error('#course-video not found');
-}
-
-/** @type {InstanceType<typeof Plyr>} */
-const player = new Plyr(el, {
-    keyboard: { focused: true, global: false },
-    tooltips: { controls: true, seek: true },
-    resetOnEnd: false,
-    fullscreen: { enabled: true, fallback: true, iosNative: true },
-});
-
 const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
-
-function mediaDuration() {
-    const d = player.duration;
-    return Number.isFinite(d) && d > 0 ? d : null;
-}
 
 /** @type {boolean} */
 let courseCelebrationShown = false;
@@ -50,58 +31,152 @@ function maybeCelebrateCourseComplete(payload) {
     });
 }
 
-function sendProgress() {
-    return fetch(cfg.progressUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            'X-CSRF-TOKEN': csrf,
-            'X-Requested-With': 'XMLHttpRequest',
-        },
-        body: JSON.stringify({
-            current_time: player.currentTime,
-            duration: mediaDuration(),
-        }),
-    })
-        .then((res) => (res.ok ? res.json() : null))
-        .then((payload) => {
-            if (payload) {
-                maybeCelebrateCourseComplete(payload);
-            }
+/*
+ * The player element (`#course-video`) only exists for playable video lessons — PDF / HTML
+ * lessons render a document viewer instead (see initManualCompletion() below). Everything in
+ * this block is Plyr-specific and skipped entirely when there's nothing to play.
+ */
+const el = document.getElementById('course-video');
+
+if (el) {
+    /** @type {InstanceType<typeof Plyr>} */
+    const player = new Plyr(el, {
+        keyboard: { focused: true, global: false },
+        tooltips: { controls: true, seek: true },
+        resetOnEnd: false,
+        fullscreen: { enabled: true, fallback: true, iosNative: true },
+    });
+
+    const mediaDuration = () => {
+        const d = player.duration;
+        return Number.isFinite(d) && d > 0 ? d : null;
+    };
+
+    const sendProgress = () =>
+        fetch(cfg.progressUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-CSRF-TOKEN': csrf,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({
+                current_time: player.currentTime,
+                duration: mediaDuration(),
+            }),
         })
-        .catch(() => {});
-}
+            .then((res) => (res.ok ? res.json() : null))
+            .then((payload) => {
+                if (payload) {
+                    maybeCelebrateCourseComplete(payload);
+                }
+            })
+            .catch(() => {});
 
-let tick;
+    let tick;
 
-player.on('loadedmetadata', () => {
-    const pos = cfg.initialPosition;
-    if (typeof pos === 'number' && pos > 0 && !Number.isNaN(pos)) {
-        const dur = mediaDuration();
-        const safe = dur !== null ? Math.min(pos, Math.max(0, dur - 0.5)) : pos;
-        try {
-            player.currentTime = safe;
-        } catch {
-            //
+    player.on('loadedmetadata', () => {
+        const pos = cfg.initialPosition;
+        if (typeof pos === 'number' && pos > 0 && !Number.isNaN(pos)) {
+            const dur = mediaDuration();
+            const safe = dur !== null ? Math.min(pos, Math.max(0, dur - 0.5)) : pos;
+            try {
+                player.currentTime = safe;
+            } catch {
+                //
+            }
         }
-    }
-});
+    });
 
-player.on('play', () => {
-    if (tick) {
-        clearInterval(tick);
-    }
-    tick = window.setInterval(sendProgress, 10_000);
-});
+    player.on('play', () => {
+        if (tick) {
+            clearInterval(tick);
+        }
+        tick = window.setInterval(sendProgress, 10_000);
+    });
 
-player.on('pause', () => {
-    if (tick) {
-        clearInterval(tick);
-        tick = null;
-    }
-    sendProgress();
-});
+    player.on('pause', () => {
+        if (tick) {
+            clearInterval(tick);
+            tick = null;
+        }
+        sendProgress();
+    });
+
+    player.on('ended', () => {
+        sendProgress();
+        if (cfg.nextUrl) {
+            showUpNextOverlay();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (isKeyboardTypingTarget(e.target)) {
+            return;
+        }
+
+        if (isUpNextOverlayOpen()) {
+            return;
+        }
+
+        if (e.code === 'Space') {
+            e.preventDefault();
+            if (player.paused) {
+                void player.play();
+            } else {
+                player.pause();
+            }
+            return;
+        }
+
+        if (e.code === 'ArrowLeft') {
+            e.preventDefault();
+            player.currentTime = Math.max(0, player.currentTime - 10);
+            return;
+        }
+
+        if (e.code === 'ArrowRight') {
+            e.preventDefault();
+            const dur = mediaDuration() ?? Number.POSITIVE_INFINITY;
+            player.currentTime = Math.min(player.currentTime + 10, dur);
+            return;
+        }
+
+        if (e.code === 'ArrowUp') {
+            e.preventDefault();
+            player.increaseVolume(0.1);
+            return;
+        }
+
+        if (e.code === 'ArrowDown') {
+            e.preventDefault();
+            player.decreaseVolume(0.1);
+            return;
+        }
+
+        if (e.code === 'KeyF' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.preventDefault();
+            player.fullscreen.toggle();
+        }
+    });
+
+    window.addEventListener('beforeunload', () => {
+        sendProgress();
+    });
+
+    /** Seek + timestamp helpers for lesson notes (optional DOM on watch page). */
+    cfg.getCurrentTime = () => (Number.isFinite(player.currentTime) ? player.currentTime : 0);
+
+    cfg.seekTo = (sec) => {
+        const t = Number(sec);
+        if (!Number.isFinite(t)) {
+            return;
+        }
+        const dur = mediaDuration() ?? Number.POSITIVE_INFINITY;
+        player.currentTime = Math.min(Math.max(0, t), dur);
+    };
+}
 
 const UP_NEXT_COUNTDOWN_SEC = 5;
 
@@ -203,13 +278,6 @@ function initUpNextAutoplay() {
     });
 }
 
-player.on('ended', () => {
-    sendProgress();
-    if (cfg.nextUrl) {
-        showUpNextOverlay();
-    }
-});
-
 initUpNextAutoplay();
 
 function isKeyboardTypingTarget(target) {
@@ -222,60 +290,6 @@ function isKeyboardTypingTarget(target) {
     }
     return Boolean(target.isContentEditable);
 }
-
-document.addEventListener('keydown', (e) => {
-    if (isKeyboardTypingTarget(e.target)) {
-        return;
-    }
-
-    if (isUpNextOverlayOpen()) {
-        return;
-    }
-
-    if (e.code === 'Space') {
-        e.preventDefault();
-        if (player.paused) {
-            void player.play();
-        } else {
-            player.pause();
-        }
-        return;
-    }
-
-    if (e.code === 'ArrowLeft') {
-        e.preventDefault();
-        player.currentTime = Math.max(0, player.currentTime - 10);
-        return;
-    }
-
-    if (e.code === 'ArrowRight') {
-        e.preventDefault();
-        const dur = mediaDuration() ?? Number.POSITIVE_INFINITY;
-        player.currentTime = Math.min(player.currentTime + 10, dur);
-        return;
-    }
-
-    if (e.code === 'ArrowUp') {
-        e.preventDefault();
-        player.increaseVolume(0.1);
-        return;
-    }
-
-    if (e.code === 'ArrowDown') {
-        e.preventDefault();
-        player.decreaseVolume(0.1);
-        return;
-    }
-
-    if (e.code === 'KeyF' && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        e.preventDefault();
-        player.fullscreen.toggle();
-    }
-});
-
-window.addEventListener('beforeunload', () => {
-    sendProgress();
-});
 
 /* In-page theater mode (wider video; lesson list moves below the player — not Fullscreen API) */
 const THEATER_STORAGE_KEY = 'homeTeacherTheaterMode';
@@ -353,18 +367,55 @@ function formatMediaTime(seconds) {
     return `${m}:${String(s).padStart(2, '0')}`;
 }
 
-/** Seek + timestamp helpers for lesson notes (optional DOM on watch page). */
-cfg.getCurrentTime = () =>
-    Number.isFinite(player.currentTime) ? player.currentTime : 0;
-
-cfg.seekTo = (sec) => {
-    const t = Number(sec);
-    if (!Number.isFinite(t)) {
+/**
+ * "Mark as done" toggle for lessons with no play position (PDF / HTML). Posts to
+ * videos.mark-complete and reuses the same course-completion celebration as videos.
+ */
+function initManualCompletion() {
+    const btn = document.getElementById('mark-complete-btn');
+    const url = btn?.getAttribute('data-mark-complete-url');
+    if (!btn || !url) {
         return;
     }
-    const dur = mediaDuration() ?? Number.POSITIVE_INFINITY;
-    player.currentTime = Math.min(Math.max(0, t), dur);
-};
+
+    const badge = document.getElementById('lesson-completed-badge');
+
+    const applyState = (completed) => {
+        btn.setAttribute('aria-pressed', completed ? 'true' : 'false');
+        const onLabel = btn.getAttribute('data-label-on') ?? 'Completed ✓';
+        const offLabel = btn.getAttribute('data-label-off') ?? 'Mark as done';
+        btn.textContent = completed ? onLabel : offLabel;
+        btn.classList.toggle('mark-complete-btn--done', completed);
+        badge?.classList.toggle('hidden', !completed);
+    };
+
+    btn.addEventListener('click', () => {
+        const next = btn.getAttribute('aria-pressed') !== 'true';
+        btn.disabled = true;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-CSRF-TOKEN': csrf,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({ completed: next }),
+        })
+            .then((res) => (res.ok ? res.json() : Promise.reject(new Error('request failed'))))
+            .then((payload) => {
+                applyState(Boolean(payload.completed));
+                maybeCelebrateCourseComplete(payload);
+            })
+            .catch(() => {})
+            .finally(() => {
+                btn.disabled = false;
+            });
+    });
+}
+
+initManualCompletion();
 
 function initLessonNotes() {
     const input = document.getElementById('note-timestamp-input');
@@ -392,7 +443,7 @@ function initLessonNotes() {
     }
 
     btnUse.addEventListener('click', () => {
-        const t = cfg.getCurrentTime();
+        const t = cfg.getCurrentTime?.() ?? NaN;
         if (!Number.isFinite(t) || t < 0) {
             return;
         }
@@ -414,7 +465,7 @@ function initLessonNotes() {
         if (!Number.isFinite(s)) {
             return;
         }
-        cfg.seekTo(s);
+        cfg.seekTo?.(s);
     });
 
     updateLabel();

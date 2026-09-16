@@ -74,7 +74,7 @@ class CourseController extends Controller
         $count = $this->scanner->sync($course);
 
         $message = $count === 0
-            ? 'Course added. No supported video files were found — put videos in that folder and click Rescan.'
+            ? 'Course added. No supported lesson files were found — add videos, PDFs, or HTML files to that folder and click Rescan.'
             : 'Course added with '.$count.' lesson(s).';
 
         return redirect()->route('courses.show', $course)->with('status', $message);
@@ -172,7 +172,7 @@ class CourseController extends Controller
         $count = $this->scanner->sync($course);
 
         $message = $count === 0
-            ? 'Rescanned. No supported video files found.'
+            ? 'Rescanned. No supported lesson files found.'
             : 'Rescanned: '.$count.' lesson(s) indexed.';
 
         return back()->with('status', $message);

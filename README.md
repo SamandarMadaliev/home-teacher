@@ -5,7 +5,7 @@ Home Teacher is a local Laravel app for watching course videos stored on disk wh
 ## Features
 
 - Add courses by pointing to folders on your machine.
-- Auto-scan and list video lessons per course (rescan to pick up new files without losing custom names / order).
+- Auto-scan and list video, PDF, and HTML lessons per course (rescan to pick up new files without losing custom names / order). PDF/HTML lessons open in an inline viewer (HTML is sandboxed) and use a manual "Mark as done" toggle instead of watch-time progress.
 - Watch lessons with a Plyr-based player (keyboard shortcuts, theater mode, autoplay next).
 - Per-lesson and aggregate course progress, with a resume / start / replay button.
 - Drag-to-reorder lessons inside a course.
@@ -229,7 +229,8 @@ php artisan route:clear
 - `videos.show` — lesson watch page
 - `videos.update` — rename a lesson
 - `videos.stream` — video streaming endpoint
-- `videos.progress` — save watch progress
+- `videos.progress` — save watch progress (video lessons)
+- `videos.mark-complete` — toggle manual completion (PDF/HTML lessons)
 - `videos.notes.store` / `videos.notes.destroy` — lesson notes (markdown)
 - `videos.attachments.store` / `videos.attachments.download` / `videos.attachments.destroy` — lesson resources
 - `playground.show` / `playground.run` / `playground.refresh` — code playground

@@ -315,6 +315,11 @@
                                                         >
                                                             {{ $video->title }}
                                                         </a>
+                                                        @if ($video->typeBadgeLabel())
+                                                            <span class="shrink-0 rounded-full bg-slate-200 px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider text-slate-600 ring-1 ring-slate-300/70 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-700/70">
+                                                                {{ $video->typeBadgeLabel() }}
+                                                            </span>
+                                                        @endif
                                                         <button
                                                             type="button"
                                                             class="lesson-rename-trigger"

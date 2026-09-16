@@ -83,7 +83,7 @@
                     autocomplete="off"
                 />
                 <p class="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-500">
-                    Must be a real directory on disk. After you submit, we scan once for supported video files.
+                    Must be a real directory on disk. After you submit, we scan once for supported lesson files (video, PDF, HTML).
                 </p>
                 <details class="details-plain group mt-3 rounded-xl border border-slate-200/95 bg-slate-50/80 px-3 py-2 ring-1 ring-slate-200/90 dark:border-slate-800/90 dark:bg-slate-950/35 dark:ring-slate-800/70">
                     <summary class="cursor-pointer text-xs font-semibold link-accent">
