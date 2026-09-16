@@ -52,8 +52,18 @@ if (el) {
         return Number.isFinite(d) && d > 0 ? d : null;
     };
 
-    const sendProgress = () =>
-        fetch(cfg.progressUrl, {
+    let metadataReady = false;
+    let initialPositionApplied = false;
+
+    const sendProgress = () => {
+        // Skip until metadata has loaded at least once: a loading hiccup (stall, source
+        // re-fetch) can leave currentTime at 0 before the resume position is applied, and
+        // reporting that would overwrite the user's saved progress with 0.
+        if (!metadataReady) {
+            return Promise.resolve();
+        }
+
+        return fetch(cfg.progressUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -73,10 +83,22 @@ if (el) {
                 }
             })
             .catch(() => {});
+    };
 
     let tick;
 
     player.on('loadedmetadata', () => {
+        metadataReady = true;
+
+        // Only ever apply the resume position on the first successful load: a later
+        // loading hiccup (stall, source re-fetch) can fire this event again mid-session,
+        // and re-seeking to the original page-load position would throw away progress
+        // made since then.
+        if (initialPositionApplied) {
+            return;
+        }
+        initialPositionApplied = true;
+
         const pos = cfg.initialPosition;
         if (typeof pos === 'number' && pos > 0 && !Number.isNaN(pos)) {
             const dur = mediaDuration();
