@@ -30,7 +30,9 @@
         <div class="app-header-inner mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3.5 sm:gap-4 sm:px-6 sm:py-4">
             <a href="{{ route('home') }}" class="group flex min-w-0 items-center gap-3" aria-label="{{ config('app.name') }}, home">
                 <span class="brand-logo group-hover:opacity-95" aria-hidden="true">
-                    <span class="text-sm font-bold text-slate-950">▶</span>
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="size-5 translate-x-px text-slate-950">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
                 </span>
                 <span class="truncate text-lg font-semibold tracking-tight text-slate-900 transition group-hover:text-slate-950 dark:text-slate-50 dark:group-hover:text-white">
                     {{ config('app.name') }}

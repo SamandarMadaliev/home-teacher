@@ -18,7 +18,27 @@
         </a>
     </div>
 
-    @if ($courses->isEmpty())
+    <form action="{{ route('courses.index') }}" method="get" role="search" class="mb-8 flex gap-2">
+        <input
+            type="search"
+            name="q"
+            value="{{ $search }}"
+            placeholder="Search courses and lessons…"
+            aria-label="Search courses and lessons"
+            class="input-field min-w-0 flex-1"
+        />
+        <button type="submit" class="btn-secondary shrink-0 px-4">Search</button>
+        @if ($search !== '')
+            <a href="{{ route('courses.index') }}" class="btn-secondary shrink-0 px-4">Clear</a>
+        @endif
+    </form>
+
+    @if ($courses->isEmpty() && $search !== '')
+        <div class="card-surface px-8 py-14 text-center">
+            <p class="text-lg font-medium text-slate-800 dark:text-slate-100">No matches for “{{ $search }}”</p>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Try a different title or lesson name.</p>
+        </div>
+    @elseif ($courses->isEmpty())
         <div class="card-surface px-8 py-14 text-center">
             <div class="icon-empty-accent" aria-hidden="true">
                 <svg class="h-8 w-8 text-accent/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">

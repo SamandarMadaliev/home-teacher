@@ -19,11 +19,21 @@ class CourseController extends Controller
         private CourseVideoScanner $scanner
     ) {}
 
-    public function index(): View
+    public function index(Request $request): View
     {
+        $search = trim((string) $request->query('q', ''));
+        $matchesSearch = function ($query) use ($search) {
+            $like = '%'.addcslashes($search, '\\%_').'%';
+            $query->where(function ($q) use ($like) {
+                $q->where('title', 'like', $like)
+                    ->orWhereHas('videos', fn ($v) => $v->where('title', 'like', $like));
+            });
+        };
+
         $courses = Course::query()
             ->forCurrentUser()
             ->active()
+            ->when($search !== '', $matchesSearch)
             ->with(['videos.progress'])
             ->withCount('videos')
             ->orderedForLibrary()
@@ -32,12 +42,13 @@ class CourseController extends Controller
         $archivedCourses = Course::query()
             ->forCurrentUser()
             ->archived()
+            ->when($search !== '', $matchesSearch)
             ->withCount('videos')
             ->orderByDesc('archived_at')
             ->orderBy('title')
             ->get();
 
-        return view('courses.index', compact('courses', 'archivedCourses'));
+        return view('courses.index', compact('courses', 'archivedCourses', 'search'));
     }
 
     public function create(): View
@@ -101,9 +112,11 @@ class CourseController extends Controller
                 $previewStreamUrl = route('courses.preview.stream', $course);
                 $showCoursePreview = true;
             } else {
-                $firstLesson = $videos->first();
-                if ($firstLesson !== null && $firstLesson->absoluteFilePath() !== null) {
-                    $previewStreamUrl = route('videos.stream', $firstLesson);
+                $firstVideoLesson = $videos->first(
+                    fn ($v) => $v->isVideo() && $v->absoluteFilePath() !== null
+                );
+                if ($firstVideoLesson !== null) {
+                    $previewStreamUrl = route('videos.stream', $firstVideoLesson);
                     $showCoursePreview = true;
                 }
             }
