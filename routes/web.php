@@ -7,6 +7,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\FolderPickerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PlaygroundController;
+use App\Http\Controllers\ProblemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoadmapController;
 use App\Http\Controllers\UserAccentController;
@@ -61,6 +62,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/playground', [PlaygroundController::class, 'show'])->name('playground.show');
     Route::post('/playground/run', [PlaygroundController::class, 'run'])->name('playground.run');
     Route::post('/playground/refresh', [PlaygroundController::class, 'refresh'])->name('playground.refresh');
+
+    // Static /problems/* routes must come before the resource's {problem} routes.
+    Route::get('/problems/random', [ProblemController::class, 'random'])->name('problems.random');
+    Route::post('/problems/preview', [ProblemController::class, 'preview'])->name('problems.preview');
+    Route::post('/problems/reference-check', [ProblemController::class, 'referenceCheck'])->middleware('throttle:30,1')->name('problems.reference-check');
+    Route::resource('problems', ProblemController::class);
+    Route::post('/problems/{problem}/run', [ProblemController::class, 'run'])->middleware('throttle:60,1')->name('problems.run');
+    Route::post('/problems/{problem}/run-examples', [ProblemController::class, 'runExamples'])->middleware('throttle:60,1')->name('problems.run-examples');
+    Route::post('/problems/{problem}/submit', [ProblemController::class, 'submit'])->middleware('throttle:30,1')->name('problems.submit');
+    Route::get('/problems/{problem}/submissions/{submission}', [ProblemController::class, 'submission'])->name('problems.submissions.show');
 
     Route::resource('roadmaps', RoadmapController::class);
     Route::post('/roadmaps/{roadmap}/courses/reorder', [RoadmapController::class, 'reorderCourses'])->name('roadmaps.courses.reorder');

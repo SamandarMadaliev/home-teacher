@@ -1,0 +1,269 @@
+/* ───────── Problems: solve page + authoring form ───────── */
+
+/* `.input-field` forces width:100%, which beats Tailwind's `w-auto`. */
+.input-field.w-auto { width: auto; }
+
+/* Solve layout: statement | (editor over console) */
+.problem-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.problem-panes {
+    display: grid;
+    grid-template-columns: var(--pane-left, 42%) 10px minmax(0, 1fr);
+    height: calc(100dvh - 11.5rem);
+    min-height: 560px;
+}
+.problem-right {
+    display: grid;
+    grid-template-rows: var(--pane-editor, 58%) 10px minmax(0, 1fr);
+    min-height: 0;
+    min-width: 0;
+}
+.problem-pane {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+.problem-pane > :not(.problem-pane-body):not(.problem-editor) { flex: none; }
+.problem-pane-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+}
+
+.problem-splitter {
+    position: relative;
+    cursor: col-resize;
+    touch-action: none;
+}
+.problem-splitter[data-splitter='y'] { cursor: row-resize; }
+.problem-splitter::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    border-radius: 9999px;
+    background: rgb(148 163 184 / 0.45);
+    transition: background 0.15s;
+}
+.problem-splitter[data-splitter='x']::after { width: 3px; height: 40px; }
+.problem-splitter[data-splitter='y']::after { height: 3px; width: 40px; }
+.problem-splitter:hover::after,
+.problem-splitter:focus-visible::after,
+.problem-splitter.is-dragging::after { background: var(--color-accent, #3b82f6); }
+.problem-splitter:focus-visible { outline: none; }
+
+/* Focus mode (key F): fill the viewport */
+.problem-focus {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    padding: 1rem;
+    background: #f8fafc;
+}
+html.dark .problem-focus { background: #020617; }
+.problem-focus .problem-panes { height: calc(100dvh - 5rem); }
+
+/* Tabs */
+.problem-tabs { display: flex; gap: 0.25rem; overflow-x: auto; }
+.problem-tab {
+    position: relative;
+    white-space: nowrap;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgb(100 116 139);
+}
+.problem-tab:hover { color: rgb(15 23 42); }
+html.dark .problem-tab:hover { color: rgb(226 232 240); }
+.problem-tab[aria-selected='true'] { color: rgb(15 23 42); }
+html.dark .problem-tab[aria-selected='true'] { color: rgb(248 250 252); }
+.problem-tab[aria-selected='true']::after {
+    content: '';
+    position: absolute;
+    left: 0.5rem; right: 0.5rem; bottom: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--color-accent, #3b82f6);
+}
+.problem-tab:focus-visible { outline: 2px solid var(--color-accent, #3b82f6); outline-offset: -2px; border-radius: 6px; }
+
+/* Editor */
+.problem-editor { flex: 1 1 auto; min-height: 0; }
+.problem-editor .cm-editor { height: 100%; background: #fff; }
+.problem-editor .cm-editor.cm-focused { outline: none; }
+.problem-editor .cm-scroller { overflow: auto; }
+html.dark .problem-editor .cm-editor { background: #0b1120; }
+.cm-error-line { background: rgb(244 63 94 / 0.16) !important; box-shadow: inset 3px 0 0 rgb(244 63 94); }
+
+/* Case chips + diff */
+.problem-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 9999px;
+    border: 1px solid rgb(203 213 225);
+    padding: 0.25rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: transparent;
+    color: rgb(51 65 85);
+    transition: background 0.15s, border-color 0.15s;
+}
+html.dark .problem-chip { border-color: rgb(51 65 85); color: rgb(203 213 225); }
+.problem-chip:hover { border-color: var(--color-accent, #3b82f6); }
+.problem-chip[aria-selected='true'] { background: rgb(148 163 184 / 0.18); border-color: rgb(100 116 139); }
+.problem-chip.is-pass { color: rgb(5 150 105); }
+.problem-chip.is-fail { color: rgb(225 29 72); }
+.problem-chip.is-warn { color: rgb(217 119 6); }
+.problem-chip.is-running { animation: problem-pulse 1.1s ease-in-out infinite; }
+html.dark .problem-chip.is-pass { color: rgb(52 211 153); }
+html.dark .problem-chip.is-fail { color: rgb(251 113 133); }
+html.dark .problem-chip.is-warn { color: rgb(251 191 36); }
+@keyframes problem-pulse { 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) { .problem-chip.is-running { animation: none; } }
+
+.problem-diff {
+    overflow-x: auto;
+    border-radius: 0.5rem;
+    background: rgb(241 245 249);
+    font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    padding: 0.35rem 0;
+}
+html.dark .problem-diff { background: rgb(15 23 42); }
+.problem-diff-row { display: flex; padding: 0 0.6rem; white-space: pre; }
+.problem-diff-row.is-diff { background: rgb(244 63 94 / 0.14); }
+.problem-diff-no { width: 2rem; flex: none; color: rgb(148 163 184); user-select: none; }
+
+.problem-pre {
+    overflow: auto;
+    max-height: 14rem;
+    border-radius: 0.5rem;
+    background: rgb(241 245 249);
+    padding: 0.6rem 0.75rem;
+    font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre;
+}
+html.dark .problem-pre { background: rgb(15 23 42); }
+
+/* Progress bar while judging */
+.problem-progress { height: 6px; border-radius: 9999px; background: rgb(148 163 184 / 0.25); overflow: hidden; }
+.problem-progress > span { display: block; height: 100%; width: 0; background: var(--color-accent, #3b82f6); transition: width 0.2s; }
+
+/* Toasts */
+.problem-toasts {
+    position: fixed;
+    left: 50%; bottom: 5.5rem;
+    transform: translateX(-50%);
+    z-index: 90;
+    display: flex; flex-direction: column; gap: 0.5rem; align-items: center;
+}
+.problem-toast {
+    display: flex; align-items: center; gap: 0.9rem;
+    border-radius: 0.75rem;
+    background: rgb(15 23 42); color: #fff;
+    padding: 0.6rem 0.9rem; font-size: 0.8rem;
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.25);
+}
+.problem-toast-action { font-weight: 700; color: #7dd3fc; }
+
+/* Statement markdown */
+.problem-prose pre {
+    overflow: auto;
+    border-radius: 0.5rem;
+    background: rgb(241 245 249);
+    padding: 0.6rem 0.75rem;
+}
+html.dark .problem-prose pre { background: rgb(15 23 42); }
+.problem-prose code { font-size: 0.85em; }
+.problem-prose table { border-collapse: collapse; }
+.problem-prose th, .problem-prose td { border: 1px solid rgb(203 213 225); padding: 0.25rem 0.6rem; }
+html.dark .problem-prose th, html.dark .problem-prose td { border-color: rgb(51 65 85); }
+
+/* Mobile: tabs instead of panes */
+.problem-mobile-tabs { display: none; }
+@media (max-width: 1023px) {
+    .problem-mobile-tabs { display: flex; }
+    .problem-panes { display: block; height: auto; min-height: 0; }
+    .problem-right { display: contents; }
+    .problem-splitter { display: none; }
+    .problem-shell [data-pane] { display: none; }
+    .problem-shell[data-mobile-tab='problem'] [data-pane='statement'],
+    .problem-shell[data-mobile-tab='code'] [data-pane='editor'],
+    .problem-shell[data-mobile-tab='result'] [data-pane='console'] { display: flex; }
+    .problem-shell [data-pane='editor'] { height: 70dvh; min-height: 420px; }
+    .problem-shell [data-pane='console'] { min-height: 320px; }
+}
+
+/* ───────── Authoring form ───────── */
+.problem-form-grid { display: grid; gap: 1.5rem; }
+@media (min-width: 1024px) { .problem-form-grid { grid-template-columns: 13rem minmax(0, 1fr); } }
+.problem-form-nav { position: sticky; top: 1rem; align-self: start; }
+.problem-form-nav a {
+    display: flex; align-items: center; justify-content: space-between;
+    border-radius: 0.5rem; padding: 0.4rem 0.6rem;
+    font-size: 0.8rem; font-weight: 600; color: rgb(71 85 105);
+}
+html.dark .problem-form-nav a { color: rgb(148 163 184); }
+.problem-form-nav a:hover, .problem-form-nav a.is-active { background: rgb(148 163 184 / 0.15); color: rgb(15 23 42); }
+html.dark .problem-form-nav a:hover, html.dark .problem-form-nav a.is-active { color: rgb(248 250 252); }
+
+.problem-savebar {
+    position: sticky; bottom: 0.75rem; z-index: 20;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    border: 1px solid rgb(203 213 225 / 0.9);
+    border-radius: 1rem; padding: 0.7rem 1rem;
+    background: rgb(255 255 255 / 0.92); backdrop-filter: blur(8px);
+    box-shadow: 0 8px 24px rgb(15 23 42 / 0.12);
+}
+html.dark .problem-savebar { background: rgb(15 23 42 / 0.92); border-color: rgb(51 65 85); }
+
+.problem-seg { display: inline-flex; border-radius: 0.6rem; border: 1px solid rgb(203 213 225); overflow: hidden; }
+html.dark .problem-seg { border-color: rgb(51 65 85); }
+.problem-seg label { cursor: pointer; padding: 0.35rem 0.8rem; font-size: 0.8rem; font-weight: 600; color: rgb(71 85 105); }
+html.dark .problem-seg label { color: rgb(148 163 184); }
+.problem-seg input { position: absolute; opacity: 0; pointer-events: none; }
+.problem-seg input:checked + span { color: var(--color-accent, #3b82f6); }
+.problem-seg label:has(input:checked) { background: rgb(148 163 184 / 0.18); }
+.problem-seg label:has(input:focus-visible) { outline: 2px solid var(--color-accent, #3b82f6); outline-offset: -2px; }
+
+.problem-test-row { border: 1px solid rgb(203 213 225 / 0.95); border-radius: 0.75rem; background: transparent; }
+html.dark .problem-test-row { border-color: rgb(30 41 59 / 0.95); }
+.problem-test-row.is-collapsed .problem-test-body { display: none; }
+.problem-test-row.sortable-ghost { opacity: 0.4; }
+.problem-test-row.is-check-pass { border-color: rgb(16 185 129 / 0.6); }
+.problem-test-row.is-check-fail { border-color: rgb(244 63 94 / 0.7); }
+
+.problem-tag {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    border-radius: 9999px; padding: 0.15rem 0.6rem;
+    font-size: 0.75rem; font-weight: 600;
+    background: rgb(148 163 184 / 0.18);
+}
+.problem-tag button { line-height: 1; opacity: 0.6; }
+.problem-tag button:hover { opacity: 1; }
+
+/* ───────── Function signature builder ───────── */
+.problem-param-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 0.5rem;
+}
+.problem-type {
+    border-radius: 0.375rem;
+    background: rgb(100 116 139 / 0.12);
+    padding: 0 0.375rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.6875rem;
+    color: rgb(71 85 105);
+}
+:where(.dark) .problem-type { color: rgb(148 163 184); }
+.input-field.is-invalid {
+    border-color: rgb(244 63 94 / 0.7);
+    box-shadow: 0 0 0 1px rgb(244 63 94 / 0.25);
+}

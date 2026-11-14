@@ -14,6 +14,7 @@ export default defineConfig({
                 'resources/js/roadmap-courses.js',
                 'resources/js/playground.js',
                 'resources/js/note-formatter.js',
+                'resources/js/problems.js',
             ],
             refresh: true,
         }),

@@ -44,6 +44,7 @@
                     <a href="{{ route('courses.index') }}" class="nav-pill text-[13px] sm:text-sm">Courses</a>
                     <a href="{{ route('roadmaps.index') }}" class="nav-pill text-[13px] sm:text-sm">Roadmaps</a>
                     <a href="{{ route('playground.show') }}" class="nav-pill text-[13px] sm:text-sm">Playground</a>
+                    <a href="{{ route('problems.index') }}" class="nav-pill text-[13px] sm:text-sm">Problems</a>
                 @endauth
                 @auth
                     @include('layouts.partials.accent-picker')
