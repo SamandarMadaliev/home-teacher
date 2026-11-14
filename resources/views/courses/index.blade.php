@@ -13,9 +13,11 @@
                 Watch locally. Progress saves automatically. Courses you watched most recently appear first.
             </p>
         </div>
-        <a href="{{ route('courses.create') }}" class="btn-primary shrink-0">
-            Add course
-        </a>
+        @if (auth()->user()->isAdmin())
+            <a href="{{ route('courses.create') }}" class="btn-primary shrink-0">
+                Add course
+            </a>
+        @endif
     </div>
 
     <form action="{{ route('courses.index') }}" method="get" role="search" class="mb-8 flex gap-2">
@@ -47,10 +49,14 @@
             </div>
             <p class="text-lg font-medium text-slate-800 dark:text-slate-100">No courses yet</p>
             <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                <a href="{{ route('courses.create') }}" class="link-accent-underline">
-                    Add a course
-                </a>
-                <span class="text-slate-600 dark:text-slate-500"> and choose the folder where your videos live.</span>
+                @if (auth()->user()->isAdmin())
+                    <a href="{{ route('courses.create') }}" class="link-accent-underline">
+                        Add a course
+                    </a>
+                    <span class="text-slate-600 dark:text-slate-500"> and choose the folder where your videos live.</span>
+                @else
+                    Courses are added by the site admin, because they read videos from folders on this computer.
+                @endif
             </p>
         </div>
     @else

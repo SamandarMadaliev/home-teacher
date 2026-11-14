@@ -23,4 +23,20 @@
     >
         Notes
     </a>
+    <a
+        href="{{ route('invites.index') }}"
+        @class(['profile-tab', 'profile-tab--active' => $active === 'invites'])
+        @if ($active === 'invites') aria-current="page" @endif
+    >
+        Invites
+    </a>
+    @if (auth()->user()->isAdmin())
+        <a
+            href="{{ route('admin.users.index') }}"
+            @class(['profile-tab', 'profile-tab--active' => $active === 'users'])
+            @if ($active === 'users') aria-current="page" @endif
+        >
+            Users
+        </a>
+    @endif
 </nav>

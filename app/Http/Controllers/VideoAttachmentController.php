@@ -80,6 +80,10 @@ class VideoAttachmentController extends Controller
 
     private function storeFile(Request $request, Video $video): RedirectResponse
     {
+        if (! $request->user()?->isAdmin()) {
+            return back()->withErrors(['file_path' => 'Only the site admin can attach files from this computer. You can add a link instead.']);
+        }
+
         $data = $request->validate([
             'title' => ['nullable', 'string', 'max:255'],
             'file_path' => ['required', 'string', 'max:4096'],

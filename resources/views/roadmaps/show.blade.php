@@ -68,8 +68,12 @@
             @else
                 <p>
                     You do not have any courses yet.
-                    <a href="{{ route('courses.create') }}" class="link-accent-underline">Add a course</a>
-                    <span class="text-slate-600 dark:text-slate-500"> to index a folder of videos, then return here to build your order.</span>
+                    @if (auth()->user()->isAdmin())
+                        <a href="{{ route('courses.create') }}" class="link-accent-underline">Add a course</a>
+                        <span class="text-slate-600 dark:text-slate-500"> to index a folder of videos, then return here to build your order.</span>
+                    @else
+                        Courses are added by the site admin, because they read videos from folders on this computer.
+                    @endif
                 </p>
             @endif
         </div>

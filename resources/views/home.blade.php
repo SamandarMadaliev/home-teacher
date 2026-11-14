@@ -28,7 +28,9 @@
                                 Google
                             </a>
                         @endif
-                        <a href="{{ route('register') }}" class="btn-primary min-w-[10.5rem] px-6">Create account</a>
+                        @if (\App\Support\Registration::isOpenToPublic())
+                            <a href="{{ route('register') }}" class="btn-primary min-w-[10.5rem] px-6">Create account</a>
+                        @endif
                         <a href="{{ route('login') }}" class="btn-secondary min-w-[10.5rem] px-6">Sign in</a>
                     </div>
                 </div>
@@ -151,7 +153,9 @@
                     Start any lesson — your most recent course will appear here for quick access.
                 </p>
                 <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
-                    <a href="{{ route('courses.create') }}" class="btn-primary px-6">Add course</a>
+                    @if (auth()->user()?->isAdmin())
+                        <a href="{{ route('courses.create') }}" class="btn-primary px-6">Add course</a>
+                    @endif
                     <a href="{{ route('courses.index') }}" class="btn-secondary px-6">Browse library</a>
                 </div>
             </div>
@@ -231,7 +235,11 @@
             <div class="empty-state-soft px-8 py-14 text-center">
                 <p class="text-lg font-medium text-slate-800 dark:text-slate-100">No courses yet</p>
                 <p class="mt-2 text-sm text-slate-600 dark:text-slate-500">
-                    <a href="{{ route('courses.create') }}" class="link-accent-underline">Add a course</a>
+                    @if (auth()->user()?->isAdmin())
+                        <a href="{{ route('courses.create') }}" class="link-accent-underline">Add a course</a>
+                    @else
+                        <span>Courses are added by the site admin, because they read videos from folders on this computer.</span>
+                    @endif
                     <span class="text-slate-600 dark:text-slate-600"> by pointing at a folder of videos.</span>
                 </p>
             </div>

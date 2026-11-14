@@ -72,11 +72,10 @@ class GoogleAuthTest extends TestCase
             'google_id' => null,
         ]);
 
-        $googleUser = Mockery::mock(SocialiteUserContract::class);
-        $googleUser->shouldReceive('getId')->andReturn('google-abc');
-        $googleUser->shouldReceive('getName')->andReturn('Google Sam');
-        $googleUser->shouldReceive('getEmail')->andReturn('sam@gmail.com');
-        $googleUser->shouldReceive('getAvatar')->andReturn(null);
+        // Google reports the address as verified; only then may it be linked.
+        $googleUser = (new \Laravel\Socialite\Two\User)
+            ->setRaw(['email_verified' => true])
+            ->map(['id' => 'google-abc', 'name' => 'Google Sam', 'email' => 'sam@gmail.com', 'avatar' => null]);
 
         $provider = Mockery::mock('Laravel\Socialite\Contracts\Provider');
         $provider->shouldReceive('user')->andReturn($googleUser);

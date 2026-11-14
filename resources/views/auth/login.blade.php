@@ -61,8 +61,12 @@
             <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <button type="submit" class="btn-primary w-full sm:w-auto">Sign in</button>
                 <p class="text-center text-sm text-slate-600 dark:text-slate-400 sm:text-right">
-                    No account?
-                    <a href="{{ route('register') }}" class="link-accent">Create one</a>
+                    @if (\App\Support\Registration::isOpenToPublic())
+                        No account?
+                        <a href="{{ route('register') }}" class="link-accent">Create one</a>
+                    @else
+                        New here? Ask a member for an invite link.
+                    @endif
                 </p>
             </div>
         </form>

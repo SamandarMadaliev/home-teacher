@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Support\LegacyLibraryClaim;
+use App\Support\Registration;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,9 +15,12 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('auth.register');
+        return view('auth.register', [
+            'refusal' => Registration::refusal($request),
+            'invite' => Registration::pendingInvite($request),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -28,16 +31,18 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
-        $isFirstUser = User::query()->doesntExist();
+        if ($refusal = Registration::refusal($request)) {
+            return redirect()->route('register')->withErrors(['email' => $refusal]);
+        }
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);
-
-        if ($isFirstUser) {
-            LegacyLibraryClaim::claimForFirstUser($user);
+        try {
+            $user = Registration::createUser($request, [
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+            ]);
+        } catch (\RuntimeException $e) {
+            return redirect()->route('register')->withInput($request->only('name', 'email'))->withErrors(['email' => $e->getMessage()]);
         }
 
         event(new Registered($user));

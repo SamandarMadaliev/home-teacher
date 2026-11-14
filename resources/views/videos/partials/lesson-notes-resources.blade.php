@@ -200,10 +200,15 @@
         @class(['watch-tab-panel', 'hidden' => $watchLessonTab !== 'resources'])
     >
         <p class="max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-500">
-            Point at files already on disk (absolute path or relative to the course folder) or save external links — nothing is copied or uploaded.
+            @if (auth()->user()->isAdmin())
+                Point at files already on disk (absolute path or relative to the course folder) or save external links — nothing is copied or uploaded.
+            @else
+                Save external links for this lesson. (Attaching files from this computer is limited to the site admin.)
+            @endif
         </p>
 
-                <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div @class(['mt-5 grid grid-cols-1 gap-4', 'md:grid-cols-2' => auth()->user()->isAdmin()])>
+                    @if (auth()->user()->isAdmin())
                     <form
                         action="{{ route('videos.attachments.store', $video) }}"
                         method="post"
@@ -245,6 +250,7 @@
                             <button type="submit" class="btn-primary text-sm">Attach file</button>
                         </div>
                     </form>
+                    @endif
 
                     <form
                         action="{{ route('videos.attachments.store', $video) }}"

@@ -3,32 +3,28 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\File;
-use Symfony\Component\Process\Exception\ProcessTimedOutException;
-use Symfony\Component\Process\Process;
 
 /**
  * A program built once by {@see CodeRunner::compile()} and then run many
- * times (once per test case). Build time never counts toward a test's
- * time limit. Call {@see dispose()} when done; the destructor is a backstop.
+ * times (once per test case), each time in a fresh read-only sandbox that
+ * never sees the build cache. Build time never counts toward a test's time
+ * limit. Call {@see dispose()} when done; the destructor is a backstop.
  */
 class CompiledProgram
 {
     private bool $disposed = false;
 
-    /**
-     * @param  list<string>  $command  absolute command to execute the built program
-     */
     public function __construct(
         public readonly bool $ok,
         public readonly string $compileOutput,
         public readonly int $compileMs,
         public readonly bool $compileTimedOut,
         private readonly string $dir,
-        private readonly array $command,
+        private readonly CodeSandbox $sandbox,
     ) {}
 
     /**
-     * Same result shape as {@see CodeRunner::run()}.
+     * Same result shape as {@see CodeRunner::execute()}.
      *
      * @return array<string, mixed>
      */
@@ -38,33 +34,11 @@ class CompiledProgram
             throw new \LogicException('Program is not runnable.');
         }
 
-        $process = new Process($this->command, $this->dir, ['HOME' => $this->dir]);
-        $process->setTimeout(min($timeout, CodeRunner::TIMEOUT_SECONDS));
-        if ($stdin !== null && $stdin !== '') {
-            $process->setInput($stdin);
-        }
-
-        $start = microtime(true);
-        $timedOut = false;
-        try {
-            $process->run();
-        } catch (ProcessTimedOutException) {
-            $timedOut = true;
-        }
-        $durationMs = (int) round((microtime(true) - $start) * 1000);
-
-        [$stdout, $stdoutTrunc] = CodeRunner::capture($process->getOutput());
-        [$stderr, $stderrTrunc] = CodeRunner::capture($process->getErrorOutput());
-
-        return [
-            'stdout' => $stdout,
-            'stderr' => $stderr,
-            'exit_code' => $process->getExitCode(),
-            'duration_ms' => $durationMs,
-            'timed_out' => $timedOut,
-            'stdout_truncated' => $stdoutTrunc,
-            'stderr_truncated' => $stderrTrunc,
-        ];
+        return CodeRunner::execute(
+            $this->sandbox->process(['./prog'], $this->dir, ['GOMAXPROCS' => '2']),
+            $stdin,
+            $timeout,
+        );
     }
 
     public function dispose(): void
