@@ -126,7 +126,7 @@ class ProblemTest extends TestCase
 
         $this->assertDatabaseCount('problem_submissions', 1);
         $this->assertCount(2, $problem->submissions()->first()->results);
-        $this->assertTrue($problem->isSolved());
+        $this->assertTrue($problem->isSolvedBy($user));
 
         // A second accepted submission is no longer a "first solve".
         $again = $this->events($this->actingAs($user)->post(route('problems.submit', $problem), ['language' => 'python', 'code' => $good]));
@@ -160,7 +160,7 @@ class ProblemTest extends TestCase
         $this->assertFalse($done['first_solve']);
         $this->assertSame('3', $events[1]['expected']);
         $this->assertSame("0\n", $events[1]['actual']);
-        $this->assertFalse($problem->isSolved());
+        $this->assertFalse($problem->isSolvedBy($user));
     }
 
     public function test_run_examples_only_runs_visible_cases_and_records_nothing(): void

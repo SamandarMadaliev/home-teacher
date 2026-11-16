@@ -1,15 +1,17 @@
 <?php
 
 use App\Http\Controllers\AdminUserController;
-use App\Http\Controllers\InviteController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\FolderPickerController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InviteController;
 use App\Http\Controllers\PlaygroundController;
 use App\Http\Controllers\ProblemController;
+use App\Http\Controllers\ProblemShareController;
+use App\Http\Controllers\ProblemSolutionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoadmapController;
 use App\Http\Controllers\UserAccentController;
@@ -87,6 +89,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/problems/{problem}/run-examples', [ProblemController::class, 'runExamples'])->middleware('throttle:60,1')->name('problems.run-examples');
     Route::post('/problems/{problem}/submit', [ProblemController::class, 'submit'])->middleware('throttle:30,1')->name('problems.submit');
     Route::get('/problems/{problem}/submissions/{submission}', [ProblemController::class, 'submission'])->name('problems.submissions.show');
+
+    // Sharing (owner only) and community solutions.
+    Route::post('/problems/{problem}/shares', [ProblemShareController::class, 'store'])->middleware('throttle:30,60')->name('problems.shares.store');
+    Route::patch('/problems/{problem}/shares/{share}', [ProblemShareController::class, 'update'])->name('problems.shares.update');
+    Route::delete('/problems/{problem}/shares/{share}', [ProblemShareController::class, 'destroy'])->name('problems.shares.destroy');
+    Route::post('/problems/{problem}/visibility', [ProblemShareController::class, 'visibility'])->name('problems.visibility');
+    Route::get('/problems/{problem}/solutions', [ProblemSolutionController::class, 'index'])->name('problems.solutions.index');
+    Route::get('/problems/{problem}/solutions/reference', [ProblemSolutionController::class, 'reference'])->name('problems.solutions.reference');
+    Route::post('/problems/{problem}/solutions/hide-all', [ProblemSolutionController::class, 'hideAll'])->name('problems.solutions.hide-all');
+    Route::get('/problems/{problem}/solutions/{submission}', [ProblemSolutionController::class, 'show'])->whereNumber('submission')->name('problems.solutions.show');
+    Route::post('/problems/{problem}/submissions/{submission}/hide', [ProblemSolutionController::class, 'hide'])->name('problems.submissions.hide');
+    // Admin moderation of community content (the policy also requires the problem to be public).
+    Route::post('/problems/{problem}/moderate', [ProblemShareController::class, 'moderate'])->middleware('admin')->name('problems.moderate');
+    Route::post('/problems/{problem}/solutions/{submission}/moderate', [ProblemSolutionController::class, 'moderate'])->middleware('admin')->name('problems.solutions.moderate');
 
     Route::resource('roadmaps', RoadmapController::class);
     Route::post('/roadmaps/{roadmap}/courses/reorder', [RoadmapController::class, 'reorderCourses'])->name('roadmaps.courses.reorder');

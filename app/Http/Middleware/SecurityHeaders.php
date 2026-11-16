@@ -36,6 +36,11 @@ class SecurityHeaders
             'Permissions-Policy' => 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
             'Cross-Origin-Opener-Policy' => 'same-origin-allow-popups',
         ];
+        // Problem statements are markdown written by other members; a remote
+        // image (![](https://…)) would leak each viewer's IP to its host.
+        if ($request->routeIs('problems.*')) {
+            $headers['Content-Security-Policy'] = "img-src 'self' data:";
+        }
         if ($request->isSecure() && app()->isProduction()) {
             $headers['Strict-Transport-Security'] = 'max-age=31536000';
         }

@@ -15,7 +15,13 @@
         default => 'bg-rose-500/10 text-rose-600 ring-rose-500/25',
     };
     $statusTabs = ['all' => 'All', 'todo' => 'To do', 'attempted' => 'Attempted', 'solved' => 'Solved'];
-    $query = fn (array $over) => route('problems.index', array_filter(array_merge($filters, $over), fn ($v, $k) => $v !== '' && $v !== null && ! ($k === 'status' && $v === 'all') && ! ($k === 'sort' && $v === 'recent'), ARRAY_FILTER_USE_BOTH));
+    $query = fn (array $over) => route('problems.index', array_filter(array_merge($filters, ['scope' => $scope], $over), fn ($v, $k) => $v !== '' && $v !== null && ! ($k === 'status' && $v === 'all') && ! ($k === 'sort' && $v === 'recent') && ! ($k === 'scope' && $v === 'mine'), ARRAY_FILTER_USE_BOTH));
+    $scopeTabs = ['mine' => 'Mine', 'shared' => 'Shared with me', 'community' => 'Community'];
+    $emptyText = [
+        'mine' => ['No problems yet', 'A problem is a statement plus test cases. Write one, then solve it — or share it with others.'],
+        'shared' => ['Nothing shared with you yet', 'When someone shares a problem with your account email, it shows up here.'],
+        'community' => ['No community problems yet', 'Problems that their authors make public appear here for every member.'],
+    ][$scope];
 @endphp
 
 @section('content')
@@ -28,20 +34,31 @@
             </p>
         </div>
         <div class="flex shrink-0 gap-2">
-            @if ($totalCount > $solvedCount)
+            @if ($scope !== 'community' && $totalCount > $solvedCount)
                 <a href="{{ route('problems.random') }}" class="btn-secondary">🎲 Random unsolved</a>
             @endif
             <a href="{{ route('problems.create') }}" class="btn-primary">New problem</a>
         </div>
     </div>
 
+    <nav class="problem-tabs mb-6" role="tablist" aria-label="Which problems">
+        @foreach ($scopeTabs as $key => $label)
+            <a href="{{ route('problems.index', $key === 'mine' ? [] : ['scope' => $key]) }}" class="problem-tab" role="tab" aria-selected="{{ $scope === $key ? 'true' : 'false' }}">
+                {{ $label }} <span class="text-slate-500">({{ $scopeCounts[$key] }})</span>
+                @if ($key === 'shared' && $newShared)
+                    <span class="ml-1 rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-bold text-white">{{ $newShared }} new</span>
+                @endif
+            </a>
+        @endforeach
+    </nav>
+
     @if ($totalCount === 0)
         <div class="card-surface px-8 py-14 text-center">
-            <p class="text-lg font-medium text-slate-900 dark:text-slate-100">No problems yet</p>
-            <p class="mx-auto mt-2 max-w-md text-sm text-slate-600 dark:text-slate-400">
-                A problem is a statement plus input/output test cases. Your solution reads stdin and prints to stdout.
-            </p>
-            <a href="{{ route('problems.create') }}" class="btn-primary mt-6 inline-flex">Create your first problem</a>
+            <p class="text-lg font-medium text-slate-900 dark:text-slate-100">{{ $emptyText[0] }}</p>
+            <p class="mx-auto mt-2 max-w-md text-sm text-slate-600 dark:text-slate-400">{{ $emptyText[1] }}</p>
+            @if ($scope === 'mine')
+                <a href="{{ route('problems.create') }}" class="btn-primary mt-6 inline-flex">Create your first problem</a>
+            @endif
         </div>
     @else
         {{-- Progress --}}
@@ -76,6 +93,7 @@
         {{-- Filters --}}
         <form method="get" action="{{ route('problems.index') }}" class="mb-5 space-y-3" role="search" data-filter-form>
             @if ($filters['status'] !== 'all') <input type="hidden" name="status" value="{{ $filters['status'] }}"> @endif
+            @if ($scope !== 'mine') <input type="hidden" name="scope" value="{{ $scope }}"> @endif
             <div class="flex flex-wrap items-center gap-2">
                 <div class="relative min-w-[12rem] flex-1">
                     <input type="search" name="q" value="{{ $filters['q'] }}" placeholder="Search problems…  ( / )" class="input-field w-full font-sans" aria-label="Search problems" data-search>
@@ -107,7 +125,7 @@
                     @endforeach
                 </div>
                 @if ($filtered)
-                    <a href="{{ route('problems.index') }}" class="text-xs font-semibold text-slate-600 hover:underline dark:text-slate-400">Clear filters</a>
+                    <a href="{{ route('problems.index', $scope === 'mine' ? [] : ['scope' => $scope]) }}" class="text-xs font-semibold text-slate-600 hover:underline dark:text-slate-400">Clear filters</a>
                 @endif
             </div>
         </form>
@@ -115,7 +133,7 @@
         @if ($problems->isEmpty())
             <div class="card-surface px-8 py-12 text-center">
                 <p class="text-base font-medium text-slate-900 dark:text-slate-100">No problems match these filters</p>
-                <a href="{{ route('problems.index') }}" class="link-accent-underline mt-2 inline-block text-sm">Clear filters</a>
+                <a href="{{ route('problems.index', $scope === 'mine' ? [] : ['scope' => $scope]) }}" class="link-accent-underline mt-2 inline-block text-sm">Clear filters</a>
             </div>
         @else
             <ul class="space-y-2" role="list">
@@ -130,16 +148,32 @@
                                 {{ $state === 'solved' ? '✓' : ($state === 'attempted' ? '◐' : '○') }}
                             </span>
                             <div class="min-w-0 flex-1">
-                                <h2 class="truncate text-base font-semibold text-slate-900 dark:text-slate-50">{{ $problem->title }}</h2>
+                                <h2 class="flex items-center gap-2 truncate text-base font-semibold text-slate-900 dark:text-slate-50">
+                                    <span class="truncate">{{ $problem->title }}</span>
+                                    @if ($scope === 'shared' && $problem->is_new)
+                                        <span class="shrink-0 rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-bold text-white">New</span>
+                                    @endif
+                                    @if ($scope === 'mine' && $problem->visibility === 'public')
+                                        <span class="shrink-0 rounded-full bg-sky-500/10 px-2 py-0.5 text-[11px] font-semibold text-sky-700 ring-1 ring-sky-500/25 dark:text-sky-300">Community</span>
+                                    @elseif ($scope === 'mine' && $problem->shares_count)
+                                        <span class="shrink-0 rounded-full bg-slate-500/10 px-2 py-0.5 text-[11px] font-semibold text-slate-700 ring-1 ring-slate-500/25 dark:text-slate-300">Shared · {{ $problem->shares_count }}</span>
+                                    @endif
+                                </h2>
                                 <p class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-600 dark:text-slate-500">
+                                    @if ($scope !== 'mine')
+                                        <span>by {{ $problem->user?->name ?? 'unknown' }} ·</span>
+                                    @endif
                                     <span>{{ $problem->test_cases_count }} {{ Str::plural('test', $problem->test_cases_count) }}</span>
+                                    @if ($scope !== 'mine' || $problem->visibility === 'public' || $problem->shares_count)
+                                        <span>· {{ $problem->solvers_count }} solved</span>
+                                    @endif
                                     @if ($problem->submissions_count)
                                         <span>· {{ $problem->submissions_count }} {{ Str::plural('attempt', $problem->submissions_count) }}</span>
                                     @endif
                                     @foreach ($problem->tagList() as $tag)
                                         <span class="problem-tag">{{ $tag }}</span>
                                     @endforeach
-                                    @if ($problem->visible_cases_count === 0)
+                                    @if ($scope === 'mine' && $problem->visible_cases_count === 0)
                                         <span class="font-semibold text-amber-600">⚠ no examples</span>
                                     @endif
                                 </p>

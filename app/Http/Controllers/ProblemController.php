@@ -4,17 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProblemRequest;
 use App\Models\Problem;
+use App\Models\ProblemShare;
 use App\Models\ProblemSubmission;
+use App\Models\User;
 use App\Models\VideoNote;
 use App\Services\CodeRunner;
 use App\Services\LanguageRuntimeProbe;
 use App\Services\ProblemJudge;
 use App\Support\FunctionSignature;
 use App\Support\ProblemStarterCode;
+use Illuminate\Contracts\Cache\Lock;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -23,17 +28,31 @@ class ProblemController extends Controller
 {
     private const SORTS = ['recent', 'title', 'difficulty'];
 
+    /** Mine = I wrote it; shared = someone shared it with me; community = public problems by others. */
+    private const SCOPES = ['mine', 'shared', 'community'];
+
     public function index(Request $request): View
     {
-        $all = Problem::query()
-            ->forCurrentUser()
+        $user = $request->user();
+        $scope = in_array($request->query('scope'), self::SCOPES, true) ? $request->query('scope') : 'mine';
+        $mine = fn ($q) => $q->where('user_id', $user->id);
+
+        $all = $this->scopeQuery($scope, $user)
+            ->with('user:id,name')
             ->withCount([
                 'testCases',
                 'testCases as visible_cases_count' => fn ($q) => $q->where('is_hidden', false),
-                'submissions',
+                'submissions' => $mine,
+                'shares',
+                // People who solved it (anyone's accepted submission, counted once per person).
+                'submissions as solvers_count' => fn ($q) => $q->where('status', ProblemSubmission::STATUS_ACCEPTED)
+                    ->select(DB::raw('count(distinct user_id)')),
             ])
-            ->withExists(['submissions as solved' => fn ($q) => $q->where('status', ProblemSubmission::STATUS_ACCEPTED)])
-            ->withMax('submissions as last_attempt_at', 'created_at')
+            ->withExists([
+                'submissions as solved' => fn ($q) => $mine($q)->where('status', ProblemSubmission::STATUS_ACCEPTED),
+                'shares as is_new' => fn ($q) => $mine($q)->whereNull('seen_at'),
+            ])
+            ->withMax(['submissions as last_attempt_at' => $mine], 'created_at')
             ->orderByDesc('updated_at')
             ->get();
 
@@ -72,6 +91,14 @@ class ProblemController extends Controller
             ->sortByDesc('last_attempt_at')->first();
 
         return view('problems.index', [
+            'scope' => $scope,
+            'scopeCounts' => [
+                'mine' => Problem::query()->forUser($user)->count(),
+                'shared' => $this->scopeQuery('shared', $user)->count(),
+                'community' => $this->scopeQuery('community', $user)->count(),
+            ],
+            'newShared' => ProblemShare::query()->where('user_id', $user->id)->whereNull('seen_at')
+                ->whereHas('problem', fn ($q) => $q->where('user_id', '!=', $user->id))->count(),
             'problems' => $problems->values(),
             'filters' => $filters,
             'filtered' => $filters['q'] !== '' || $filters['status'] !== 'all' || $filters['difficulty'] !== '' || $filters['tag'] !== '',
@@ -81,6 +108,15 @@ class ProblemController extends Controller
             'allTags' => $all->flatMap(fn (Problem $p) => $p->tagList())->unique()->sort()->values()->all(),
             'continue' => $continue,
         ]);
+    }
+
+    private function scopeQuery(string $scope, User $user)
+    {
+        return match ($scope) {
+            'shared' => Problem::query()->sharedWith($user)->where('problems.user_id', '!=', $user->id),
+            'community' => Problem::query()->community()->where('problems.user_id', '!=', $user->id),
+            default => Problem::query()->forUser($user),
+        };
     }
 
     /** Jump to a random problem you haven't solved yet. */
@@ -109,6 +145,7 @@ class ProblemController extends Controller
     {
         $problem = DB::transaction(function () use ($request) {
             $problem = Problem::create($request->problemAttributes() + ['user_id' => $request->user()->id]);
+            $problem->forceFill(['visibility' => Problem::VISIBILITY_PRIVATE, 'revision' => 1])->save();
             $this->syncTestCases($problem, $request->tests());
 
             return $problem;
@@ -119,21 +156,40 @@ class ProblemController extends Controller
 
     public function show(Problem $problem, LanguageRuntimeProbe $probe): View
     {
-        $this->authorizeOwner($problem);
+        $this->allow('view', $problem);
+        $user = auth()->user();
+        $isOwner = $problem->isOwnedBy($user);
 
-        $problem->load('testCases');
+        $share = $isOwner ? null : $problem->shareFor($user);
+        if ($share && $share->seen_at === null) {
+            $share->forceFill(['seen_at' => now()])->save();
+        }
+
+        $problem->load(['testCases', 'user:id,name']);
         $sig = $problem->functionSignature();
         $languages = array_values(array_filter($probe->detectList(), fn ($l) => $l['available'] && (! $sig || $sig->supports($l['key']))));
-        $submissions = $problem->submissions()->limit(30)->get();
+        $submissions = $problem->submissionsBy($user)->limit(30)->get();
 
         return view('problems.show', [
             'problem' => $problem,
+            'isOwner' => $isOwner,
+            'share' => $share,
+            // The reference solution is never put in the page; solutions.js
+            // fetches it from an endpoint that checks viewReference.
+            'solutionsAccess' => match (true) {
+                Gate::allows('viewSolutions', $problem) => 'all',
+                Gate::allows('viewOwnerSolutions', $problem) => 'owner',
+                default => 'locked',
+            },
+            'solutionsCount' => $problem->solutionsQuery()->count(),
+            'canModerate' => Gate::allows('moderate', $problem),
+            'shares' => $isOwner ? $problem->shares()->with('user:id,name,email')->get() : collect(),
             'languages' => $languages,
             'samples' => $problem->testCases->where('is_hidden', false)->values(),
             'hiddenCount' => $problem->testCases->where('is_hidden', true)->count(),
-            'solved' => $problem->isSolved(),
+            'solved' => $problem->isSolvedBy($user),
             'submissions' => $submissions,
-            'attempts' => $problem->submissions()->count(),
+            'attempts' => $problem->submissionsBy($user)->count(),
             'signature' => $sig,
             // Function problems: starter code is generated client-side from the
             // signature, so only the author's overrides are sent.
@@ -146,18 +202,29 @@ class ProblemController extends Controller
 
     public function edit(Problem $problem, LanguageRuntimeProbe $probe): View
     {
-        $this->authorizeOwner($problem);
+        $this->allow('manage', $problem);
 
-        return view('problems.form', $this->formData($problem->load('testCases'), $probe));
+        return view('problems.form', $this->formData($problem->load('testCases'), $probe) + [
+            // Other people who have submitted — editing tests affects them.
+            'otherSolvers' => $problem->submissions()->where('user_id', '!=', $problem->user_id)
+                ->distinct()->count('user_id'),
+        ]);
     }
 
     public function update(ProblemRequest $request, Problem $problem): RedirectResponse
     {
-        $this->authorizeOwner($problem);
+        $this->allow('manage', $problem);
 
         DB::transaction(function () use ($request, $problem) {
+            $before = $problem->judgingFingerprint();
             $problem->update($request->problemAttributes());
             $this->syncTestCases($problem, $request->tests());
+
+            // Tests, signature, comparison or limits changed: older solutions
+            // were judged against something else.
+            if ($problem->refresh()->judgingFingerprint() !== $before) {
+                $problem->forceFill(['revision' => $problem->revision + 1])->save();
+            }
         });
 
         return $this->afterSave($request, $problem, 'Problem updated.');
@@ -173,7 +240,7 @@ class ProblemController extends Controller
 
     public function destroy(Problem $problem): RedirectResponse
     {
-        $this->authorizeOwner($problem);
+        $this->allow('manage', $problem);
         $problem->delete();
 
         return redirect()->route('problems.index')->with('status', 'Problem deleted.');
@@ -190,7 +257,7 @@ class ProblemController extends Controller
     /** Run against custom stdin, no verdict. */
     public function run(Request $request, Problem $problem, ProblemJudge $judge, LanguageRuntimeProbe $probe): JsonResponse
     {
-        $this->authorizeOwner($problem);
+        $this->allow('view', $problem);
         $data = $this->validateSolution($request);
 
         if (! $probe->isAvailable($data['language'])) {
@@ -202,17 +269,23 @@ class ProblemController extends Controller
             return response()->json(['error' => 'invalid_input', 'message' => $error], 422);
         }
 
+        if (! $lock = $this->judgeLock()) {
+            return $this->busy();
+        }
+
         try {
             return response()->json($judge->runCustom($data['language'], $data['code'], $data['stdin'] ?? null, $sig));
         } catch (\RuntimeException|\InvalidArgumentException $e) {
             return response()->json(['error' => 'run_failed', 'message' => $e->getMessage()], 422);
+        } finally {
+            $lock->release();
         }
     }
 
     /** Stream a run over the visible examples only. Nothing is recorded. */
     public function runExamples(Request $request, Problem $problem, ProblemJudge $judge, LanguageRuntimeProbe $probe): JsonResponse|StreamedResponse
     {
-        $this->authorizeOwner($problem);
+        $this->allow('view', $problem);
         $data = $this->validateSolution($request);
 
         if (! $probe->isAvailable($data['language'])) {
@@ -224,13 +297,17 @@ class ProblemController extends Controller
             return response()->json(['error' => 'no_examples', 'message' => 'This problem has no visible examples.'], 422);
         }
 
-        return $this->ndjson(fn () => $this->judgeEvents($problem, $data, $judge, record: false));
+        if (! $lock = $this->judgeLock()) {
+            return $this->busy();
+        }
+
+        return $this->ndjson(fn () => $this->judgeEvents($problem, $data, $judge, record: false), $lock);
     }
 
     /** Judge against every test case, streaming each result, and record the submission. */
     public function submit(Request $request, Problem $problem, ProblemJudge $judge, LanguageRuntimeProbe $probe): JsonResponse|StreamedResponse
     {
-        $this->authorizeOwner($problem);
+        $this->allow('view', $problem);
         $data = $this->validateSolution($request);
 
         if (! $probe->isAvailable($data['language'])) {
@@ -242,13 +319,18 @@ class ProblemController extends Controller
             return response()->json(['error' => 'no_tests', 'message' => 'This problem has no test cases.'], 422);
         }
 
-        return $this->ndjson(fn () => $this->judgeEvents($problem, $data, $judge, record: true));
+        if (! $lock = $this->judgeLock()) {
+            return $this->busy();
+        }
+
+        return $this->ndjson(fn () => $this->judgeEvents($problem, $data, $judge, record: true), $lock);
     }
 
+    /** One of your own submissions, with its code. Other people's code is only reachable as solutions. */
     public function submission(Problem $problem, ProblemSubmission $submission): JsonResponse
     {
-        $this->authorizeOwner($problem);
-        abort_unless($submission->problem_id === $problem->id, 404);
+        $this->allow('view', $problem);
+        abort_unless($submission->problem_id === $problem->id && $submission->user_id === auth()->id(), 404);
 
         return response()->json([
             'id' => $submission->id,
@@ -260,6 +342,8 @@ class ProblemController extends Controller
             'duration_ms' => $submission->duration_ms,
             'created_at' => $submission->created_at->toIso8601String(),
             'cases' => $submission->results ?? [],
+            'hidden' => $submission->hidden_at !== null,
+            'outdated' => $submission->problem_revision < $problem->revision,
         ]);
     }
 
@@ -324,7 +408,8 @@ class ProblemController extends Controller
 
         yield ['type' => 'start', 'total' => count($shown), 'cases' => $shown];
 
-        $wasSolved = $record && $problem->isSolved();
+        $user = auth()->user();
+        $wasSolved = $record && $problem->isSolvedBy($user);
         $cases = $judge->cases($problem, $data['language'], $data['code'], visibleOnly: ! $record);
         $rows = [];
         foreach ($cases as $row) {
@@ -342,7 +427,8 @@ class ProblemController extends Controller
 
         if ($record) {
             $submission = $problem->submissions()->create([
-                'user_id' => auth()->id(),
+                'user_id' => $user->id,
+                'problem_revision' => $problem->revision,
                 'language' => $data['language'],
                 'code' => $data['code'],
                 'status' => $verdict['status'],
@@ -361,7 +447,7 @@ class ProblemController extends Controller
                 'total_count' => $submission->total_count,
                 'duration_ms' => $submission->duration_ms,
                 'created_at' => $submission->created_at->toIso8601String(),
-                'attempt' => $problem->submissions()->count(),
+                'attempt' => $problem->submissionsBy($user)->count(),
             ];
         }
 
@@ -374,9 +460,14 @@ class ProblemController extends Controller
      *
      * @param  \Closure():\Generator<int, array<string, mixed>>  $events
      */
-    private function ndjson(\Closure $events): StreamedResponse
+    private function ndjson(\Closure $events, ?Lock $lock = null): StreamedResponse
     {
-        return response()->stream(function () use ($events) {
+        return response()->stream(function () use ($events, $lock) {
+            // A cancelled request ends the script at the next write; release then too.
+            if ($lock) {
+                register_shutdown_function(fn () => $lock->release());
+            }
+
             $emit = function (array $event): void {
                 echo json_encode($event, JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_SLASHES)."\n";
                 if (ob_get_level() > 0) {
@@ -391,6 +482,8 @@ class ProblemController extends Controller
                 }
             } catch (\RuntimeException|\InvalidArgumentException $e) {
                 $emit(['type' => 'error', 'message' => $e->getMessage()]);
+            } finally {
+                $lock?->release();
             }
         }, 200, [
             'Content-Type' => 'application/x-ndjson',
@@ -399,9 +492,29 @@ class ProblemController extends Controller
         ]);
     }
 
-    private function authorizeOwner(Problem $problem): void
+    /** Denied looks the same as missing, so private problems can't be probed. */
+    private function allow(string $ability, Problem $problem): void
     {
-        abort_unless($problem->user_id === auth()->id(), 404);
+        abort_unless(Gate::allows($ability, $problem), 404);
+    }
+
+    /**
+     * One run at a time per person: shared and public problems let other
+     * people run code on this machine, so a person can't stack up runs.
+     */
+    private function judgeLock(): ?Lock
+    {
+        $lock = Cache::lock('problem-judge:'.auth()->id(), 600);
+
+        return $lock->get() ? $lock : null;
+    }
+
+    private function busy(): JsonResponse
+    {
+        return response()->json([
+            'error' => 'busy',
+            'message' => 'Another run of yours is still going — wait for it to finish first.',
+        ], 429);
     }
 
     private function unavailable(): JsonResponse
@@ -421,10 +534,13 @@ class ProblemController extends Controller
         ]);
     }
 
+    /** Unsolved problems in my list (my own + shared with me), for Random / Next. */
     private function unsolvedQuery()
     {
-        return Problem::query()->forCurrentUser()
-            ->whereDoesntHave('submissions', fn ($q) => $q->where('status', ProblemSubmission::STATUS_ACCEPTED));
+        $user = auth()->user();
+
+        return Problem::query()->inLibraryOf($user)
+            ->whereDoesntHave('submissions', fn ($q) => $q->where('user_id', $user->id)->where('status', ProblemSubmission::STATUS_ACCEPTED));
     }
 
     /** The next unsolved problem after this one (wrapping around), or null. */

@@ -272,6 +272,12 @@
                         <textarea name="reference_solution" class="hidden" data-ref-code>{{ old('reference_solution', $problem->reference_solution) }}</textarea>
                         <p class="text-xs text-slate-600 dark:text-slate-400" data-ref-status aria-live="polite"></p>
                     @endif
+                    <label class="flex items-start gap-2 text-sm text-slate-800 dark:text-slate-200">
+                        <input type="hidden" name="show_reference_solution" value="0">
+                        <input type="checkbox" name="show_reference_solution" value="1" class="mt-1" @checked(old('show_reference_solution', $problem->show_reference_solution))>
+                        <span>Show this solution to people who solve the problem
+                            <span class="block text-xs text-slate-600 dark:text-slate-500">Only matters when the problem is shared. People you share it with “including your solution” can see it before solving.</span></span>
+                    </label>
                 </section>
 
                 {{-- Hints --}}
@@ -347,6 +353,13 @@
                 </section>
 
                 {{-- Danger zone is a separate form below; keep layout spacing --}}
+                @if ($editing && ($otherSolvers ?? 0) > 0)
+                    <p class="rounded-xl bg-amber-500/10 px-4 py-3 text-xs text-amber-800 dark:text-amber-300">
+                        {{ $otherSolvers }} other {{ $otherSolvers === 1 ? 'person has' : 'people have' }} submitted to this problem.
+                        Changing the tests, function signature, comparison or time limit marks their earlier solutions as written for an older version (they stay solved).
+                    </p>
+                @endif
+
                 <div class="problem-savebar" data-savebar>
                     <p class="text-xs text-slate-600 dark:text-slate-400" data-dirty-label aria-live="polite">No changes yet</p>
                     <div class="flex flex-wrap gap-2">
@@ -359,9 +372,11 @@
                 @if ($editing)
                     <div class="rounded-2xl border border-rose-300/60 p-5 dark:border-rose-900/50">
                         <h2 class="text-sm font-bold text-rose-700 dark:text-rose-400">Danger zone</h2>
-                        <p class="mt-1 text-xs text-slate-600 dark:text-slate-400">Deleting removes this problem, its test cases and all {{ $problem->submissions()->count() }} submissions. This can’t be undone.</p>
+                        <p class="mt-1 text-xs text-slate-600 dark:text-slate-400">
+                            Deleting removes this problem, its test cases and all {{ $problem->submissions()->count() }} submissions{{ ($otherSolvers ?? 0) > 0 ? " — including those of {$otherSolvers} other ".($otherSolvers === 1 ? 'person' : 'people') : '' }}. This can’t be undone.
+                        </p>
                         <button type="submit" form="delete-problem-form" class="btn-secondary mt-3 text-xs text-rose-600"
-                            onclick="return confirm('Delete this problem and its submissions?')">Delete problem</button>
+                            onclick="return confirm({{ Js::from(($otherSolvers ?? 0) > 0 ? "Delete this problem? {$otherSolvers} other ".($otherSolvers === 1 ? 'person' : 'people').' will lose their submissions and solutions too.' : 'Delete this problem and its submissions?') }})">Delete problem</button>
                     </div>
                 @endif
             </div>

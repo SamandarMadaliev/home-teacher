@@ -20,12 +20,22 @@ class ProblemSubmission extends Model
 
     protected $fillable = [
         'problem_id', 'user_id', 'language', 'code', 'status',
-        'passed_count', 'total_count', 'duration_ms', 'results',
+        'passed_count', 'total_count', 'duration_ms', 'results', 'problem_revision',
     ];
 
     protected function casts(): array
     {
-        return ['results' => 'array'];
+        return [
+            'results' => 'array',
+            'problem_revision' => 'integer',
+            'hidden_at' => 'datetime',
+            'moderated_at' => 'datetime',
+        ];
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function problem(): BelongsTo

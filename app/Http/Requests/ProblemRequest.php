@@ -7,14 +7,23 @@ use App\Services\CodeRunner;
 use App\Services\LanguageRuntimeProbe;
 use App\Support\FunctionSignature;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class ProblemRequest extends FormRequest
 {
+    /** Updating: only the owner, checked before validation so nothing is echoed back to others. */
     public function authorize(): bool
     {
-        return true;
+        $problem = $this->route('problem');
+
+        return ! $problem instanceof Problem || Gate::allows('manage', $problem);
+    }
+
+    protected function failedAuthorization(): void
+    {
+        abort(404);
     }
 
     public function rules(): array
@@ -38,6 +47,7 @@ class ProblemRequest extends FormRequest
             'hints.*' => ['nullable', 'string', 'max:1000'],
             'reference_solution' => ['nullable', 'string', 'max:'.CodeRunner::MAX_CODE_BYTES],
             'reference_language' => ['nullable', Rule::in($languages)],
+            'show_reference_solution' => ['nullable', 'boolean'],
             'starter_code' => ['nullable', 'array'],
             'starter_code.*' => ['nullable', 'string', 'max:'.CodeRunner::MAX_CODE_BYTES],
             'time_limit_ms' => ['nullable', 'integer', 'between:'.Problem::MIN_TIME_LIMIT_MS.','.Problem::MAX_TIME_LIMIT_MS],
@@ -141,6 +151,7 @@ class ProblemRequest extends FormRequest
             'hints' => $hints ?: null,
             'reference_solution' => $reference,
             'reference_language' => $reference === null ? null : ($d['reference_language'] ?? null),
+            'show_reference_solution' => $reference !== null && (bool) ($d['show_reference_solution'] ?? false),
             'starter_code' => $starter ?: null,
             'time_limit_ms' => $d['time_limit_ms'] ?? Problem::DEFAULT_TIME_LIMIT_MS,
             'compare_mode' => $compare,
