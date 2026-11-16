@@ -151,3 +151,22 @@ export function toast(message, action) {
     host.append(node);
     setTimeout(remove, action ? 7000 : 3500);
 }
+
+/**
+ * JSON request with any method. Resolves to { ok, status, data } instead of
+ * throwing on 4xx, so callers can react to error codes (e.g. a share limit).
+ * Network failures still throw.
+ */
+export async function requestJson(method, url, body) {
+    const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': csrf() },
+        body: body === undefined ? undefined : JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok && !data.message) {
+        data.message = res.status === 429 ? 'Too many requests — try again later.' : `Request failed (${res.status}).`;
+    }
+    if (!res.ok && data.errors && !data.error) data.message = Object.values(data.errors)[0]?.[0] ?? data.message;
+    return { ok: res.ok, status: res.status, data };
+}

@@ -4,9 +4,11 @@
  */
 import { createEditor } from './editor.js';
 import { hintFor, renderDiff } from './diff.js';
+import { initModeration, initShare } from './share.js';
 import { checkValue, formatArgs, minifyJson, normalizeValue, splitArgs, starterFor } from './signature.js';
+import { initSolutions } from './solutions.js';
 import {
-    STATUS_LABELS, STATUS_TEXT, debounce, el, errorLineFromStderr, postJson, postNdjson, relativeTime, store, toast,
+    STATUS_LABELS, STATUS_TEXT, debounce, el, errorLineFromStderr, postJson, postNdjson, relativeTime, requestJson, store, toast,
 } from './util.js';
 
 const root = document.querySelector('[data-problem-solve]');
@@ -581,6 +583,7 @@ function onVerdict(v) {
 
 function markSolved() {
     $$('[data-solved-badge]').forEach((b) => b.classList.remove('hidden'));
+    solutions.unlock();
 }
 
 async function celebrate() {
@@ -641,6 +644,8 @@ async function openSubmission(id) {
         back.type = 'button';
         back.addEventListener('click', () => { subViewer.classList.add('hidden'); subList.parentElement.classList.remove('hidden'); });
         head.append(back, el('span', `text-xs font-semibold ${STATUS_TEXT[s.status] ?? ''}`, `${STATUS_LABELS[s.status] ?? s.status} · ${s.passed}/${s.total} · ${s.language}`));
+        const notes = [];
+        if (s.outdated) notes.push(el('p', 'text-xs text-amber-700 dark:text-amber-300', 'Judged against an older version of this problem.'));
         const load = el('button', 'btn-secondary text-xs', 'Load into editor');
         load.type = 'button';
         load.disabled = !editor || !cfg.languages.some((l) => l.key === s.language);
@@ -653,7 +658,26 @@ async function openSubmission(id) {
             setMobileTab('code');
             toast(`Loaded submission #${s.id}.`, { label: 'Undo', run: () => editor.undo() });
         });
-        box.append(head, el('pre', 'problem-pre max-h-[22rem]', s.code), load);
+        const actions = el('div', 'flex flex-wrap items-center gap-2');
+        actions.append(load);
+        if (s.status === 'accepted') {
+            // Accepted code is shown to people who solved the problem, unless hidden.
+            let hidden = s.hidden;
+            const toggle = el('button', 'btn-ghost text-xs');
+            toggle.type = 'button';
+            const paint = () => {
+                toggle.textContent = hidden ? 'Show in Solutions' : 'Hide from Solutions';
+                toggle.title = hidden ? 'Only you can see this submission.' : 'People who solved this problem can see this code.';
+            };
+            paint();
+            toggle.addEventListener('click', async () => {
+                const r = await requestJson('POST', cfg.urls.hideSubmission.replace(':id', s.id), { hidden: !hidden });
+                toast(r.data.message);
+                if (r.ok) { hidden = r.data.hidden; paint(); }
+            });
+            actions.append(toggle);
+        }
+        box.append(head, ...notes, el('pre', 'problem-pre max-h-[22rem]', s.code), actions);
         subViewer.replaceChildren(box);
         subViewer.classList.remove('hidden');
         subList.parentElement.classList.add('hidden');
@@ -682,7 +706,32 @@ async function openSubmission(id) {
     paint();
 })();
 
-$('[data-solution-reveal]')?.addEventListener('click', (e) => {
-    e.currentTarget.classList.add('hidden');
-    $('[data-solution-body]').classList.remove('hidden');
+/* ───────── Sharing + community solutions ───────── */
+initShare(root, cfg);
+initModeration(root, cfg);
+
+/**
+ * Put someone else's solution into the editor. Your current draft for that
+ * language is kept in a backup key and the change is one undo away.
+ */
+function openInEditor(lang, code, { outdated, label }) {
+    if (!editor || !cfg.languages.some((l) => l.key === lang)) return;
+    if (outdated && !confirm('This was written for an older version of the problem and may not fit the current tests or signature. Open it anyway?')) return;
+    const current = store.get(codeKey(lang));
+    if (current && current.trim() !== '' && current !== starterOf(lang) && current !== code) {
+        if (!confirm('Replace your current code for this language? It is kept as a backup and you can undo.')) return;
+        store.set(`${codeKey(lang)}-backup`, current);
+    }
+    if (langSelect.value !== lang) {
+        langSelect.value = lang;
+        langSelect.dispatchEvent(new Event('change'));
+    }
+    editor.setDoc(code);
+    setMobileTab('code');
+    toast(`Opened ${label}'s solution.`, { label: 'Undo', run: () => editor.undo() });
+}
+
+const solutions = initSolutions(root, cfg, {
+    openInEditor,
+    canOpen: (lang) => !!editor && cfg.languages.some((l) => l.key === lang),
 });

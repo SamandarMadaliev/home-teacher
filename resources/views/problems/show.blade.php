@@ -28,7 +28,27 @@
             'runExamples' => route('problems.run-examples', $problem),
             'submit' => route('problems.submit', $problem),
             'submission' => route('problems.submissions.show', [$problem, ':id']),
+            'hideSubmission' => route('problems.submissions.hide', [$problem, ':id']),
+            'solutions' => route('problems.solutions.index', $problem),
+            'solution' => route('problems.solutions.show', [$problem, ':id']),
+            'reference' => route('problems.solutions.reference', $problem),
+            'hideAll' => route('problems.solutions.hide-all', $problem),
+            'moderateSolution' => route('problems.solutions.moderate', [$problem, ':id']),
+            'moderate' => route('problems.moderate', $problem),
+            'shares' => route('problems.shares.store', $problem),
+            'share' => route('problems.shares.update', [$problem, ':id']),
+            'visibility' => route('problems.visibility', $problem),
         ],
+        'languageLabels' => collect(\App\Services\LanguageRuntimeProbe::LANGUAGES)->map(fn ($l) => $l['label']),
+        'solutions' => ['access' => $solutionsAccess, 'count' => $solutionsCount],
+        'canModerate' => $canModerate,
+        // Owner only: the Share dialog's initial state.
+        'share' => $isOwner ? [
+            'visibility' => $problem->visibility,
+            'max_shares' => \App\Models\Problem::MAX_SHARES,
+            'shares' => $shares->map(fn ($s) => ['id' => $s->id, 'name' => $s->user->name, 'email' => $s->user->email, 'include_solution' => $s->include_solution])->values(),
+            'own_solutions' => $submissions->where('status', 'accepted')->whereNull('hidden_at')->count(),
+        ] : null,
         'languages' => collect($languages)->map(fn ($l) => ['key' => $l['key'], 'label' => $l['label']])->values(),
         'starter' => $starter,
         'defaultLanguage' => $problem->reference_language,
@@ -63,15 +83,32 @@
                 <span class="rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 {{ $difficultyClass }}">{{ ucfirst($problem->difficulty) }}</span>
                 <span data-solved-badge class="rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-semibold text-accent ring-1 ring-accent/25 {{ $solved ? '' : 'hidden' }}">✓ Solved</span>
                 <span class="text-xs text-slate-600 dark:text-slate-500" data-attempts>{{ $attempts }} {{ Str::plural('attempt', $attempts) }}</span>
+                @unless ($isOwner)
+                    <span class="text-xs text-slate-600 dark:text-slate-500">· by {{ $problem->user?->name ?? 'unknown' }}{{ $share ? ' · shared with you' : ($problem->isPublic() ? ' · community' : '') }}</span>
+                @endunless
             </div>
             <div class="flex shrink-0 items-center gap-2">
                 @if ($next)
                     <a href="{{ route('problems.show', $next) }}" class="btn-secondary text-xs" title="Next unsolved: {{ $next->title }}">Next unsolved →</a>
                 @endif
                 <button type="button" class="btn-secondary text-xs" data-shortcuts-open title="Keyboard shortcuts (?)">⌨ Shortcuts</button>
-                <a href="{{ route('problems.edit', $problem) }}" class="btn-secondary text-xs">Edit</a>
+                @if ($canModerate)
+                    <button type="button" class="btn-secondary text-xs text-rose-600" data-moderate-problem data-moderated="{{ $problem->isModerated() ? '1' : '0' }}">
+                        {{ $problem->isModerated() ? 'Restore to community (admin)' : 'Hide from community (admin)' }}
+                    </button>
+                @endif
+                @if ($isOwner)
+                    <button type="button" class="btn-secondary text-xs" data-share-open>Share · <span data-visibility-badge></span></button>
+                    <a href="{{ route('problems.edit', $problem) }}" class="btn-secondary text-xs">Edit</a>
+                @endif
             </div>
         </header>
+
+        @if ($problem->isModerated() && ($isOwner || $canModerate))
+            <p class="rounded-xl bg-rose-500/10 px-4 py-2 text-xs text-rose-700 dark:text-rose-300">
+                An admin has hidden this problem from the community. You and the people it is shared with still have access.
+            </p>
+        @endif
 
         {{-- Mobile pane switcher --}}
         <div class="problem-mobile-tabs card-surface p-1" role="tablist" aria-label="Sections">
@@ -89,9 +126,7 @@
                         <button type="button" role="tab" class="{{ $tabBtn }}" data-statement-tab="hints" aria-selected="false">Hints ({{ count($problem->hintList()) }})</button>
                     @endif
                     <button type="button" role="tab" class="{{ $tabBtn }}" data-statement-tab="submissions" aria-selected="false">Submissions (<span data-submissions-count>{{ $attempts }}</span>)</button>
-                    @if ($problem->reference_solution)
-                        <button type="button" role="tab" class="{{ $tabBtn }}" data-statement-tab="solution" aria-selected="false">Solution</button>
-                    @endif
+                    <button type="button" role="tab" class="{{ $tabBtn }}" data-statement-tab="solutions" aria-selected="false">Solutions{{ $solutionsCount ? " ($solutionsCount)" : '' }}</button>
                 </div>
 
                 <div class="problem-pane-body p-5">
@@ -152,15 +187,8 @@
                         <div class="hidden" data-submission-viewer></div>
                     </div>
 
-                    @if ($problem->reference_solution)
-                        <div data-statement-panel="solution" class="hidden space-y-3">
-                            <div data-solution-reveal-wrap>
-                                <p class="text-sm text-slate-600 dark:text-slate-400">This is the reference solution you wrote ({{ \App\Services\LanguageRuntimeProbe::LANGUAGES[$problem->reference_language]['label'] ?? 'unknown language' }}). Looking at it before solving spoils the problem.</p>
-                                <button type="button" class="btn-secondary mt-3 text-xs" data-solution-reveal>Reveal solution</button>
-                            </div>
-                            <pre class="problem-pre hidden max-h-none" data-solution-body>{{ $problem->reference_solution }}</pre>
-                        </div>
-                    @endif
+                    {{-- Filled by solutions.js; code is fetched only when the server allows it. --}}
+                    <div data-statement-panel="solutions" class="hidden"></div>
                 </div>
             </section>
 
@@ -248,5 +276,50 @@
             </dl>
             <button type="button" class="btn-secondary mt-5 text-xs" data-shortcuts-close>Close</button>
         </dialog>
+
+        @if ($isOwner)
+            <dialog data-share-dialog class="m-auto w-[min(32rem,94vw)] rounded-2xl border border-slate-200 bg-white p-6 text-slate-900 backdrop:bg-black/50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+                <h2 class="text-base font-bold">Share “{{ $problem->title }}”</h2>
+
+                <fieldset class="mt-4 space-y-2">
+                    <legend class="sr-only">Who can open this problem</legend>
+                    @foreach ([
+                        'private' => ['Only me', 'Nobody else can see it.'],
+                        'people' => ['Specific people', 'Up to '.\App\Models\Problem::MAX_SHARES.' people you add by email. They can solve it but not edit it.'],
+                        'community' => ['Community', 'Every member can see and solve it.'],
+                    ] as $value => [$title, $desc])
+                        <label class="flex cursor-pointer gap-3 rounded-xl border border-slate-200/95 p-3 has-[:checked]:border-accent has-[:checked]:bg-accent/5 dark:border-slate-800/90">
+                            <input type="radio" name="share-mode" value="{{ $value }}" class="mt-0.5" data-share-mode @disabled($value === 'community' && $problem->isModerated())>
+                            <span><span class="block text-sm font-semibold">{{ $title }}</span><span class="block text-xs text-slate-600 dark:text-slate-400">{{ $desc }}</span></span>
+                        </label>
+                    @endforeach
+                </fieldset>
+
+                <form class="mt-5 space-y-2" data-share-form>
+                    <div class="flex items-center justify-between">
+                        <label for="share-email" class="text-sm font-semibold">Add a person</label>
+                        <span class="text-xs text-slate-600 dark:text-slate-500" data-share-count></span>
+                    </div>
+                    <div class="flex gap-2">
+                        <input id="share-email" type="email" autocomplete="off" placeholder="their account email" class="input-field flex-1 font-sans" data-share-email>
+                        <button type="submit" class="btn-primary text-xs">Add</button>
+                    </div>
+                    <label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300">
+                        <input type="checkbox" data-share-include> Let them see my solution without solving it first
+                    </label>
+                    <p class="text-xs" data-share-message aria-live="polite"></p>
+                </form>
+
+                <ul class="mt-3 divide-y divide-slate-200/90 dark:divide-slate-800/90" role="list" data-share-list></ul>
+                <p class="mt-2 text-xs text-slate-600 dark:text-slate-500" data-share-empty>Not shared with anyone yet.</p>
+
+                <p class="mt-4 text-xs text-slate-600 dark:text-slate-500">
+                    People who solve the problem can see each other’s accepted code (and yours) in Solutions. Anyone can hide their own from the Submissions tab.
+                </p>
+                <div class="mt-4 flex justify-end">
+                    <button type="button" class="btn-secondary text-xs" data-share-close>Done</button>
+                </div>
+            </dialog>
+        @endif
     </div>
 @endsection
