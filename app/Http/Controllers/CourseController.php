@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\FolderPicker;
 use App\Models\Course;
 use App\Models\Video;
 use App\Services\CourseVideoScanner;
@@ -67,6 +68,11 @@ class CourseController extends Controller
         if ($resolved === false || ! is_dir($resolved)) {
             return back()->withInput()->withErrors([
                 'folder_path' => 'That path must be an existing folder on this machine.',
+            ]);
+        }
+        if (! FolderPicker::isWithinAllowedRoots($resolved)) {
+            return back()->withInput()->withErrors([
+                'folder_path' => 'That folder is outside the folders courses may use (COURSE_BROWSE_ROOTS).',
             ]);
         }
 

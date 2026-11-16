@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\CodeRunner;
+use App\Services\CodeSandbox;
 use App\Services\LanguageRuntimeProbe;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -59,9 +60,10 @@ class PlaygroundController extends Controller
         return response()->json($result);
     }
 
-    public function refresh(LanguageRuntimeProbe $probe): RedirectResponse
+    public function refresh(LanguageRuntimeProbe $probe, CodeSandbox $sandbox): RedirectResponse
     {
         $probe->forget();
+        $sandbox->forget();
         $probe->detect(force: true);
 
         return redirect()->route('playground.show')->with('status', 'Re-checked installed runtimes.');

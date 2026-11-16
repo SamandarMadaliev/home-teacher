@@ -44,6 +44,7 @@
                     <a href="{{ route('courses.index') }}" class="nav-pill text-[13px] sm:text-sm">Courses</a>
                     <a href="{{ route('roadmaps.index') }}" class="nav-pill text-[13px] sm:text-sm">Roadmaps</a>
                     <a href="{{ route('playground.show') }}" class="nav-pill text-[13px] sm:text-sm">Playground</a>
+                    <a href="{{ route('problems.index') }}" class="nav-pill text-[13px] sm:text-sm">Problems</a>
                 @endauth
                 @auth
                     @include('layouts.partials.accent-picker')
@@ -75,15 +76,19 @@
                         @csrf
                         <button type="submit" class="nav-pill text-[13px] sm:text-sm">Sign out</button>
                     </form>
-                    <a href="{{ route('courses.create') }}" class="btn-header-cta">
-                        <span class="sm:hidden">Add</span>
-                        <span class="hidden sm:inline">Add course</span>
-                    </a>
+                    @if (auth()->user()->isAdmin())
+                        <a href="{{ route('courses.create') }}" class="btn-header-cta">
+                            <span class="sm:hidden">Add</span>
+                            <span class="hidden sm:inline">Add course</span>
+                        </a>
+                    @endif
                 @else
                     <a href="{{ route('login') }}" class="nav-pill text-[13px] sm:text-sm">Sign in</a>
-                    <a href="{{ route('register') }}" class="btn-header-cta">
-                        Sign up
-                    </a>
+                    @if (\App\Support\Registration::isOpenToPublic())
+                        <a href="{{ route('register') }}" class="btn-header-cta">
+                            Sign up
+                        </a>
+                    @endif
                 @endauth
             </nav>
         </div>

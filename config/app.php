@@ -135,4 +135,11 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    | Proxies whose X-Forwarded-* headers are believed (comma-separated IPs or
+    | CIDRs, or "*" for any). Default: this machine, where a local tunnel or
+    | reverse proxy connects from. See App\Http\Middleware\TrustProxies.
+    */
+    'trusted_proxies' => env('TRUSTED_PROXIES', '127.0.0.1,::1'),
+
 ];

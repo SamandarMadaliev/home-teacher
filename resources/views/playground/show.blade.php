@@ -57,7 +57,7 @@
                                 @else
                                     border-slate-200/90 bg-slate-50/70 text-slate-500 ring-slate-200/85 opacity-80 dark:border-slate-800/80 dark:bg-slate-950/30 dark:text-slate-400 dark:ring-slate-800/70
                                 @endif"
-                            title="{{ $lang['available'] ? ($lang['version'] ?: 'Installed').' — '.$lang['binary'] : 'Not installed' }}"
+                            title="{{ $lang['available'] ? ($lang['version'] ?: 'Installed') : 'Not installed' }}"
                         >
                             @if ($lang['available'])
                                 <span class="size-1.5 rounded-full bg-emerald-500"></span>
@@ -149,7 +149,7 @@
                         data-lang-tab="{{ $key }}"
                         data-label="{{ $lang['label'] }}"
                         data-version="{{ $lang['version'] }}"
-                        data-binary="{{ $lang['binary'] }}"
+                        data-binary=""
                         data-sample="{{ rawurlencode($lang['sample']) }}"
                         aria-selected="{{ $key === $default ? 'true' : 'false' }}"
                         class="playground-tab group flex items-center gap-2 rounded-t-lg border border-b-0 border-transparent px-3 py-1.5 text-[12px] font-medium text-slate-600 transition hover:text-slate-900 aria-selected:border-slate-200/95 aria-selected:bg-white aria-selected:text-slate-900 aria-selected:shadow-sm dark:text-slate-400 dark:hover:text-slate-200 dark:aria-selected:border-slate-800/85 dark:aria-selected:bg-slate-950 dark:aria-selected:text-slate-100"

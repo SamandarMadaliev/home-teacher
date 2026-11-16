@@ -139,6 +139,7 @@
                         {{ $course->folder_path }}
                     </span>
                 </div>
+@if (auth()->user()->isAdmin())
                 <form action="{{ route('courses.rescan', $course) }}" method="post" class="shrink-0">
                     @csrf
                     <button
@@ -152,6 +153,7 @@
                         Rescan folder
                     </button>
                 </form>
+                @endif
             @endif
 
             <details class="manage-menu group relative ml-auto shrink-0">

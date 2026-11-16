@@ -63,13 +63,24 @@ class VideoAttachment extends Model
             return null;
         }
 
+        $this->loadMissing('video.course.user');
+
         if (self::looksAbsolute($raw)) {
             $real = realpath($raw);
+            if ($real === false || ! is_file($real)) {
+                return null;
+            }
 
-            return ($real !== false && is_file($real)) ? $real : null;
+            // A path outside the course folder is only honoured for courses
+            // owned by an admin: for anyone else it could point at any file
+            // on the server (.env, SSH keys, …). Covers attachments created
+            // before this rule existed too.
+            $root = $this->video?->course?->folderRootReal();
+            $inside = $root !== null && str_starts_with($real, $root.DIRECTORY_SEPARATOR);
+
+            return ($inside || $this->video?->course?->user?->isAdmin()) ? $real : null;
         }
 
-        $this->loadMissing('video.course');
         $root = $this->video?->course?->folderRootReal();
         if ($root === null) {
             return null;

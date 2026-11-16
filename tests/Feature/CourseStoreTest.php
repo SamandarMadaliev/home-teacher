@@ -13,7 +13,7 @@ class CourseStoreTest extends TestCase
 
     public function test_course_title_defaults_to_folder_name_when_omitted(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $dir = sys_get_temp_dir().'/ht-course-name-'.uniqid('', true);
         mkdir($dir, 0777, true);
 
@@ -31,7 +31,7 @@ class CourseStoreTest extends TestCase
 
     public function test_course_title_uses_provided_name(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $dir = sys_get_temp_dir().'/ht-course-name-'.uniqid('', true);
         mkdir($dir, 0777, true);
 
@@ -50,7 +50,7 @@ class CourseStoreTest extends TestCase
 
     public function test_folder_path_is_required(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
 
         $this->actingAs($user)
             ->post(route('courses.store'), [

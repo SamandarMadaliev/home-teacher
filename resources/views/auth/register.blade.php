@@ -13,6 +13,21 @@
         </p>
     </header>
 
+    @if ($refusal)
+        <div class="auth-panel mt-8 rounded-3xl border border-slate-200/95 bg-white/90 p-6 text-center shadow-lg shadow-slate-300/20 ring-1 ring-slate-200/85 dark:border-slate-800/90 dark:bg-slate-900/55 dark:ring-slate-800/70 sm:p-8">
+            <p class="text-3xl" aria-hidden="true">✉️</p>
+            <h2 class="mt-3 text-lg font-bold text-slate-900 dark:text-slate-50">An invitation is needed</h2>
+            <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">{{ $refusal }}</p>
+            @error('email') <p class="mt-3 text-sm text-rose-600">{{ $message }}</p> @enderror
+            <a href="{{ route('login') }}" class="btn-primary mt-6 inline-flex">I already have an account</a>
+        </div>
+    @else
+    @if ($invite)
+        <p class="mt-6 rounded-2xl bg-accent/10 px-4 py-3 text-sm text-slate-800 ring-1 ring-accent/25 dark:text-slate-200">
+            🎉 <strong>{{ $invite->creator?->name ?? 'Someone' }}</strong> invited you{{ $invite->note ? ' — “'.$invite->note.'”' : '' }}. Create your account below, or continue with Google.
+        </p>
+    @endif
+
     <div class="auth-panel mt-8 rounded-3xl border border-slate-200/95 bg-white/90 p-6 shadow-lg shadow-slate-300/20 ring-1 ring-slate-200/85 dark:border-slate-800/90 dark:bg-slate-900/55 dark:shadow-black/20 dark:ring-slate-800/70 sm:p-8">
         @include('auth.partials.google-sign-in')
 
@@ -82,4 +97,5 @@
             </div>
         </form>
     </div>
+    @endif
 @endsection

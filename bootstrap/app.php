@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\ForceHttpsUrls;
+use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\TrustProxies;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,9 +22,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(prepend: [
             ForceHttpsUrls::class,
         ]);
+        $middleware->append(SecurityHeaders::class);
+        $middleware->alias(['admin' => EnsureAdmin::class]);
 
+        // Which proxies to believe comes from config at request time
+        // (TRUSTED_PROXIES); see App\Http\Middleware\TrustProxies.
+        $middleware->replace(\Illuminate\Http\Middleware\TrustProxies::class, TrustProxies::class);
         $middleware->trustProxies(
-            at: '*',
             headers: Request::HEADER_X_FORWARDED_FOR
                 | Request::HEADER_X_FORWARDED_HOST
                 | Request::HEADER_X_FORWARDED_PORT
